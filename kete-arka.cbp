@@ -43,6 +43,9 @@
 		<Linker>
 			<Add directory="C:/SFML/lib" />
 		</Linker>
+		<Unit filename="classes/game.cc" />
+		<Unit filename="classes/game.h" />
+		<Unit filename="config.h" />
 		<Unit filename="main.cc" />
 		<Extensions>
 			<code_completion />
