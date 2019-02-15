@@ -1,0 +1,9 @@
+#ifndef KETE_ARKA_CONFIG_H_
+#define KETE_ARKA_CONFIG_H_
+
+constexpr float kFPS = 30.0;
+constexpr sf::String kAppName = "kete-arka";
+constexpr int kScreenHeight = 256;
+constexpr int kScreenWidth = 224;
+
+#endif  // KETE_ARKA_CONFIG_H_

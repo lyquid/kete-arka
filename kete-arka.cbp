@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="kete-arka" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/kete-arka" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="C:/SFML/lib/libsfml-graphics-d.a" />
+					<Add library="C:/SFML/lib/libsfml-window-d.a" />
+					<Add library="C:/SFML/lib/libsfml-system-d.a" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/kete-arka" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="C:/SFML/lib/libsfml-graphics.a" />
+					<Add library="C:/SFML/lib/libsfml-window.a" />
+					<Add library="C:/SFML/lib/libsfml-system.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="C:/SFML/include" />
+		</Compiler>
+		<Linker>
+			<Add directory="C:/SFML/lib" />
+		</Linker>
+		<Unit filename="main.cc" />
+		<Extensions>
+			<code_completion />
+			<editor_config active="1" use_tabs="0" tab_indents="1" tab_width="2" indent="2" eol_mode="2" />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
