@@ -1,0 +1,6 @@
+#ifndef KETE_ARKA_CLASSES_SHIP_H_
+#define KETE_ARKA_CLASSES_SHIP_H_
+
+
+
+#endif  // KETE_ARKA_CLASSES_SHIP_H_

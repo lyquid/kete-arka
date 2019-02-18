@@ -3,9 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "ball.h"
 #include "../config.h"
-
-using namespace sf;
 
 class Game {
  public:
@@ -21,12 +20,12 @@ class Game {
   void update();
 
  private:
-  Event event_;
+  sf::Event event_;
   bool paused_ = true;
   bool redraw_ = true;
   bool running_ = false;
-  String title_ = kAppName + " - v" + kAppVersion;
-  RenderWindow window_;
+  sf::String title_ = kAppName + " - v" + kAppVersion;
+  sf::RenderWindow window_;
 };
 
 #endif  // KETE_ARKA_CLASSES_GAME_H_

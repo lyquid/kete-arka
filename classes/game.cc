@@ -7,14 +7,14 @@ void Game::clean() {
 void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
-      case Event::Closed:
+      case sf::Event::Closed:
         running_ = false;
     }
   }
 }
 
 void Game::init() {
-  window_.create(VideoMode(kScreenWidth, kScreenHeight, 32), title_, Style::Titlebar | Style::Close);
+  window_.create(sf::VideoMode(kScreenWidth, kScreenHeight, 32), title_, sf::Style::Titlebar | sf::Style::Close);
   running_ = true;
 }
 
