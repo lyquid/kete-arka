@@ -5,26 +5,34 @@
 
 #include "ball.h"
 #include "../config.h"
+#include "menu.h"
+#include "player.h"
 
 class Game {
  public:
-  Game() {}
+  Game() {
+    in_menu_ = true;
+    paused_ = true;
+    quit_ = false;
+    title_ = kAppName + " - v" + kAppVersion;
+  }
   ~Game() {}
-
   void clean();
   void handleEvents();
   void init();
   bool isPaused();
-  bool isRunning();
+  bool quit();
   void render();
   void update();
 
  private:
   sf::Event event_;
-  bool paused_ = true;
-  bool redraw_ = true;
-  bool running_ = false;
-  sf::String title_ = kAppName + " - v" + kAppVersion;
+  sf::Font font_;
+  bool in_menu_;
+  Menu menu_;
+  bool paused_;
+  bool quit_;
+  sf::String title_;
   sf::RenderWindow window_;
 };
 

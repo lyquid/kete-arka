@@ -8,23 +8,30 @@ void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
       case sf::Event::Closed:
-        running_ = false;
+        quit_ = true;
+        break;
     }
   }
 }
 
 void Game::init() {
   window_.create(sf::VideoMode(kScreenWidth, kScreenHeight, 32), title_, sf::Style::Titlebar | sf::Style::Close);
-  running_ = true;
+  window_.setVerticalSyncEnabled(true);
+  if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
+    exit(EXIT_FAILURE);
+  } else {
+    menu_.init(&font_);
+  }
 }
 
-bool Game::isRunning() {
-  return running_;
+bool Game::quit() {
+  return quit_;
 }
 
 void Game::render() {
   window_.clear();
   // window.draw(shape);
+  menu_.draw(&window_);
   window_.display();
 }
 

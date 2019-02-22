@@ -47,6 +47,12 @@
 		<Unit filename="classes/ball.h" />
 		<Unit filename="classes/game.cc" />
 		<Unit filename="classes/game.h" />
+		<Unit filename="classes/menu.cc" />
+		<Unit filename="classes/menu.h" />
+		<Unit filename="classes/player.cc" />
+		<Unit filename="classes/player.h" />
+		<Unit filename="classes/ship.cc" />
+		<Unit filename="classes/ship.h" />
 		<Unit filename="config.h" />
 		<Unit filename="main.cc" />
 		<Extensions>

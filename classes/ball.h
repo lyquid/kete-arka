@@ -5,7 +5,9 @@
 
 class Ball {
  public:
-  Ball() {}
+  Ball() {
+    radius_ = 10.f;
+  }
   ~Ball() {}
 
   void create(sf::Vector2f position, float radius);
@@ -16,7 +18,7 @@ class Ball {
 
  private:
   sf::Vector2f position;
-  float radius = 10.f;
+  float radius_;
 };
 
 #endif  // KETE_ARKA_CLASSES_BALL_H_
