@@ -10,6 +10,29 @@ void Game::handleEvents() {
       case sf::Event::Closed:
         quit_ = true;
         break;
+      case sf::Event::KeyPressed:
+        if (in_menu_) {
+          switch (event_.key.code) {
+            case sf::Keyboard::Escape:
+              quit_ = true;
+              break;
+            case sf::Keyboard::Num1:
+              in_menu_ = false;
+              paused_ = false;
+              break;
+          }
+        } else { // not in menu
+          switch (event_.key.code) {
+            case sf::Keyboard::Escape:
+              paused_ = true;
+              in_menu_ = true;
+              break;
+            case sf::Keyboard::Space:
+              paused_ = !paused_;
+              break;
+          }
+        }
+        break;
     }
   }
 }
@@ -30,8 +53,11 @@ bool Game::quit() {
 
 void Game::render() {
   window_.clear();
-  // window.draw(shape);
-  menu_.draw(&window_);
+  if (in_menu_) {
+    menu_.draw(&window_);
+  } else {
+    // not in menu, render the game
+  }
   window_.display();
 }
 
