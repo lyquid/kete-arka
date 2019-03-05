@@ -1,24 +1,26 @@
 #ifndef KETE_ARKA_CLASSES_BALL_H_
 #define KETE_ARKA_CLASSES_BALL_H_
 
+#include <math.h>
 #include <SFML/Graphics.hpp>
+
+#include "../config.h"
 
 class Ball {
  public:
   Ball() {
-    radius_ = 10.f;
+    reset();
   }
   ~Ball() {}
-
-  void create(sf::Vector2f position, float radius);
   sf::Vector2f getPosition();
-  float getRadius();
-  void setPosition(sf::Vector2f position);
-  void setRadius(float radius);
+  sf::CircleShape getShape();
+  void move(float delta_time);
+  void reset();
 
  private:
-  sf::Vector2f position;
-  float radius_;
+  float angle_;
+  sf::CircleShape circle_shape_;
+  float speed_;
 };
 
 #endif  // KETE_ARKA_CLASSES_BALL_H_

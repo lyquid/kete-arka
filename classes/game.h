@@ -15,6 +15,7 @@ class Game {
     paused_ = true;
     quit_ = false;
     title_ = kAppName + " - v" + kAppVersion;
+    // ball_.create();
   }
   ~Game() {}
   void clean();
@@ -26,6 +27,8 @@ class Game {
   void update();
 
  private:
+  Ball ball_;
+  sf::Clock clock_;
   sf::Event event_;
   sf::Font font_;
   bool in_menu_;

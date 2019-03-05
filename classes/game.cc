@@ -19,6 +19,7 @@ void Game::handleEvents() {
             case sf::Keyboard::Num1:
               in_menu_ = false;
               paused_ = false;
+              ball_.reset();
               break;
           }
         } else { // not in menu
@@ -56,9 +57,14 @@ void Game::render() {
   if (in_menu_) {
     menu_.draw(&window_);
   } else {
-    // not in menu, render the game
+    window_.draw(ball_.getShape());
   }
   window_.display();
 }
 
-void Game::update() {}
+void Game::update() {
+  float delta_time = clock_.restart().asSeconds();
+  if (!paused_) {
+    ball_.move(delta_time);
+  }
+}
