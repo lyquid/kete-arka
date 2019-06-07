@@ -69,7 +69,7 @@ void Ball::reset() {
   direction_ = sf::Vector2f(random_x_direction, 1.f);
   // Ball's speed_ initialization
   speed_ = kBallDefaultSpeed;
-  // Ball physical properties
+  // Ball "physical" properties
   ball_shape_.setRadius(kBallDefaultRadius);
   ball_shape_.setFillColor(kBallDefaultColor);
   ball_shape_.setOrigin(kBallDefaultRadius, kBallDefaultRadius);

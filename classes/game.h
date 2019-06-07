@@ -34,6 +34,7 @@ class Game {
   Menu menu_;
   bool paused_;
   bool quit_;
+  Ship ship_;
   sf::String title_;
   sf::RenderWindow window_;
 };

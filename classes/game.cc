@@ -58,6 +58,7 @@ void Game::render() {
     menu_.draw(&window_);
   } else {
     window_.draw(ball_.getShape()); //TODO: look for a better solution
+    window_.draw(ship_.getShape());
   }
   window_.display();
 }

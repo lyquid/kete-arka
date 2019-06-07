@@ -7,12 +7,17 @@
 
 class Ship {
  public:
-  Ship() {}
+  Ship() {
+    init();
+  }
   ~Ship() {}
+  sf::RectangleShape getShape();
 
  private:
+  void init();
   bool moveLeft();
   bool moveRight();
+  sf::RectangleShape ship_shape_;
   float speed_;
 };
 
