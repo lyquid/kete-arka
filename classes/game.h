@@ -3,10 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "ball.h"
 #include "../config.h"
+#include "ball.h"
 #include "menu.h"
-#include "player.h"
+#include "ship.h"
 
 class Game {
  public:
@@ -15,7 +15,6 @@ class Game {
     paused_ = true;
     quit_ = false;
     title_ = kAppName + " - v" + kAppVersion;
-    // ball_.create();
   }
   ~Game() {}
   void clean();

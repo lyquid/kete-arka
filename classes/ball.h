@@ -1,7 +1,6 @@
 #ifndef KETE_ARKA_CLASSES_BALL_H_
 #define KETE_ARKA_CLASSES_BALL_H_
 
-#include <math.h>
 #include <SFML/Graphics.hpp>
 
 #include "../config.h"
@@ -12,14 +11,15 @@ class Ball {
     reset();
   }
   ~Ball() {}
-  sf::Vector2f getPosition();
   sf::CircleShape getShape();
   void move(float delta_time);
   void reset();
 
  private:
-  float angle_;
-  sf::CircleShape circle_shape_;
+  bool checkBoundaryCollision();
+  bool checkMachineWins();
+  sf::CircleShape ball_shape_;
+  sf::Vector2f direction_;
   float speed_;
 };
 

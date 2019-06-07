@@ -57,7 +57,7 @@ void Game::render() {
   if (in_menu_) {
     menu_.draw(&window_);
   } else {
-    window_.draw(ball_.getShape());
+    window_.draw(ball_.getShape()); //TODO: look for a better solution
   }
   window_.display();
 }
