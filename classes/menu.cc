@@ -16,11 +16,16 @@ void Menu::drawPauseScreen(sf::RenderWindow* window) {
 ///
 /// @param window The renderWindow to render the texts on.
 ///
-/// Draws the game's main title and "press start" on the given RenderWindow.
+/// Calls setFlashingPressStartText before drawing
+/// the game's main title and, if needed, the "press start"
+/// text on the given renderWindow.
 /////////////////////////////////////////////////
 void Menu::drawTitleScreen(sf::RenderWindow* window) {
+  setFlashingPressStartText();
   window->draw(title_text_);
-  window->draw(press_start_text_);
+  if (render_press_start_text_) {
+    window->draw(press_start_text_);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -63,4 +68,18 @@ void Menu::initText(sf::Text* text, const sf::String string_text, const sf::Font
   text->setString(string_text);
   text->setOrigin(text->getGlobalBounds().left + (text->getGlobalBounds().width / 2.f),
                   text->getGlobalBounds().top + (text->getGlobalBounds().height / 2.f));
+}
+
+/////////////////////////////////////////////////
+/// @brief Sets the flashing text flag true or false
+///
+/// Checks how much time has been passed since last render.
+/// If it's more than 0.7 seconds, inverts the flag for the
+/// flashing text and resets the clock.
+/////////////////////////////////////////////////
+void Menu::setFlashingPressStartText(){
+  if (press_start_flashing_clock_.getElapsedTime().asSeconds() > 0.7f) {
+    render_press_start_text_ = !render_press_start_text_;
+    press_start_flashing_clock_.restart();
+  }
 }
