@@ -11,7 +11,7 @@
 class Game {
  public:
   Game() {
-    in_menu_ = true;
+    in_title_screen_ = true;
     paused_ = true;
     quit_ = false;
     title_ = kAppName + " - v" + kAppVersion;
@@ -30,7 +30,7 @@ class Game {
   sf::Clock clock_;
   sf::Event event_;
   sf::Font font_;
-  bool in_menu_;
+  bool in_title_screen_;
   Menu menu_;
   bool paused_;
   bool quit_;

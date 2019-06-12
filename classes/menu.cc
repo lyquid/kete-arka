@@ -1,26 +1,26 @@
 #include "menu.h"
 
 /////////////////////////////////////////////////
-/// @brief Draws the game's main title and "press start" text.
-///
-/// @param window The renderWindow to render the texts on.
-///
-/// Draws the game's main title and "press start" on the given RenderWindow.
-/////////////////////////////////////////////////
-void Menu::drawMenu(sf::RenderWindow* window) {
-  window->draw(title_text_);
-  window->draw(press_start_text_);
-}
-
-/////////////////////////////////////////////////
 /// @brief Draws the pause text.
 ///
 /// @param window The renderWindow to render the "pause" text on.
 ///
 /// Draws the pause text on the given RenderWindow.
 /////////////////////////////////////////////////
-void Menu::drawPause(sf::RenderWindow* window) {
+void Menu::drawPauseScreen(sf::RenderWindow* window) {
   window->draw(pause_text_);
+}
+
+/////////////////////////////////////////////////
+/// @brief Draws the game's main title and "press start" text.
+///
+/// @param window The renderWindow to render the texts on.
+///
+/// Draws the game's main title and "press start" on the given RenderWindow.
+/////////////////////////////////////////////////
+void Menu::drawTitleScreen(sf::RenderWindow* window) {
+  window->draw(title_text_);
+  window->draw(press_start_text_);
 }
 
 /////////////////////////////////////////////////
@@ -34,13 +34,13 @@ void Menu::drawPause(sf::RenderWindow* window) {
 /////////////////////////////////////////////////
 void Menu::init(const sf::Font* font) {
   // main title
-  initText(&title_text_, kGameTitle, font, 60);
+  initText(&title_text_, kGameTitle, font, kGameTitleFontSize);
   title_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.25f);
   // press start text
-  initText(&press_start_text_, kPressStartText, font, 20);
+  initText(&press_start_text_, kPressStartText, font, kPressStartTextFontSize);
   press_start_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.75f);
   // pause text
-  initText(&pause_text_, kPauseText, font, 20);
+  initText(&pause_text_, kPauseText, font, kPauseTextFontSize);
   pause_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.5f);
 }
 

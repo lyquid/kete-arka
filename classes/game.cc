@@ -11,13 +11,13 @@ void Game::handleEvents() {
         quit_ = true;
         break;
       case sf::Event::KeyPressed:
-        if (in_menu_) {
+        if (in_title_screen_) {
           switch (event_.key.code) {
             case sf::Keyboard::Escape:
               quit_ = true;
               break;
             case sf::Keyboard::Num1:
-              in_menu_ = false;
+              in_title_screen_ = false;
               paused_ = false;
               ball_.reset();
               break;
@@ -26,7 +26,7 @@ void Game::handleEvents() {
           switch (event_.key.code) {
             case sf::Keyboard::Escape:
               paused_ = true;
-              in_menu_ = true;
+              in_title_screen_ = true;
               break;
             case sf::Keyboard::Space:
               paused_ = !paused_;
@@ -54,11 +54,11 @@ bool Game::quit() {
 
 void Game::render() {
   window_.clear();
-  if (in_menu_) {
-    menu_.drawMenu(&window_);
+  if (in_title_screen_) {
+    menu_.drawTitleScreen(&window_);
   } else {
     if (paused_) {
-      menu_.drawPause(&window_);
+      menu_.drawPauseScreen(&window_);
     }
     window_.draw(ball_.getShape()); //TODO: look for a better solution
     window_.draw(ship_.getShape());

@@ -9,8 +9,8 @@ class Menu {
  public:
   Menu() {}
   ~Menu() {}
-  void drawMenu(sf::RenderWindow* window);
-  void drawPause(sf::RenderWindow* window);
+  void drawPauseScreen(sf::RenderWindow* window);
+  void drawTitleScreen(sf::RenderWindow* window);
   void init(const sf::Font* font);
 
  private:
