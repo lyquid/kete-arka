@@ -55,8 +55,11 @@ bool Game::quit() {
 void Game::render() {
   window_.clear();
   if (in_menu_) {
-    menu_.draw(&window_);
+    menu_.drawMenu(&window_);
   } else {
+    if (paused_) {
+      menu_.drawPause(&window_);
+    }
     window_.draw(ball_.getShape()); //TODO: look for a better solution
     window_.draw(ship_.getShape());
   }

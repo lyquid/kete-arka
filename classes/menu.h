@@ -9,13 +9,15 @@ class Menu {
  public:
   Menu() {}
   ~Menu() {}
-  void draw(sf::RenderWindow* window);
-  void init(sf::Font* font);
+  void drawMenu(sf::RenderWindow* window);
+  void drawPause(sf::RenderWindow* window);
+  void init(const sf::Font* font);
 
  private:
-  void initText(sf::Text* text, sf::Font* font, int size);
-  sf::Text subtitle_;
-  sf::Text title_;
+  void initText(sf::Text* text, const sf::String string_text, const sf::Font* font, const int size);
+  sf::Text press_start_text_;
+  sf::Text title_text_;
+  sf::Text pause_text_;
 };
 
 #endif // KETE_ARKA_CLASSES_MENU_H_
