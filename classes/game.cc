@@ -27,9 +27,11 @@ void Game::handleEvents() {
             case sf::Keyboard::Escape:
               paused_ = true;
               in_title_screen_ = true;
+              menu_.setRenderFlashingTextFlag(true);
               break;
             case sf::Keyboard::Space:
               paused_ = !paused_;
+              menu_.setRenderFlashingTextFlag(true);
               break;
           }
         }

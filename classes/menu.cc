@@ -1,29 +1,46 @@
 #include "menu.h"
 
 /////////////////////////////////////////////////
+/// @brief Checks if the render_flashing_text_flag_ needs to be updated.
+///
+/// Checks how much time has passed since last render.
+/// If it's more than 0.7 seconds, inverts the flag for the
+/// flashing text and resets the clock.
+/////////////////////////////////////////////////
+void Menu::checkFlashingTextFlag(){
+  if (flashing_text_clock_.getElapsedTime().asSeconds() > 0.7f) {
+    render_flashing_text_flag_ = !render_flashing_text_flag_;
+    flashing_text_clock_.restart();
+  }
+}
+
+/////////////////////////////////////////////////
 /// @brief Draws the pause text.
 ///
-/// @param window The renderWindow to render the "pause" text on.
+/// @param window The RenderWindow to render the "pause" text on.
 ///
 /// Draws the pause text on the given RenderWindow.
 /////////////////////////////////////////////////
 void Menu::drawPauseScreen(sf::RenderWindow* window) {
-  window->draw(pause_text_);
+  checkFlashingTextFlag();
+  if (render_flashing_text_flag_) {
+    window->draw(pause_text_);
+  }
 }
 
 /////////////////////////////////////////////////
 /// @brief Draws the game's main title and "press start" text.
 ///
-/// @param window The renderWindow to render the texts on.
+/// @param window The RenderWindow to render the texts on.
 ///
-/// Calls setFlashingPressStartText before drawing
+/// Calls checkFlashingTextFlag before drawing
 /// the game's main title and, if needed, the "press start"
-/// text on the given renderWindow.
+/// text on the given RenderWindow.
 /////////////////////////////////////////////////
 void Menu::drawTitleScreen(sf::RenderWindow* window) {
-  setFlashingPressStartText();
+  checkFlashingTextFlag();
   window->draw(title_text_);
-  if (render_press_start_text_) {
+  if (render_flashing_text_flag_) {
     window->draw(press_start_text_);
   }
 }
@@ -71,15 +88,14 @@ void Menu::initText(sf::Text* text, const sf::String string_text, const sf::Font
 }
 
 /////////////////////////////////////////////////
-/// @brief Sets the flashing text flag true or false
+/// @brief Sets the render_flashing_text_flag_ to the requested status.
 ///
-/// Checks how much time has been passed since last render.
-/// If it's more than 0.7 seconds, inverts the flag for the
-/// flashing text and resets the clock.
+/// @param status The desired status for the render_flashing_text_flag_.
+///
+/// Sets the render_flashing_text_flag_ to the requested status.
+/// Resets the clock so the new status will be rendered full time.
 /////////////////////////////////////////////////
-void Menu::setFlashingPressStartText(){
-  if (press_start_flashing_clock_.getElapsedTime().asSeconds() > 0.7f) {
-    render_press_start_text_ = !render_press_start_text_;
-    press_start_flashing_clock_.restart();
-  }
+void Menu::setRenderFlashingTextFlag(bool status){
+  render_flashing_text_flag_ = status;
+  flashing_text_clock_.restart();
 }
