@@ -63,7 +63,7 @@ void Game::render() {
       menu_.drawPauseScreen(&window_);
     }
     ball_.draw(window_);
-    window_.draw(ship_.getShape());
+    ship_.draw(window_);
   }
   window_.display();
 }

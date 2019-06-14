@@ -11,8 +11,8 @@ class Ship {
     init();
   }
   ~Ship() {}
-  sf::RectangleShape getShape();
-  void move(sf::Vector2f offset);
+  void draw(sf::RenderWindow& window);
+  void move(const sf::Vector2f offset);
 
  private:
   void init();

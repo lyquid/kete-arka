@@ -1,14 +1,14 @@
 #include "ship.h"
 
 /////////////////////////////////////////////////
-/// @brief Returns the ship's shape.
+/// @brief Draws the ship to the specified RenderWindow.
 ///
-/// @return A RectangleShape based on the ship's shape.
+/// @param window The RenderWindow to draw the ship on.
 ///
-/// Returns a RectangleShape representing the ship's shape.
+/// Draws the ship to the specified RenderWindow.
 /////////////////////////////////////////////////
-sf::RectangleShape Ship::getShape() {
-  return ship_shape_;
+void Ship::draw(sf::RenderWindow& window) {
+  window.draw(ship_shape_);
 }
 
 /////////////////////////////////////////////////
@@ -32,7 +32,7 @@ void Ship::init() {
 /// Checks if we want to move the ship right or left and 
 /// keeps the ship within the screen boundaries.
 /////////////////////////////////////////////////
-void Ship::move(sf::Vector2f offset) {
+void Ship::move(const sf::Vector2f offset) {
   if ((offset.x < 0 && ship_shape_.getPosition().x > 0)                                     // wants to go left
    || (offset.x > 0 && ship_shape_.getPosition().x + kShipDefaultSize.x < kScreenWidth)) {  // wants to go right
     ship_shape_.move(offset);
