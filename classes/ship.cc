@@ -21,7 +21,7 @@ void Ship::draw(sf::RenderWindow& window) {
 void Ship::init() {
   ship_shape_.setFillColor(kShipDefaultColor);
   ship_shape_.setSize(kShipDefaultSize);
-  ship_shape_.setPosition(kShipDefaultPosition);
+  resetPosition();
 }
 
 /////////////////////////////////////////////////
@@ -37,4 +37,14 @@ void Ship::move(const sf::Vector2f offset) {
    || (offset.x > 0 && ship_shape_.getPosition().x + kShipDefaultSize.x < kScreenWidth)) {  // wants to go right
     ship_shape_.move(offset);
   }
+}
+
+/////////////////////////////////////////////////
+/// @brief Resets ship's position.
+///
+/// Resets the ship's positions to it's original
+/// default position.
+/////////////////////////////////////////////////
+void Ship::resetPosition() {
+  ship_shape_.setPosition(kShipDefaultPosition);
 }

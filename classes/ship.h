@@ -13,6 +13,7 @@ class Ship {
   ~Ship() {}
   void draw(sf::RenderWindow& window);
   void move(const sf::Vector2f offset);
+  void resetPosition();
 
  private:
   void init();

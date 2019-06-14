@@ -20,6 +20,7 @@ void Game::handleEvents() {
               in_title_screen_ = false;
               paused_ = false;
               ball_.reset();
+              ship_.resetPosition();
               break;
           }
         } else { // not in menu
