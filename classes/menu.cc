@@ -54,15 +54,15 @@ void Menu::drawTitleScreen(sf::RenderWindow& window) {
 /// the "pause" text calling the initText function with
 /// the required/desired parameters (strings, sizes, ...).
 /////////////////////////////////////////////////
-void Menu::init(const sf::Font* font) {
+void Menu::init(const sf::Font& font) {
   // main title
-  initText(&title_text_, kGameTitle, font, kGameTitleFontSize);
+  initText(title_text_, kGameTitle, font, kGameTitleFontSize);
   title_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.25f);
   // press start text
-  initText(&press_start_text_, kPressStartText, font, kPressStartTextFontSize);
+  initText(press_start_text_, kPressStartText, font, kPressStartTextFontSize);
   press_start_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.75f);
   // pause text
-  initText(&pause_text_, kPauseText, font, kPauseTextFontSize);
+  initText(pause_text_, kPauseText, font, kPauseTextFontSize);
   pause_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.5f);
 }
 
@@ -78,13 +78,13 @@ void Menu::init(const sf::Font* font) {
 /// rendered for the text. Thereafter sets the origin of the text
 /// to be at the half of both height and width (the "center").
 /////////////////////////////////////////////////
-void Menu::initText(sf::Text* text, const sf::String string_text, const sf::Font* font, const int size) {
-  text->setFont(*font);
-  text->setCharacterSize(size);
-  text->setFillColor(sf::Color::White);
-  text->setString(string_text);
-  text->setOrigin(text->getGlobalBounds().left + (text->getGlobalBounds().width / 2.f),
-                  text->getGlobalBounds().top + (text->getGlobalBounds().height / 2.f));
+void Menu::initText(sf::Text& text, const sf::String string_text, const sf::Font& font, const int size) {
+  text.setFont(font);
+  text.setCharacterSize(size);
+  text.setFillColor(sf::Color::White);
+  text.setString(string_text);
+  text.setOrigin(text.getGlobalBounds().left + (text.getGlobalBounds().width / 2.f),
+                  text.getGlobalBounds().top + (text.getGlobalBounds().height / 2.f));
 }
 
 /////////////////////////////////////////////////

@@ -46,7 +46,7 @@ void Game::init() {
   if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
     exit(EXIT_FAILURE);
   } else {
-    menu_.init(&font_);
+    menu_.init(font_);
   }
 }
 

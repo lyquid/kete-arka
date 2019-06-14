@@ -13,11 +13,11 @@ class Menu {
   ~Menu() {}
   void drawPauseScreen(sf::RenderWindow& window);
   void drawTitleScreen(sf::RenderWindow& window);
-  void init(const sf::Font* font);
+  void init(const sf::Font& font);
   void setRenderFlashingTextFlag(bool status);
 
  private:
-  void initText(sf::Text* text, const sf::String string_text, const sf::Font* font, const int size);
+  void initText(sf::Text& text, const sf::String string_text, const sf::Font& font, const int size);
   void checkFlashingTextFlag();
   sf::Clock flashing_text_clock_;
   sf::Text pause_text_;
