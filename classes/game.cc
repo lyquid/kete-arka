@@ -57,10 +57,10 @@ bool Game::quit() {
 void Game::render() {
   window_.clear();
   if (in_title_screen_) {
-    menu_.drawTitleScreen(&window_);
+    menu_.drawTitleScreen(window_);
   } else {
     if (paused_) {
-      menu_.drawPauseScreen(&window_);
+      menu_.drawPauseScreen(window_);
     }
     ball_.draw(window_);
     ship_.draw(window_);

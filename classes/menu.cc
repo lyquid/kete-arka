@@ -21,10 +21,10 @@ void Menu::checkFlashingTextFlag(){
 ///
 /// Draws the pause text on the given RenderWindow.
 /////////////////////////////////////////////////
-void Menu::drawPauseScreen(sf::RenderWindow* window) {
+void Menu::drawPauseScreen(sf::RenderWindow& window) {
   checkFlashingTextFlag();
   if (render_flashing_text_flag_) {
-    window->draw(pause_text_);
+    window.draw(pause_text_);
   }
 }
 
@@ -37,11 +37,11 @@ void Menu::drawPauseScreen(sf::RenderWindow* window) {
 /// the game's main title and, if needed, the "press start"
 /// text on the given RenderWindow.
 /////////////////////////////////////////////////
-void Menu::drawTitleScreen(sf::RenderWindow* window) {
+void Menu::drawTitleScreen(sf::RenderWindow& window) {
   checkFlashingTextFlag();
-  window->draw(title_text_);
+  window.draw(title_text_);
   if (render_flashing_text_flag_) {
-    window->draw(press_start_text_);
+    window.draw(press_start_text_);
   }
 }
 

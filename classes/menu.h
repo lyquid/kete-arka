@@ -11,8 +11,8 @@ class Menu {
     render_flashing_text_flag_ = true;
   }
   ~Menu() {}
-  void drawPauseScreen(sf::RenderWindow* window);
-  void drawTitleScreen(sf::RenderWindow* window);
+  void drawPauseScreen(sf::RenderWindow& window);
+  void drawTitleScreen(sf::RenderWindow& window);
   void init(const sf::Font* font);
   void setRenderFlashingTextFlag(bool status);
 
