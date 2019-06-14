@@ -27,7 +27,7 @@ const sf::Color kShipDefaultColor = sf::Color::White;
 const float kShipDefaultLength = 80.f;
 const float kShipDefaultThickness = 15.f;
 const sf::Vector2f kShipDefaultSize = sf::Vector2f(kShipDefaultLength, kShipDefaultThickness);
-const sf::Vector2f kShipDefaultPosition = sf::Vector2f(kScreenWidth / 2.f, kScreenHeight - (kScreenHeight * 0.1f));
-const float kShipDefaultSpeed = 150.f;
+const sf::Vector2f kShipDefaultPosition = sf::Vector2f(kScreenWidth / 2.f, kScreenHeight - (kScreenHeight * 0.15f));
+const float kShipDefaultSpeed = 275.f;
 
 #endif  // KETE_ARKA_CONFIG_H_

@@ -12,11 +12,10 @@ class Ship {
   }
   ~Ship() {}
   sf::RectangleShape getShape();
+  void move(sf::Vector2f offset);
 
  private:
   void init();
-  bool moveLeft();
-  bool moveRight();
   sf::RectangleShape ship_shape_;
   float speed_;
 };

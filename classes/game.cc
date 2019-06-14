@@ -72,5 +72,13 @@ void Game::update() {
   float delta_time = clock_.restart().asSeconds();
   if (!paused_) {
     ball_.move(delta_time);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
+     || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+      ship_.move(sf::Vector2f(-delta_time * kShipDefaultSpeed, 0));
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
+     || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+      ship_.move(sf::Vector2f(delta_time * kShipDefaultSpeed, 0));
+    }
   }
 }
