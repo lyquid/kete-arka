@@ -11,7 +11,7 @@ class Ball {
     reset();
   }
   ~Ball() {}
-  sf::CircleShape getShape();
+  void draw(sf::RenderWindow& window);
   void move(float delta_time);
   void reset();
 

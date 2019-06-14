@@ -62,7 +62,7 @@ void Game::render() {
     if (paused_) {
       menu_.drawPauseScreen(&window_);
     }
-    window_.draw(ball_.getShape()); //TODO: look for a better solution
+    ball_.draw(window_);
     window_.draw(ship_.getShape());
   }
   window_.display();

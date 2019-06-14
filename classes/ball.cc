@@ -1,11 +1,7 @@
 #include "ball.h"
 
-//sf::Vector2f Ball::getPosition(){
-//  return circle_shape_.getPosition();
-//}
-
-sf::CircleShape Ball::getShape() {
-  return ball_shape_;
+void Ball::draw(sf::RenderWindow& window) {
+  window.draw(ball_shape_);
 }
 
 bool Ball::checkBoundaryCollision() {
