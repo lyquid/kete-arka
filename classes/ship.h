@@ -12,6 +12,8 @@ class Ship {
   }
   ~Ship() {}
   void draw(sf::RenderWindow& window);
+  sf::RectangleShape getShipShape();
+  sf::Vector2f getShipSize();
   void move(const sf::Vector2f offset);
   void resetPosition();
 

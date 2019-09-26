@@ -43,15 +43,43 @@ bool Ball::checkMachineWins() {
   return false;
 }
 
-void Ball::move(float delta_time) {
-  float factor = speed_ * delta_time;
-  ball_shape_.move(direction_.x * factor, direction_.y * factor);
-
-  if (checkMachineWins()){
-    // GAME OVER, MACHINE WINS
-  } else {
-    checkBoundaryCollision();
+bool Ball::checkShipCollision(Ship ship) {
+  bool collision = false;
+  float ball_radius = ball_shape_.getRadius();
+  float ball_y = ball_shape_.getPosition().y;
+  float ship_x = ship.getShipShape().getPosition().x;
+  float ship_x_size = ship.getShipSize().x;
+  // ship collision checking
+  if (ship.getShipShape().getGlobalBounds().intersects(ball_shape_.getGlobalBounds())) {
+    collision = true;
+    if (last_position_.x < ship_x) { 
+      // left hit
+      direction_.x = -direction_.x;
+      ball_shape_.setPosition(ship_x - ball_radius, ball_y);
+    } else if (last_position_.x > ship_x + ship_x_size) {
+      // right hit
+      direction_.x = -direction_.x;
+      ball_shape_.setPosition(ship_x + ship_x_size + ball_radius, ball_y);
+    } else {
+      // front/rear hit
+      direction_.y = -direction_.y;
+    }
   }
+  return collision; // not doing anything with this right now
+}
+
+void Ball::move(float delta_time, Ship ship) {
+  float factor = speed_ * delta_time;
+  // printf("factor= %f\n", factor);
+  if (checkMachineWins()) {
+    // todo: check if ball touches the bottom of the screen
+  } else if (checkBoundaryCollision()) {
+    // boundary collision
+  } else if (checkShipCollision(ship)) {
+    // ship collision
+  }
+  last_position_ = ball_shape_.getPosition();
+  ball_shape_.move(direction_.x * factor, direction_.y * factor);
 }
 
 void Ball::reset() {
@@ -70,4 +98,5 @@ void Ball::reset() {
   ball_shape_.setFillColor(kBallDefaultColor);
   ball_shape_.setOrigin(kBallDefaultRadius, kBallDefaultRadius);
   ball_shape_.setPosition(kBallDefaultPosition);
+  last_position_ = ball_shape_.getPosition();
 }

@@ -12,6 +12,30 @@ void Ship::draw(sf::RenderWindow& window) {
 }
 
 /////////////////////////////////////////////////
+/// @brief Returns the ship's shape.
+///
+/// @return A RectangleShape representing the ship's shape.
+///
+/// Returns a RectangleShape representing the ship's 
+/// current shape.
+/////////////////////////////////////////////////
+sf::RectangleShape Ship::getShipShape() {
+  return ship_shape_;
+}
+
+/////////////////////////////////////////////////
+/// @brief Returns the ship's size.
+///
+/// @return A Vector2f representing the ship's size.
+///
+/// Returns a Vector2f representing the ship's 
+/// current size.
+/////////////////////////////////////////////////
+sf::Vector2f Ship::getShipSize() {
+  return ship_shape_.getSize();
+}
+
+/////////////////////////////////////////////////
 /// @brief Initializes ship's properties.
 ///
 /// Sets the color to the default ship's color, the size 
