@@ -11,7 +11,7 @@ bool Ball::checkBoundaryCollision() {
   if (ball_shape_.getPosition().x - current_radius <= 0) {
     // left collision
     direction_.x = -direction_.x;
-    ball_shape_.setPosition(0.1f + current_radius, ball_shape_.getPosition().y);
+    ball_shape_.setPosition(current_radius + 0.1f, ball_shape_.getPosition().y);
     // TODO: play sound
     collision = true;
   } else if (ball_shape_.getPosition().x + current_radius >= kScreenWidth) {
@@ -25,7 +25,7 @@ bool Ball::checkBoundaryCollision() {
   if (ball_shape_.getPosition().y - current_radius <= 0) {
     // top collision
     direction_.y = -direction_.y;
-    ball_shape_.setPosition(ball_shape_.getPosition().x, 0.1f + current_radius);
+    ball_shape_.setPosition(ball_shape_.getPosition().x, current_radius + 0.1f);
     // TODO: play sound
     collision = true;
   } else if (ball_shape_.getPosition().y + current_radius >= kScreenHeight) {
@@ -55,11 +55,11 @@ bool Ball::checkShipCollision(Ship ship) {
     if (last_position_.x < ship_x) { 
       // left hit
       direction_.x = -direction_.x;
-      ball_shape_.setPosition(ship_x - ball_radius, ball_y);
+      ball_shape_.setPosition(ship_x - ball_radius - 0.1f, ball_y);
     } else if (last_position_.x > ship_x + ship_x_size) {
       // right hit
       direction_.x = -direction_.x;
-      ball_shape_.setPosition(ship_x + ship_x_size + ball_radius, ball_y);
+      ball_shape_.setPosition(ship_x + ship_x_size + ball_radius + 0.1f, ball_y);
     } else {
       // front/rear hit
       direction_.y = -direction_.y;
