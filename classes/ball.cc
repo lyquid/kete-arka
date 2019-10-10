@@ -75,6 +75,7 @@ void Ball::move(const float delta_time, Ship ship) {
 }
 
 void Ball::randomizeBounceAngle(const Borders border) {
+  float displ = 0.f;
   std::string collision_with = "";
   float random_angle_variation = (std::rand() % 21 - 10) / 100.f;  // rnd -0.10 to 0.10
   // todo: There's a bug here. Sometimes disp exceeds 1.41
@@ -116,13 +117,20 @@ void Ball::randomizeBounceAngle(const Borders border) {
       }
       break;
   }
+  displ = std::abs(direction_.x) + std::abs(direction_.y);
+  // logs to log file
+  Logger::write("(" + collision_with + ")"
+                + "\tx = " + toString(direction_.x)
+                + "\ty = " + toString(direction_.y)
+                + "\trnd = " + toString(random_angle_variation)
+                + "\tdsp = " + toString(displ)); 
   // logs to console
   std::cout.precision(3);
   std::cout << "(" << collision_with << ")";
   std::cout << "\tx = " << std::fixed << direction_.x;
   std::cout << "\ty = " << std::fixed << direction_.y;
   std::cout << "\trnd = " << std::fixed << random_angle_variation;
-  std::cout << "\tdsp = " << std::fixed << std::abs(direction_.x) + std::abs(direction_.y) << std::endl;
+  std::cout << "\tdsp = " << std::fixed << displ << std::endl;
 }
 
 void Ball::reset() {
@@ -143,4 +151,10 @@ void Ball::reset() {
   shape_.setOrigin(kBallDefaultRadius, kBallDefaultRadius);
   shape_.setPosition(kBallDefaultPosition);
   last_position_ = shape_.getPosition();
+}
+
+template <typename T> std::string toString(const T& t) { 
+  std::ostringstream oss; 
+  oss << t; 
+  return oss.str();
 }

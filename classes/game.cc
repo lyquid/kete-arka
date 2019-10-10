@@ -2,6 +2,7 @@
 
 void Game::clean() {
   window_.close();
+  logger_.write("Successfully closed window.");
 }
 
 void Game::handleEvents() {
@@ -42,12 +43,16 @@ void Game::handleEvents() {
 }
 
 void Game::init() {
+  logger_.start();
   window_.create(sf::VideoMode(kScreenWidth, kScreenHeight, 32), title_, sf::Style::Titlebar | sf::Style::Close);
+  logger_.write("Successfully created display.");
   window_.setVerticalSyncEnabled(true);
   if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
+    logger_.write("ERROR: Failed loading font.");
     exit(EXIT_FAILURE);
   } else {
     menu_.init(font_);
+    logger_.write("Successfully initialized menu.");
   }
 }
 

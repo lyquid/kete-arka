@@ -5,6 +5,7 @@
 
 #include "../config.h"
 #include "ball.h"
+#include "logger.h"
 #include "menu.h"
 #include "ship.h"
 
@@ -31,6 +32,7 @@ class Game {
   sf::Event event_;
   sf::Font font_;
   bool in_title_screen_;
+  Logger logger_;
   Menu menu_;
   bool paused_;
   bool quit_;

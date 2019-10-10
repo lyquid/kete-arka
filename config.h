@@ -1,7 +1,10 @@
 #ifndef KETE_ARKA_CONFIG_H_
 #define KETE_ARKA_CONFIG_H_
 
+#include <SFML/Graphics.hpp>
+
 // app default settings
+const std::string kLogFileName = "kete-arka.log";
 const int kScreenHeight = 768;
 const int kScreenWidth = 672;
 const int kGameTitleFontSize = 60;

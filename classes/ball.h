@@ -3,11 +3,15 @@
 
 #include <cmath>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <SFML/Graphics.hpp>
 
 #include "../config.h"
+#include "logger.h"
 #include "ship.h"
+
+template <typename T> std::string toString(const T& t);
 
 class Ball {
  public:
