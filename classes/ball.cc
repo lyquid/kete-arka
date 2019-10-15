@@ -118,19 +118,25 @@ void Ball::randomizeBounceAngle(const Borders border) {
       break;
   }
   displ = std::abs(direction_.x) + std::abs(direction_.y);
-  // logs to log file
-  Logger::write("(" + collision_with + ")"
-                + "\tx = " + toString(direction_.x)
-                + "\ty = " + toString(direction_.y)
-                + "\trnd = " + toString(random_angle_variation)
-                + "\tdsp = " + toString(displ)); 
-  // logs to console
-  std::cout.precision(3);
-  std::cout << "(" << collision_with << ")";
-  std::cout << "\tx = " << std::fixed << direction_.x;
-  std::cout << "\ty = " << std::fixed << direction_.y;
-  std::cout << "\trnd = " << std::fixed << random_angle_variation;
-  std::cout << "\tdsp = " << std::fixed << displ << std::endl;
+  switch (kExecutionMode) {
+    case LogFile:
+      // logs to log file
+      Logger::write("(" + collision_with + ")"
+                  + "\tx = " + toString(direction_.x)
+                  + "\ty = " + toString(direction_.y)
+                  + "\trnd = " + toString(random_angle_variation)
+                  + "\tdsp = " + toString(displ)); 
+      [[fallthrough]];
+    case Debug:
+      // logs to console
+      std::cout.precision(3);
+      std::cout << "(" << collision_with << ")";
+      std::cout << "\tx = " << std::fixed << direction_.x;
+      std::cout << "\ty = " << std::fixed << direction_.y;
+      std::cout << "\trnd = " << std::fixed << random_angle_variation;
+      std::cout << "\tdsp = " << std::fixed << displ << std::endl;
+      break;
+  }
 }
 
 void Ball::reset() {

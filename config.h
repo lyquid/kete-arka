@@ -3,8 +3,13 @@
 
 #include <SFML/Graphics.hpp>
 
+// app utils
+enum Borders {Top, Bottom, Left, Right};
+enum ExecutionModes {Normal, Debug, LogFile};
+
 // app default settings
 const std::string kLogFileName = "kete-arka.log";
+const ExecutionModes kExecutionMode = Debug;
 const int kScreenHeight = 768;
 const int kScreenWidth = 672;
 const int kGameTitleFontSize = 60;
@@ -33,8 +38,5 @@ const float kShipDefaultThickness = 15.f;
 const sf::Vector2f kShipDefaultSize = sf::Vector2f(kShipDefaultLength, kShipDefaultThickness);
 const sf::Vector2f kShipDefaultPosition = sf::Vector2f((kScreenWidth - kShipDefaultSize.x) / 2.f, kScreenHeight * 0.85f);
 const float kShipDefaultSpeed = 400.f;
-
-// utils
-enum Borders {Top, Bottom, Left, Right};
 
 #endif  // KETE_ARKA_CONFIG_H_
