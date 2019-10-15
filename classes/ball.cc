@@ -119,8 +119,11 @@ void Ball::randomizeBounceAngle(const Borders border) {
   }
   displ = std::abs(direction_.x) + std::abs(direction_.y);
   switch (kExecutionMode) {
+    case Normal:
+      // do nothing
+      break;
     case LogFile:
-      // logs to log file
+      // logs to the log file and then fallthrough to Debug case
       Logger::write("(" + collision_with + ")"
                   + "\tx = " + toString(direction_.x)
                   + "\ty = " + toString(direction_.y)
