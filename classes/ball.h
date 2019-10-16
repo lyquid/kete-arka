@@ -27,7 +27,10 @@ class Ball {
   bool checkBorderCollision();
   bool checkMachineWins();
   bool checkShipCollision(Ship ship);
+  void invertHorizontalDirection(const float variation);
+  void invertVerticalDirection(const float variation);
   void randomizeBounceAngle(const Borders border);  
+  static float sumAbs(const float num1, const float num2);
   sf::Vector2f direction_;
   sf::Vector2f last_position_;
   sf::CircleShape shape_;

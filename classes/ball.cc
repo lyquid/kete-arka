@@ -61,6 +61,14 @@ bool Ball::checkShipCollision(Ship ship) {
   return collision; // not doing anything with this right now
 }
 
+void Ball::invertHorizontalDirection(const float variation) {
+  direction_.x = -direction_.x + variation;
+}
+
+void Ball::invertVerticalDirection(const float variation) {
+  direction_.y = -direction_.y + variation;
+}
+
 void Ball::move(const float delta_time, Ship ship) {
   float factor = speed_ * delta_time;
   if (checkMachineWins()) {
@@ -78,12 +86,15 @@ void Ball::randomizeBounceAngle(const Borders border) {
   float displ = 0.f;
   std::string collision_with = "";
   float random_angle_variation = (std::rand() % 21 - 10) / 100.f;  // rnd -0.10 to 0.10
-  // todo: There's a bug here. Sometimes disp exceeds 1.41
   switch(border) {
     case Top:
       collision_with = "T";
-      direction_.y = -direction_.y + random_angle_variation;
-      if (direction_.x < 0) {
+      invertVerticalDirection(random_angle_variation);
+      if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
+        direction_.y = kBallDefaultDisplacement - std::abs(direction_.x);
+        random_angle_variation = 0.f;
+      }
+      if (direction_.x < 0.f) {
         direction_.x = direction_.x + random_angle_variation;
       } else {
         direction_.x = direction_.x - random_angle_variation;
@@ -91,33 +102,45 @@ void Ball::randomizeBounceAngle(const Borders border) {
       break;
     case Bottom:
       collision_with = "B";
-      direction_.y = -direction_.y + random_angle_variation;
-      if (direction_.x < 0) {
+      invertVerticalDirection(random_angle_variation);
+      if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
+        direction_.y = -kBallDefaultDisplacement + std::abs(direction_.x);
+        random_angle_variation = 0.f;
+      }
+      if (direction_.x < 0.f) {
         direction_.x = direction_.x - random_angle_variation;
       } else {
         direction_.x = direction_.x + random_angle_variation;
       }
       break;
     case Left:
-    collision_with = "L";
-      direction_.x = -direction_.x + random_angle_variation;
-      if (direction_.y < 0) {
+      collision_with = "L";
+      invertHorizontalDirection(random_angle_variation);
+      if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
+        direction_.x = kBallDefaultDisplacement - std::abs(direction_.y);
+        random_angle_variation = 0.f;
+      }
+      if (direction_.y < 0.f) {
         direction_.y = direction_.y + random_angle_variation;
       } else {
         direction_.y = direction_.y - random_angle_variation;
       }
       break;
     case Right:
-    collision_with = "R";
-      direction_.x = -direction_.x + random_angle_variation;
-      if (direction_.y < 0) {
+      collision_with = "R";
+      invertHorizontalDirection(random_angle_variation);
+      if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
+        direction_.x = -kBallDefaultDisplacement + std::abs(direction_.y);
+        random_angle_variation = 0.f;
+      }
+      if (direction_.y < 0.f) {
         direction_.y = direction_.y - random_angle_variation;
       } else {
         direction_.y = direction_.y + random_angle_variation;
       }
       break;
   }
-  displ = std::abs(direction_.x) + std::abs(direction_.y);
+  displ = sumAbs(direction_.x, direction_.y);
   switch (kExecutionMode) {
     case Normal:
       // do nothing
@@ -160,6 +183,10 @@ void Ball::reset() {
   shape_.setOrigin(kBallDefaultRadius, kBallDefaultRadius);
   shape_.setPosition(kBallDefaultPosition);
   last_position_ = shape_.getPosition();
+}
+
+float Ball::sumAbs(const float num1, const float num2) {
+  return std::abs(num1) + std::abs(num2);
 }
 
 template <typename T> std::string toString(const T& t) { 
