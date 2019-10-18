@@ -70,6 +70,7 @@ void Game::render() {
     }
     ball_.draw(window_);
     ship_.draw(window_);
+    brick_.draw(window_);
   }
   window_.display();
 }

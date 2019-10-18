@@ -33,6 +33,11 @@ const float kBallDefaultRadius = 5.f;
 const float kBallDefaultSpeed = 600.f;
 const float kBallDefaultDisplacement = 1.41f;
 
+// brick default settings
+const float kBrickDefaultLength = 80.f;
+const float kBrickDefaultThickness = 25.f;
+const sf::Vector2f kBrickDefaultSize = sf::Vector2f(kBrickDefaultLength, kBrickDefaultThickness);
+
 // ship default settings
 const sf::Color kShipDefaultColor = sf::Color::White;
 const float kShipDefaultLength = 80.f;

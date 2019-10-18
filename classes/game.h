@@ -5,6 +5,7 @@
 
 #include "../config.h"
 #include "ball.h"
+#include "brick.h"
 #include "logger.h"
 #include "menu.h"
 #include "ship.h"
@@ -28,6 +29,7 @@ class Game {
 
  private:
   Ball ball_;
+  Brick brick_;
   sf::Clock clock_;
   sf::Event event_;
   sf::Font font_;

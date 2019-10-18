@@ -19,7 +19,7 @@ class Ship {
 
  private:
   void init();
-  sf::RectangleShape ship_shape_;
+  sf::RectangleShape ship_shape_; // maybe rename?
   float speed_;
 };
 

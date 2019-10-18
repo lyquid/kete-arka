@@ -45,6 +45,8 @@
 		</Linker>
 		<Unit filename="classes/ball.cc" />
 		<Unit filename="classes/ball.h" />
+		<Unit filename="classes/brick.cc" />
+		<Unit filename="classes/brick.h" />
 		<Unit filename="classes/game.cc" />
 		<Unit filename="classes/game.h" />
 		<Unit filename="classes/logger.cc" />
