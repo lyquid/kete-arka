@@ -4,7 +4,9 @@
 #include <SFML/Graphics.hpp>
 
 // app utils
-enum Borders {Top, Bottom, Left, Right};
+enum Collisions {
+  Top, Bottom, Left, Right,
+  TopShip, BottomShip, LeftShip, RightShip};
 enum ExecutionModes {Normal, Debug, LogFile};
 
 // app default settings

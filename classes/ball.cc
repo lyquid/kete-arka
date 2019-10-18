@@ -7,7 +7,7 @@ void Ball::draw(sf::RenderWindow& window) {
 bool Ball::checkBorderCollision() {
   bool collision = false;
   float current_radius = shape_.getRadius();
-  if (shape_.getPosition().x - current_radius <= 0) {
+  if (shape_.getPosition().x - current_radius <= 0.f) {
     // left collision
     randomizeBounceAngle(Left);
     shape_.setPosition(current_radius + 0.1f, shape_.getPosition().y); 
@@ -17,13 +17,13 @@ bool Ball::checkBorderCollision() {
     randomizeBounceAngle(Right);
     shape_.setPosition(kScreenWidth - current_radius - 0.1f, shape_.getPosition().y); 
     collision = true;
-  } else if (shape_.getPosition().y - current_radius <= 0) {
+  } else if (shape_.getPosition().y - current_radius <= 0.f) {
     // top collision
     randomizeBounceAngle(Top);
     shape_.setPosition(shape_.getPosition().x, current_radius + 0.1f);
     collision = true;
   } else if (shape_.getPosition().y + current_radius >= kScreenHeight) {
-    // bottom collision
+    // bottom collision (machine wins!)
     randomizeBounceAngle(Bottom);
     shape_.setPosition(shape_.getPosition().x, kScreenHeight - current_radius - 0.1f);
     collision = true;
@@ -39,23 +39,26 @@ bool Ball::checkMachineWins() {
 bool Ball::checkShipCollision(Ship ship) {
   bool collision = false;
   float ball_radius = shape_.getRadius();
+  float ball_x = shape_.getPosition().x;
   float ball_y = shape_.getPosition().y;
   float ship_x = ship.getShipShape().getPosition().x;
   float ship_x_size = ship.getShipSize().x;
+  float ship_y = ship.getShipShape().getPosition().y;
   // ship collision checking
   if (ship.getShipShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
     collision = true;
     if (last_position_.x < ship_x) {
       // left hit
-      direction_.x = -direction_.x;
+      randomizeBounceAngle(LeftShip);
       shape_.setPosition(ship_x - ball_radius - 0.1f, ball_y);
     } else if (last_position_.x > ship_x + ship_x_size) {
       // right hit
-      direction_.x = -direction_.x;
+      randomizeBounceAngle(RightShip);
       shape_.setPosition(ship_x + ship_x_size + ball_radius + 0.1f, ball_y);
     } else {
-      // front/rear hit
-      direction_.y = -direction_.y;
+      // front/rear hit (rear hit should be imposible!)
+      randomizeBounceAngle(TopShip);
+      shape_.setPosition(ball_x, ship_y - ball_radius - 0.1f);
     }
   }
   return collision; // not doing anything with this right now
@@ -82,13 +85,14 @@ void Ball::move(const float delta_time, Ship ship) {
   shape_.move(direction_.x * factor, direction_.y * factor);
 }
 
-void Ball::randomizeBounceAngle(const Borders border) {
+void Ball::randomizeBounceAngle(const Collisions collision) {
   float displ = 0.f;
   std::string collision_with = "";
   float random_angle_variation = (std::rand() % 21 - 10) / 100.f;  // rnd -0.10 to 0.10
-  switch(border) {
+  switch(collision) {
+    case BottomShip:
     case Top:
-      collision_with = "T";
+      collision_with = (collision == Top) ? "T" : "BS";
       invertVerticalDirection(random_angle_variation);
       if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
         direction_.y = kBallDefaultDisplacement - std::abs(direction_.x);
@@ -100,8 +104,9 @@ void Ball::randomizeBounceAngle(const Borders border) {
         direction_.x = direction_.x - random_angle_variation;
       }
       break;
+    case TopShip:
     case Bottom:
-      collision_with = "B";
+      collision_with = (collision == Bottom) ? "B" : "TS";
       invertVerticalDirection(random_angle_variation);
       if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
         direction_.y = -kBallDefaultDisplacement + std::abs(direction_.x);
@@ -113,8 +118,9 @@ void Ball::randomizeBounceAngle(const Borders border) {
         direction_.x = direction_.x + random_angle_variation;
       }
       break;
+    case RightShip:
     case Left:
-      collision_with = "L";
+      collision_with = (collision == Left) ? "L" : "RS";
       invertHorizontalDirection(random_angle_variation);
       if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
         direction_.x = kBallDefaultDisplacement - std::abs(direction_.y);
@@ -126,8 +132,9 @@ void Ball::randomizeBounceAngle(const Borders border) {
         direction_.y = direction_.y - random_angle_variation;
       }
       break;
+    case LeftShip:
     case Right:
-      collision_with = "R";
+      collision_with = (collision == Right) ? "R" : "LS";
       invertHorizontalDirection(random_angle_variation);
       if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
         direction_.x = -kBallDefaultDisplacement + std::abs(direction_.y);
