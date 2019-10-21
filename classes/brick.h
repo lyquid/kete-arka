@@ -12,6 +12,8 @@ class Brick {
   }
   ~Brick() {}
   void draw(sf::RenderWindow& window);
+  sf::RectangleShape getBrickShape();
+  sf::Vector2f getBrickSize();
 
  private:
   void init();

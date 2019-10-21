@@ -12,14 +12,36 @@ void Brick::draw(sf::RenderWindow& window) {
 }
 
 /////////////////////////////////////////////////
-/// @brief Initializes ship's properties.
+/// @brief Returns the brick's shape.
 ///
-/// Sets the color to the default ship's color, the size 
-/// to the default ship's size and the position to the 
-/// default ship's position.
+/// @return A RectangleShape representing the brick's shape.
+///
+/// Returns a RectangleShape representing the brick's 
+/// current shape.
+/////////////////////////////////////////////////
+sf::RectangleShape Brick::getBrickShape() {
+  return shape_;
+}
+
+/////////////////////////////////////////////////
+/// @brief Returns the brick's size.
+///
+/// @return A Vector2f representing the brick's size.
+///
+/// Returns a Vector2f representing the brick's 
+/// current size.
+/////////////////////////////////////////////////
+sf::Vector2f Brick::getBrickSize() {
+  return shape_.getSize();
+}
+
+/////////////////////////////////////////////////
+/// @brief Initializes the brick's properties.
+///
+/// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 /////////////////////////////////////////////////
 void Brick::init() {
   shape_.setFillColor(sf::Color::White);
   shape_.setSize(kBrickDefaultSize);
-  shape_.setPosition(50.f, 10.f);
+  shape_.setPosition(250.f, 100.f);
 }

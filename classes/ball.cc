@@ -1,31 +1,57 @@
 #include "ball.h"
 
-void Ball::draw(sf::RenderWindow& window) {
-  window.draw(shape_);
+bool Ball::checkBrickCollision(Brick brick) {
+  bool collision = false;
+  if (brick.getBrickShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
+    collision = true;
+    float ball_x = shape_.getPosition().x;
+    float ball_y = shape_.getPosition().y;
+    float brick_x = brick.getBrickShape().getPosition().x;
+    float brick_x_size = brick.getBrickSize().x;
+    float brick_y = brick.getBrickShape().getPosition().y;
+    float brick_y_size = brick.getBrickSize().y;
+    if (last_position_.x < brick_x) {
+      // left hit
+      randomizeBounceAngle(LeftBrick);
+      shape_.setPosition(brick_x - current_radius_, ball_y);
+    } else if (last_position_.x > brick_x + brick_x_size) {
+      // right hit
+      randomizeBounceAngle(RightBrick);
+      shape_.setPosition(brick_x + brick_x_size + current_radius_, ball_y);
+    } else if (last_position_.y < brick_y) {
+      // top hit
+      randomizeBounceAngle(TopBrick);
+      shape_.setPosition(ball_x, brick_y - current_radius_);
+    } else {
+      // bottom hit
+      randomizeBounceAngle(BottomBrick);
+      shape_.setPosition(ball_x, brick_y + brick_y_size + current_radius_);
+    }
+  }
+  return collision;
 }
 
 bool Ball::checkBorderCollision() {
   bool collision = false;
-  float current_radius = shape_.getRadius();
-  if (shape_.getPosition().x - current_radius <= 0.f) {
+  if (shape_.getPosition().x - current_radius_ <= 0.f) {
     // left collision
     randomizeBounceAngle(Left);
-    shape_.setPosition(current_radius + 0.1f, shape_.getPosition().y); 
+    shape_.setPosition(current_radius_ + 0.1f, shape_.getPosition().y); 
     collision = true;
-  } else if (shape_.getPosition().x + current_radius >= kScreenWidth) {
+  } else if (shape_.getPosition().x + current_radius_ >= kScreenWidth) {
     // right collision
     randomizeBounceAngle(Right);
-    shape_.setPosition(kScreenWidth - current_radius - 0.1f, shape_.getPosition().y); 
+    shape_.setPosition(kScreenWidth - current_radius_ - 0.1f, shape_.getPosition().y); 
     collision = true;
-  } else if (shape_.getPosition().y - current_radius <= 0.f) {
+  } else if (shape_.getPosition().y - current_radius_ <= 0.f) {
     // top collision
     randomizeBounceAngle(Top);
-    shape_.setPosition(shape_.getPosition().x, current_radius + 0.1f);
+    shape_.setPosition(shape_.getPosition().x, current_radius_ + 0.1f);
     collision = true;
-  } else if (shape_.getPosition().y + current_radius >= kScreenHeight) {
+  } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
     // bottom collision (machine wins!)
     randomizeBounceAngle(Bottom);
-    shape_.setPosition(shape_.getPosition().x, kScreenHeight - current_radius - 0.1f);
+    shape_.setPosition(shape_.getPosition().x, kScreenHeight - current_radius_ - 0.1f);
     collision = true;
   }
   return collision;
@@ -38,30 +64,32 @@ bool Ball::checkMachineWins() {
 
 bool Ball::checkShipCollision(Ship ship) {
   bool collision = false;
-  float ball_radius = shape_.getRadius();
   float ball_x = shape_.getPosition().x;
   float ball_y = shape_.getPosition().y;
   float ship_x = ship.getShipShape().getPosition().x;
   float ship_x_size = ship.getShipSize().x;
   float ship_y = ship.getShipShape().getPosition().y;
-  // ship collision checking
   if (ship.getShipShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
     collision = true;
     if (last_position_.x < ship_x) {
       // left hit
       randomizeBounceAngle(LeftShip);
-      shape_.setPosition(ship_x - ball_radius - 0.1f, ball_y);
+      shape_.setPosition(ship_x - current_radius_ - 0.1f, ball_y);
     } else if (last_position_.x > ship_x + ship_x_size) {
       // right hit
       randomizeBounceAngle(RightShip);
-      shape_.setPosition(ship_x + ship_x_size + ball_radius + 0.1f, ball_y);
+      shape_.setPosition(ship_x + ship_x_size + current_radius_ + 0.1f, ball_y);
     } else {
       // front/rear hit (rear hit should be imposible!)
       randomizeBounceAngle(TopShip);
-      shape_.setPosition(ball_x, ship_y - ball_radius - 0.1f);
+      shape_.setPosition(ball_x, ship_y - current_radius_ - 0.1f);
     }
   }
   return collision; // not doing anything with this right now
+}
+
+void Ball::draw(sf::RenderWindow& window) {
+  window.draw(shape_);
 }
 
 void Ball::invertHorizontalDirection(const float variation) {
@@ -72,16 +100,20 @@ void Ball::invertVerticalDirection(const float variation) {
   direction_.y = -direction_.y + variation;
 }
 
-void Ball::move(const float delta_time, Ship ship) {
+void Ball::move(const float delta_time, Ship ship, Brick brick) {
   float factor = speed_ * delta_time;
+  // todo: maybe check everything to prevent the ball bugging
   if (checkMachineWins()) {
     // todo: check if ball touches the bottom of the screen
   } else if (checkBorderCollision()) {
     // boundary collision
   } else if (checkShipCollision(ship)) {
     // ship collision
+  } else if (checkBrickCollision(brick)) {
+    // brick collision
   }
   last_position_ = shape_.getPosition();
+  current_radius_ = shape_.getRadius();
   shape_.move(direction_.x * factor, direction_.y * factor);
 }
 
@@ -90,9 +122,14 @@ void Ball::randomizeBounceAngle(const Collisions collision) {
   std::string collision_with = "";
   float random_angle_variation = (std::rand() % 21 - 10) / 100.f;  // rnd -0.10 to 0.10
   switch(collision) {
+    case BottomBrick:
+      collision_with = "BB";
+      [[fallthrough]];
     case BottomShip:
+      if (collision_with == "") { collision_with = "BS"; }
+      [[fallthrough]];
     case Top:
-      collision_with = (collision == Top) ? "T" : "BS";
+      if (collision_with == "") { collision_with = "T"; }
       invertVerticalDirection(random_angle_variation);
       if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
         direction_.y = kBallDefaultDisplacement - std::abs(direction_.x);
@@ -104,9 +141,14 @@ void Ball::randomizeBounceAngle(const Collisions collision) {
         direction_.x = direction_.x - random_angle_variation;
       }
       break;
+    case TopBrick:
+      collision_with = "TB";
+      [[fallthrough]];
     case TopShip:
+      if (collision_with == "") { collision_with = "TS"; }
+      [[fallthrough]];
     case Bottom:
-      collision_with = (collision == Bottom) ? "B" : "TS";
+      if (collision_with == "") { collision_with = "B"; }
       invertVerticalDirection(random_angle_variation);
       if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
         direction_.y = -kBallDefaultDisplacement + std::abs(direction_.x);
@@ -118,9 +160,14 @@ void Ball::randomizeBounceAngle(const Collisions collision) {
         direction_.x = direction_.x + random_angle_variation;
       }
       break;
+    case RightBrick:
+      collision_with = "RB";
+      [[fallthrough]];
     case RightShip:
+      if (collision_with == "") { collision_with = "RS"; }
+      [[fallthrough]];
     case Left:
-      collision_with = (collision == Left) ? "L" : "RS";
+      if (collision_with == "") { collision_with ="L"; }
       invertHorizontalDirection(random_angle_variation);
       if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
         direction_.x = kBallDefaultDisplacement - std::abs(direction_.y);
@@ -132,9 +179,14 @@ void Ball::randomizeBounceAngle(const Collisions collision) {
         direction_.y = direction_.y - random_angle_variation;
       }
       break;
+    case LeftBrick:
+      collision_with = "LB";
+      [[fallthrough]];
     case LeftShip:
+      if (collision_with == "") { collision_with = "LS"; }
+      [[fallthrough]];
     case Right:
-      collision_with = (collision == Right) ? "R" : "LS";
+      if (collision_with == "") { collision_with = "R"; }
       invertHorizontalDirection(random_angle_variation);
       if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
         direction_.x = -kBallDefaultDisplacement + std::abs(direction_.y);
@@ -190,6 +242,7 @@ void Ball::reset() {
   shape_.setOrigin(kBallDefaultRadius, kBallDefaultRadius);
   shape_.setPosition(kBallDefaultPosition);
   last_position_ = shape_.getPosition();
+  current_radius_ = shape_.getRadius();
 }
 
 float Ball::sumAbs(const float num1, const float num2) {

@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "../config.h"
+#include "brick.h"
 #include "logger.h"
 #include "ship.h"
 
@@ -20,10 +21,11 @@ class Ball {
   }
   ~Ball() {}
   void draw(sf::RenderWindow& window);
-  void move(const float delta_time, Ship ship);
+  void move(const float delta_time, Ship ship, Brick brick);
   void reset();
 
  private:
+  bool checkBrickCollision(Brick brick);
   bool checkBorderCollision();
   bool checkMachineWins();
   bool checkShipCollision(Ship ship);
@@ -31,6 +33,7 @@ class Ball {
   void invertVerticalDirection(const float variation);
   void randomizeBounceAngle(const Collisions collision);  
   static float sumAbs(const float num1, const float num2);
+  float current_radius_;
   sf::Vector2f direction_;
   sf::Vector2f last_position_;
   sf::CircleShape shape_;

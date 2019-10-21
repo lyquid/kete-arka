@@ -6,7 +6,8 @@
 // app utils
 enum Collisions {
   Top, Bottom, Left, Right,
-  TopShip, BottomShip, LeftShip, RightShip};
+  TopShip, BottomShip, LeftShip, RightShip,
+  TopBrick, BottomBrick, LeftBrick, RightBrick};
 enum ExecutionModes {Normal, Debug, LogFile};
 
 // app default settings
@@ -30,12 +31,12 @@ const sf::String kPressStartText = "Press 1 to start";
 const sf::Color kBallDefaultColor = sf::Color::White;
 const sf::Vector2f kBallDefaultPosition = sf::Vector2f(kScreenWidth / 2.f, kScreenHeight / 1.25f);
 const float kBallDefaultRadius = 5.f;
-const float kBallDefaultSpeed = 600.f;
+const float kBallDefaultSpeed = 400.f;
 const float kBallDefaultDisplacement = 1.41f;
 
 // brick default settings
-const float kBrickDefaultLength = 80.f;
-const float kBrickDefaultThickness = 25.f;
+const float kBrickDefaultLength = 350.f;
+const float kBrickDefaultThickness = 500.f;
 const sf::Vector2f kBrickDefaultSize = sf::Vector2f(kBrickDefaultLength, kBrickDefaultThickness);
 
 // ship default settings
