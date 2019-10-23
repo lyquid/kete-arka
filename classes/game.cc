@@ -5,6 +5,16 @@ void Game::clean() {
   logger_.write("Successfully closed window.");
 }
 
+void Game::drawBricks() {
+  for (int i = 0; i < kBrickDefaultRows; ++i) {
+    for (int j = 0; j < kBrickDefaultColumns; ++j) {
+      if (bricks_[i][j].isActive()) {
+        bricks_[i][j].draw(window_);
+      }
+    }
+  }
+}
+
 void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
@@ -54,6 +64,18 @@ void Game::init() {
     menu_.init(font_);
     logger_.write("Successfully initialized menu.");
   }
+  initBricks();
+}
+
+void Game::initBricks() {
+  int i, j;
+  float start_y = 40.f;
+  for (i = 0; i < kBrickDefaultRows; ++i) {
+    for (j = 0; j < kBrickDefaultColumns; ++j) {
+      bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
+    }
+    start_y = start_y + bricks_[i][j].getSize().y;
+  }
 }
 
 bool Game::quit() {
@@ -70,7 +92,7 @@ void Game::render() {
     }
     ball_.draw(window_);
     ship_.draw(window_);
-    brick_.draw(window_);
+    drawBricks();
   }
   window_.display();
 }

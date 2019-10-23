@@ -35,9 +35,12 @@ const float kBallDefaultSpeed = 400.f;
 const float kBallDefaultDisplacement = 1.41f;
 
 // brick default settings
-const float kBrickDefaultLength = 350.f;
-const float kBrickDefaultThickness = 500.f;
+const int kBrickDefaultColumns = 12;
+const int kBrickDefaultRows = 12;
+const float kBrickDefaultLength = 56.f;
+const float kBrickDefaultThickness = 13.f; 
 const sf::Vector2f kBrickDefaultSize = sf::Vector2f(kBrickDefaultLength, kBrickDefaultThickness);
+const sf::Color kBrickDefaultOutlineColor = sf::Color::Black;
 
 // ship default settings
 const sf::Color kShipDefaultColor = sf::Color::White;
@@ -45,6 +48,6 @@ const float kShipDefaultLength = 80.f;
 const float kShipDefaultThickness = 15.f;
 const sf::Vector2f kShipDefaultSize = sf::Vector2f(kShipDefaultLength, kShipDefaultThickness);
 const sf::Vector2f kShipDefaultPosition = sf::Vector2f((kScreenWidth - kShipDefaultSize.x) / 2.f, kScreenHeight * 0.85f);
-const float kShipDefaultSpeed = 400.f;
+const float kShipDefaultSpeed = 500.f;
 
 #endif  // KETE_ARKA_CONFIG_H_

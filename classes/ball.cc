@@ -2,14 +2,14 @@
 
 bool Ball::checkBrickCollision(Brick brick) {
   bool collision = false;
-  if (brick.getBrickShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
+  if (brick.getShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
     collision = true;
     float ball_x = shape_.getPosition().x;
     float ball_y = shape_.getPosition().y;
-    float brick_x = brick.getBrickShape().getPosition().x;
-    float brick_x_size = brick.getBrickSize().x;
-    float brick_y = brick.getBrickShape().getPosition().y;
-    float brick_y_size = brick.getBrickSize().y;
+    float brick_x = brick.getShape().getPosition().x;
+    float brick_x_size = brick.getSize().x;
+    float brick_y = brick.getShape().getPosition().y;
+    float brick_y_size = brick.getSize().y;
     if (last_position_.x < brick_x) {
       // left hit
       randomizeBounceAngle(LeftBrick);
