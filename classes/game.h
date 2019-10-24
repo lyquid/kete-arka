@@ -31,7 +31,6 @@ class Game {
   void drawBricks();
   void initBricks();
   Ball ball_;
-  Brick brick_;
   Brick bricks_[kBrickDefaultRows][kBrickDefaultColumns];
   sf::Clock clock_;
   sf::Event event_;

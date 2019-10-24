@@ -1,31 +1,36 @@
 #include "ball.h"
 
-bool Ball::checkBrickCollision(Brick brick) {
+bool Ball::checkBrickCollision(Brick bricks[][kBrickDefaultColumns]) {
   bool collision = false;
-  if (brick.getShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
-    collision = true;
-    float ball_x = shape_.getPosition().x;
-    float ball_y = shape_.getPosition().y;
-    float brick_x = brick.getShape().getPosition().x;
-    float brick_x_size = brick.getSize().x;
-    float brick_y = brick.getShape().getPosition().y;
-    float brick_y_size = brick.getSize().y;
-    if (last_position_.x < brick_x) {
-      // left hit
-      randomizeBounceAngle(LeftBrick);
-      shape_.setPosition(brick_x - current_radius_, ball_y);
-    } else if (last_position_.x > brick_x + brick_x_size) {
-      // right hit
-      randomizeBounceAngle(RightBrick);
-      shape_.setPosition(brick_x + brick_x_size + current_radius_, ball_y);
-    } else if (last_position_.y < brick_y) {
-      // top hit
-      randomizeBounceAngle(TopBrick);
-      shape_.setPosition(ball_x, brick_y - current_radius_);
-    } else {
-      // bottom hit
-      randomizeBounceAngle(BottomBrick);
-      shape_.setPosition(ball_x, brick_y + brick_y_size + current_radius_);
+  for (int i = 0; i < kBrickDefaultRows; ++i) {
+    for (int j = 0; j < kBrickDefaultColumns; ++j) {
+      if (bricks[i][j].isActive() && bricks[i][j].getShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
+        float ball_x = shape_.getPosition().x;
+        float ball_y = shape_.getPosition().y;
+        float brick_x = bricks[i][j].getShape().getPosition().x;
+        float brick_x_size = bricks[i][j].getSize().x;
+        float brick_y = bricks[i][j].getShape().getPosition().y;
+        float brick_y_size = bricks[i][j].getSize().y;
+        collision = true;
+        bricks[i][j].decreaseResistance();
+        if (last_position_.x < brick_x) {
+          // left hit
+          randomizeBounceAngle(LeftBrick);
+          shape_.setPosition(brick_x - current_radius_, ball_y);
+        } else if (last_position_.x > brick_x + brick_x_size) {
+          // right hit
+          randomizeBounceAngle(RightBrick);
+          shape_.setPosition(brick_x + brick_x_size + current_radius_, ball_y);
+        } else if (last_position_.y < brick_y) {
+          // top hit
+          randomizeBounceAngle(TopBrick);
+          shape_.setPosition(ball_x, brick_y - current_radius_);
+        } else {
+          // bottom hit
+          randomizeBounceAngle(BottomBrick);
+          shape_.setPosition(ball_x, brick_y + brick_y_size + current_radius_);
+        }
+      }
     }
   }
   return collision;
@@ -100,7 +105,7 @@ void Ball::invertVerticalDirection(const float variation) {
   direction_.y = -direction_.y + variation;
 }
 
-void Ball::move(const float delta_time, Ship ship, Brick brick) {
+void Ball::move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]) {
   float factor = speed_ * delta_time;
   // todo: maybe check everything to prevent the ball bugging
   if (checkMachineWins()) {
@@ -109,7 +114,7 @@ void Ball::move(const float delta_time, Ship ship, Brick brick) {
     // boundary collision
   } else if (checkShipCollision(ship)) {
     // ship collision
-  } else if (checkBrickCollision(brick)) {
+  } else if (checkBrickCollision(bricks)) {
     // brick collision
   }
   last_position_ = shape_.getPosition();

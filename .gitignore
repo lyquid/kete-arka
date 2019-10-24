@@ -79,5 +79,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/c++,windows,codeblocks,visualstudiocode
+# Custom
 kete-arka.log
+
+# End of https://www.gitignore.io/api/c++,windows,codeblocks,visualstudiocode
+

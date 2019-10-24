@@ -21,11 +21,11 @@ class Ball {
   }
   ~Ball() {}
   void draw(sf::RenderWindow& window);
-  void move(const float delta_time, Ship ship, Brick brick);
+  void move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]);
   void reset();
 
  private:
-  bool checkBrickCollision(Brick brick);
+  bool checkBrickCollision(Brick bricks[][kBrickDefaultColumns]);
   bool checkBorderCollision();
   bool checkMachineWins();
   bool checkShipCollision(Ship ship);

@@ -32,6 +32,7 @@ void Game::handleEvents() {
               paused_ = false;
               ball_.reset();
               ship_.resetPosition();
+              initBricks();
               break;
           }
         } else { // not in menu
@@ -64,14 +65,14 @@ void Game::init() {
     menu_.init(font_);
     logger_.write("Successfully initialized menu.");
   }
-  initBricks();
 }
 
 void Game::initBricks() {
   int i, j;
-  float start_y = 40.f;
+  float start_y = 50.f;
   for (i = 0; i < kBrickDefaultRows; ++i) {
     for (j = 0; j < kBrickDefaultColumns; ++j) {
+      bricks_[i][j].setActive(true);
       bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
     }
     start_y = start_y + bricks_[i][j].getSize().y;
@@ -100,7 +101,7 @@ void Game::render() {
 void Game::update() {
   float delta_time = clock_.restart().asSeconds();
   if (!paused_) {
-    ball_.move(delta_time, ship_, brick_);
+    ball_.move(delta_time, ship_, bricks_);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
      || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
       ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0));

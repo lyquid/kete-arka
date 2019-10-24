@@ -7,6 +7,7 @@
 ///
 /// Decreases the resistance of the brick by the amount specified. 
 /// If no amount is specified, decreases the resistance by 1. 
+/// If resistance equals 0, sets the brick inactive.
 /// Note that resistance cannot be decreased below 0.
 /////////////////////////////////////////////////
 void Brick::decreaseResistance(int decrease_by) {
@@ -126,6 +127,7 @@ void Brick::setPosition(sf::Vector2f position) {
 ///
 /// Sets the resistance of the brick. If < 0,
 /// resistance is set to 0.
+/// If resistance equals 0, sets the brick inactive.
 /////////////////////////////////////////////////
 void Brick::setResistance(int resistance) {
   resistance_ = (resistance < 0) ? 0 : resistance;
