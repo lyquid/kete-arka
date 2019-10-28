@@ -7,8 +7,8 @@
 enum Collisions {
   Top, Bottom, Left, Right,
   TopShip, BottomShip, LeftShip, RightShip,
-  TopBrick, BottomBrick, LeftBrick, RightBrick};
-enum ExecutionModes {Normal, Debug, LogFile};
+  TopBrick, BottomBrick, LeftBrick, RightBrick };
+enum ExecutionModes { Normal, Debug, LogFile };
 
 // app default settings
 const std::string kLogFileName = "kete-arka.log";

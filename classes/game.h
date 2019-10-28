@@ -6,6 +6,7 @@
 #include "../config.h"
 #include "ball.h"
 #include "brick.h"
+#include "gui.h"
 #include "logger.h"
 #include "menu.h"
 #include "player.h"

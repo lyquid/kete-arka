@@ -49,6 +49,8 @@
 		<Unit filename="classes/brick.h" />
 		<Unit filename="classes/game.cc" />
 		<Unit filename="classes/game.h" />
+		<Unit filename="classes/gui.cc" />
+		<Unit filename="classes/gui.h" />
 		<Unit filename="classes/logger.cc" />
 		<Unit filename="classes/logger.h" />
 		<Unit filename="classes/menu.cc" />
