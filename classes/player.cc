@@ -10,7 +10,7 @@
 /// If lives equals 0, sets the player dead.
 /// Note that lives cannot be decreased below 0.
 /////////////////////////////////////////////////
-void Player::descreaseLives(int decrease_by) {
+void Player::decreaseLives(int decrease_by) {
   if (lives_ - decrease_by <= 0) {
     lives_ = 0;
     dead_ = true;

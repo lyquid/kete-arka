@@ -9,7 +9,7 @@ class Player {
     init();
   }
   ~Player() {}
-  void descreaseLives(int decrease_by = 1);
+  void decreaseLives(int decrease_by = 1);
   void increaseScore(int increase_by);
   bool isDead();
   int getLives();
