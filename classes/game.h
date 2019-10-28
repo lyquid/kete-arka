@@ -8,6 +8,7 @@
 #include "brick.h"
 #include "logger.h"
 #include "menu.h"
+#include "player.h"
 #include "ship.h"
 
 class Game {
@@ -39,6 +40,7 @@ class Game {
   Logger logger_;
   Menu menu_;
   bool paused_;
+  Player player_;
   bool quit_;
   Ship ship_;
   sf::String title_;

@@ -50,4 +50,7 @@ const sf::Vector2f kShipDefaultSize = sf::Vector2f(kShipDefaultLength, kShipDefa
 const sf::Vector2f kShipDefaultPosition = sf::Vector2f((kScreenWidth - kShipDefaultSize.x) / 2.f, kScreenHeight * 0.85f);
 const float kShipDefaultSpeed = 500.f;
 
+// player default setting
+const int kPlayerDefaultLives = 3;
+
 #endif  // KETE_ARKA_CONFIG_H_
