@@ -12,7 +12,7 @@
 #include "logger.h"
 #include "ship.h"
 
-template <typename T> std::string toString(const T& t);
+template <typename T> std::string toString(const T &t);
 
 class Ball {
  public:
@@ -20,7 +20,7 @@ class Ball {
     reset();
   }
   ~Ball() {}
-  void draw(sf::RenderWindow& window);
+  void draw(sf::RenderWindow &window);
   void move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]);
   void reset();
 

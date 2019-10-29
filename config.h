@@ -36,7 +36,7 @@ const float kBallDefaultDisplacement = 1.41f;
 
 // brick default settings
 const int kBrickDefaultColumns = 12;
-const int kBrickDefaultRows = 6;
+const int kBrickDefaultRows = 4;
 const float kBrickDefaultLength = 56.f;
 const float kBrickDefaultThickness = 16.f; 
 const sf::Vector2f kBrickDefaultSize = sf::Vector2f(kBrickDefaultLength, kBrickDefaultThickness);

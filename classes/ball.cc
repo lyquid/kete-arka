@@ -48,10 +48,10 @@ bool Ball::checkBorderCollision() {
     randomizeBounceAngle(Right);
     shape_.setPosition(kScreenWidth - current_radius_ - 0.1f, shape_.getPosition().y); 
     collision = true;
-  } else if (shape_.getPosition().y - current_radius_ <= 0.f) {
+  } else if (shape_.getPosition().y - current_radius_ <= kGUIDefaultHeight) {
     // top collision
     randomizeBounceAngle(Top);
-    shape_.setPosition(shape_.getPosition().x, current_radius_ + 0.1f);
+    shape_.setPosition(shape_.getPosition().x, current_radius_ + kGUIDefaultHeight + 0.1f);
     collision = true;
   } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
     // bottom collision (machine wins!)
@@ -93,7 +93,7 @@ bool Ball::checkShipCollision(Ship ship) {
   return collision; // not doing anything with this right now
 }
 
-void Ball::draw(sf::RenderWindow& window) {
+void Ball::draw(sf::RenderWindow &window) {
   window.draw(shape_);
 }
 
@@ -254,7 +254,7 @@ float Ball::sumAbs(const float num1, const float num2) {
   return std::abs(num1) + std::abs(num2);
 }
 
-template <typename T> std::string toString(const T& t) { 
+template <typename T> std::string toString(const T &t) { 
   std::ostringstream oss; 
   oss << t; 
   return oss.str();
