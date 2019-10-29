@@ -91,6 +91,7 @@ void Game::render() {
     if (paused_) {
       menu_.drawPauseScreen(window_);
     }
+    gui_.draw(window_);
     ball_.draw(window_);
     ship_.draw(window_);
     drawBricks();

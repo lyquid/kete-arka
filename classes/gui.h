@@ -3,13 +3,19 @@
 
 #include "../config.h"
 
-class Gui {
+class GUI {
  public:
-  Gui() {}
-  ~Gui() {}
+  GUI() {
+    init();
+  }
+  ~GUI() {}
+  void draw(sf::RenderWindow &window);
 
  private:
-  
+  void init();
+  sf::RectangleShape left_;
+  sf::RectangleShape middle_;
+  sf::RectangleShape right_;
 };
 
 #endif  // KETE_ARKA_CLASSES_GUI_H_

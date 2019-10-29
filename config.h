@@ -29,7 +29,7 @@ const sf::String kPressStartText = "Press 1 to start";
 
 // ball default settings
 const sf::Color kBallDefaultColor = sf::Color::White;
-const sf::Vector2f kBallDefaultPosition = sf::Vector2f(kScreenWidth / 2.f, kScreenHeight / 1.25f);
+const sf::Vector2f kBallDefaultPosition = sf::Vector2f((float) kScreenWidth / 2.f, (float) kScreenHeight / 1.25f);
 const float kBallDefaultRadius = 5.f;
 const float kBallDefaultSpeed = 400.f;
 const float kBallDefaultDisplacement = 1.41f;
@@ -42,15 +42,23 @@ const float kBrickDefaultThickness = 16.f;
 const sf::Vector2f kBrickDefaultSize = sf::Vector2f(kBrickDefaultLength, kBrickDefaultThickness);
 const sf::Color kBrickDefaultOutlineColor = sf::Color::Black;
 
+// GUI default settings
+const sf::Color kGUIDefaultFillColor = sf::Color::Black;
+const sf::Color kGUIDefaultOutlineColor = sf::Color::White;
+const float kGUIDefaultHeight = (float) kScreenHeight * 0.03f;
+const float kGUIDefaultWidth = (float) kScreenWidth * (1.f / 3.f);
+const sf::Vector2f kGUIDefaultSize = sf::Vector2f(kGUIDefaultWidth, kGUIDefaultHeight);
+const float kGUIDefaultOutlineThickness = -1.f;  
+
+// player default setting
+const int kPlayerDefaultLives = 3;
+
 // ship default settings
 const sf::Color kShipDefaultColor = sf::Color::White;
 const float kShipDefaultLength = 80.f;
 const float kShipDefaultThickness = 15.f;
 const sf::Vector2f kShipDefaultSize = sf::Vector2f(kShipDefaultLength, kShipDefaultThickness);
-const sf::Vector2f kShipDefaultPosition = sf::Vector2f((kScreenWidth - kShipDefaultSize.x) / 2.f, kScreenHeight * 0.85f);
+const sf::Vector2f kShipDefaultPosition = sf::Vector2f(((float) kScreenWidth - kShipDefaultSize.x) / 2.f, (float) kScreenHeight * 0.85f);
 const float kShipDefaultSpeed = 500.f;
-
-// player default setting
-const int kPlayerDefaultLives = 3;
 
 #endif  // KETE_ARKA_CONFIG_H_

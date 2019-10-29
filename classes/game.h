@@ -37,6 +37,7 @@ class Game {
   sf::Clock clock_;
   sf::Event event_;
   sf::Font font_;
+  GUI gui_;
   bool in_title_screen_;
   Logger logger_;
   Menu menu_;
