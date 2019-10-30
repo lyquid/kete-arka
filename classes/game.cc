@@ -62,6 +62,8 @@ void Game::init() {
     logger_.write("ERROR: Failed loading font.");
     exit(EXIT_FAILURE);
   } else {
+    gui_.init(font_);
+    logger_.write("Successfully initialized GUI.");
     menu_.init(font_);
     logger_.write("Successfully initialized menu.");
   }

@@ -1,8 +1,8 @@
 #include "classes/game.h"
 
-Game* game;
+Game *game;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   std::srand(static_cast<unsigned int>(std::time(NULL)));
 
   game = new Game();
