@@ -17,9 +17,9 @@ class GUI {
                         const bool        centered );
  private:
   void initLayout();
-  // sf::RectangleShape left_;
-  // sf::RectangleShape middle_;
-  // sf::RectangleShape right_;
+  sf::RectangleShape left_;
+  sf::RectangleShape middle_;
+  sf::RectangleShape right_;
   sf::Text level_text_;
   sf::Text lives_text_;
   sf::Text score_text_;
