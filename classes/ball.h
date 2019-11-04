@@ -4,8 +4,6 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
-#include <string>
-#include <SFML/Graphics.hpp>
 
 #include "../config.h"
 #include "brick.h"

@@ -28,6 +28,7 @@ void Player::decreaseLives(int decrease_by) {
 /////////////////////////////////////////////////
 void Player::increaseScore(int increase_by) {
   score_ += increase_by;
+  printf("score: %d\n", score_);
 }
 
 /////////////////////////////////////////////////

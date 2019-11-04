@@ -76,6 +76,7 @@ void Game::initBricks() {
     for (j = 0; j < kBrickDefaultColumns; ++j) {
       bricks_[i][j].setActive(true);
       bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
+      bricks_[i][j].setPlayer(&player_);
     }
     start_y = start_y + bricks_[i][j].getSize().y;
   }

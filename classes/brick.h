@@ -1,9 +1,8 @@
 #ifndef KETE_ARKA_CLASSES_BRICK_H_
 #define KETE_ARKA_CLASSES_BRICK_H_
 
-#include <SFML/Graphics.hpp>
-
 #include "../config.h"
+#include "player.h"
 
 class Brick {
  public:
@@ -11,20 +10,22 @@ class Brick {
     init();
   }
   ~Brick() {}
-  void decreaseResistance(int decrease_by = 1);
-  void draw(sf::RenderWindow& window);
+  void decreaseResistance(const int decrease_by = 1);
+  void draw(sf::RenderWindow &window);
   sf::Vector2f getPosition();
   int getResistance();
   sf::RectangleShape getShape();
   sf::Vector2f getSize();
   bool isActive();
-  void setActive(bool status);
-  void setPosition(sf::Vector2f position);
-  void setResistance(int resistance);
+  void setActive(const bool status);
+  void setPlayer(Player *ptp); // can we make this with a reference instead?
+  void setPosition(const sf::Vector2f position);
+  void setResistance(const int resistance);
 
  private:
   void init();
   bool active_;
+  Player *player_;
   int resistance_;
   sf::RectangleShape shape_;
 };

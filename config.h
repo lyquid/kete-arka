@@ -1,6 +1,7 @@
 #ifndef KETE_ARKA_CONFIG_H_
 #define KETE_ARKA_CONFIG_H_
 
+#include <string>
 #include <SFML/Graphics.hpp>
 
 // app utils

@@ -1,8 +1,6 @@
 #ifndef KETE_ARKA_CLASSES_GAME_H_
 #define KETE_ARKA_CLASSES_GAME_H_
 
-#include <SFML/Graphics.hpp>
-
 #include "../config.h"
 #include "ball.h"
 #include "brick.h"

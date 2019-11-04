@@ -1,7 +1,7 @@
 #include "brick.h"
 
 /////////////////////////////////////////////////
-/// @brief Drecreases the resistance of the brick by the amount specified.
+/// @brief Decreases the resistance of the brick by the amount specified.
 ///
 /// @param decrease_by The amount to be decreased by.
 ///
@@ -10,10 +10,11 @@
 /// If resistance equals 0, sets the brick inactive.
 /// Note that resistance cannot be decreased below 0.
 /////////////////////////////////////////////////
-void Brick::decreaseResistance(int decrease_by) {
+void Brick::decreaseResistance(const int decrease_by) {
   resistance_ = (resistance_ - decrease_by < 0) ? 0 : resistance_ - decrease_by;
   if (!resistance_) {
     setActive(false);
+    player_->increaseScore(50);
   }
 }
 
@@ -24,7 +25,7 @@ void Brick::decreaseResistance(int decrease_by) {
 ///
 /// Draws the brick to the specified RenderWindow.
 /////////////////////////////////////////////////
-void Brick::draw(sf::RenderWindow& window) {
+void Brick::draw(sf::RenderWindow &window) {
   window.draw(shape_);
 }
 
@@ -105,8 +106,19 @@ bool Brick::isActive() {
 ///
 /// Sets the active flag of the brick to the desired status (true/false).
 /////////////////////////////////////////////////
-void Brick::setActive(bool status) {
+void Brick::setActive(const bool status) {
   active_ = status;
+}
+
+/////////////////////////////////////////////////
+/// @brief Sets the address of the player.
+///
+/// @param *ptp Player's memory address.
+///
+/// Sets the memory address of the player.
+/////////////////////////////////////////////////
+void Brick::setPlayer(Player *ptp) {
+  player_ = ptp;
 }
 
 /////////////////////////////////////////////////
@@ -116,7 +128,7 @@ void Brick::setActive(bool status) {
 ///
 /// Sets the position of the brick to the desired position.
 /////////////////////////////////////////////////
-void Brick::setPosition(sf::Vector2f position) {
+void Brick::setPosition(const sf::Vector2f position) {
   shape_.setPosition(position.x, position.y);
 }
 
@@ -129,7 +141,7 @@ void Brick::setPosition(sf::Vector2f position) {
 /// resistance is set to 0.
 /// If resistance equals 0, sets the brick inactive.
 /////////////////////////////////////////////////
-void Brick::setResistance(int resistance) {
+void Brick::setResistance(const int resistance) {
   resistance_ = (resistance < 0) ? 0 : resistance;
   if (!resistance_) {
     setActive(false);
