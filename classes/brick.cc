@@ -7,7 +7,8 @@
 ///
 /// Decreases the resistance of the brick by the amount specified. 
 /// If no amount is specified, decreases the resistance by 1. 
-/// If resistance equals 0, sets the brick inactive.
+/// If resistance equals 0, sets the brick inactive, increases 
+/// the player's score and updates the score text.
 /// Note that resistance cannot be decreased below 0.
 /////////////////////////////////////////////////
 void Brick::decreaseResistance(const int decrease_by) {
@@ -15,6 +16,7 @@ void Brick::decreaseResistance(const int decrease_by) {
   if (!resistance_) {
     setActive(false);
     player_->increaseScore(50);
+    gui_->updateScoreText();
   }
 }
 
@@ -108,6 +110,17 @@ bool Brick::isActive() {
 /////////////////////////////////////////////////
 void Brick::setActive(const bool status) {
   active_ = status;
+}
+
+/////////////////////////////////////////////////
+/// @brief Sets the address of the GUI.
+///
+/// @param *ptg GUI's memory address.
+///
+/// Sets the memory address of the GUI.
+/////////////////////////////////////////////////
+void Brick::setGui(GUI *ptg) {
+  gui_ = ptg;
 }
 
 /////////////////////////////////////////////////

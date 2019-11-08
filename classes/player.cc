@@ -1,7 +1,7 @@
 #include "player.h"
 
 /////////////////////////////////////////////////
-/// @brief Drecreases the lives of the player by the amount specified.
+/// @brief Decreases the lives of the player by the amount specified.
 ///
 /// @param decrease_by The amount to decrease the lives by.
 ///
@@ -28,7 +28,6 @@ void Player::decreaseLives(int decrease_by) {
 /////////////////////////////////////////////////
 void Player::increaseScore(int increase_by) {
   score_ += increase_by;
-  printf("score: %d\n", score_);
 }
 
 /////////////////////////////////////////////////
@@ -74,4 +73,9 @@ int Player::getLives() {
 /////////////////////////////////////////////////
 int Player::getScore() {
   return score_;
+}
+
+////////////////////////////////////////////////
+void Player::reset() {
+  init();
 }

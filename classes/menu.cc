@@ -56,13 +56,13 @@ void Menu::drawTitleScreen(sf::RenderWindow &window) {
 /////////////////////////////////////////////////
 void Menu::init(const sf::Font &font) {
   // main title
-  GUI::initText(title_text_, kGameTitle, font, kGUIGameTitleFontSize, kGUIDefaultFontColor, true);
+  GUI::initText(title_text_, kGameTitle, font, kGUIGameTitleFontSize, kGUIDefaultFontColor, BothAxis);
   title_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.25f);
   // press start text
-  GUI::initText(press_start_text_, kPressStartText, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, true);
+  GUI::initText(press_start_text_, kPressStartText, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
   press_start_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.75f);
   // pause text
-  GUI::initText(pause_text_, kPauseText, font, kGUIPauseTextFontSize, kGUIDefaultFontColor, true);
+  GUI::initText(pause_text_, kPauseText, font, kGUIPauseTextFontSize, kGUIDefaultFontColor, BothAxis);
   pause_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.5f);
 }
 

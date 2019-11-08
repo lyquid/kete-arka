@@ -10,6 +10,7 @@ enum Collisions {
   TopShip, BottomShip, LeftShip, RightShip,
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
+enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default, Current };
 
 // app default settings
 const ExecutionModes  kExecutionMode  = Debug;
@@ -26,7 +27,7 @@ const sf::String  kPauseText      = "Paused";
 const sf::String  kPressStartText = "Press 1 to start";
 const sf::String  kLevelText      = "LEVEL 01";
 const sf::String  kLivesText      = "LIVES 03";
-const sf::String  kScoreText      = "SCORE X";
+const sf::String  kScoreText      = "SCORE ";
 
 // ball default settings
 const float         kBallDefaultRadius        = 5.f;         
@@ -44,17 +45,13 @@ const int           kBrickDefaultColumns      = 12;
 const int           kBrickDefaultRows         = 4;
 
 // GUI/Menu default settings
-const float         kGUIDefaultHeight           = (float) kScreenHeight * 0.03f;
-const float         kGUIDefaultWidth            = (float) kScreenWidth * (1.f / 3.f);
-const sf::Vector2f  kGUIDefaultSize             = sf::Vector2f(kGUIDefaultWidth, kGUIDefaultHeight);
-const float         kGUIDefaultOutlineThickness = -1.f;  
-const sf::Color     kGUIDefaultFillColor        = sf::Color::Black;
-const sf::Color     kGUIDefaultFontColor        = sf::Color::White;
-const sf::Color     kGUIDefaultOutlineColor     = sf::Color::White;
-const int           kGUIGameTitleFontSize       = 60;
-const int           kGUIPauseTextFontSize       = 20;
-const int           kGUIPressStartTextFontSize  = 20;
-const int           kGUITextFontSize            = 15;
+const int       kGUIGameTitleFontSize       = 60;
+const int       kGUIPauseTextFontSize       = 20;
+const int       kGUIPressStartTextFontSize  = 20;
+const int       kGUITextFontSize            = 15;
+const sf::Color kGUIDefaultFontColor        = sf::Color::White;
+const float     kGUIDefaultMargin           = 8.f;
+const float     kGUIDefaultHeight           = kGUIDefaultMargin + (float) kGUIPauseTextFontSize;
 
 // player default setting
 const int kPlayerDefaultLives = 3;

@@ -30,8 +30,10 @@ void Game::handleEvents() {
             case sf::Keyboard::Num1:
               in_title_screen_ = false;
               paused_ = false;
+              player_.reset();
               ball_.reset();
               ship_.resetPosition();
+              gui_.reset();
               initBricks();
               break;
           }
@@ -62,7 +64,7 @@ void Game::init() {
     logger_.write("ERROR: Failed loading font.");
     exit(EXIT_FAILURE);
   } else {
-    gui_.init(font_);
+    gui_.init(font_, &player_);
     logger_.write("Successfully initialized GUI.");
     menu_.init(font_);
     logger_.write("Successfully initialized menu.");
@@ -76,6 +78,7 @@ void Game::initBricks() {
     for (j = 0; j < kBrickDefaultColumns; ++j) {
       bricks_[i][j].setActive(true);
       bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
+      bricks_[i][j].setGui(&gui_);
       bricks_[i][j].setPlayer(&player_);
     }
     start_y = start_y + bricks_[i][j].getSize().y;

@@ -253,9 +253,3 @@ void Ball::reset() {
 float Ball::sumAbs(const float num1, const float num2) {
   return std::abs(num1) + std::abs(num2);
 }
-
-template <typename T> std::string toString(const T &t) { 
-  std::ostringstream oss; 
-  oss << t; 
-  return oss.str();
-}

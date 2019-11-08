@@ -14,12 +14,13 @@ class Player {
   bool isDead();
   int getLives();
   int getScore();
+  void reset();
 
  private:
   void init();
   bool dead_;
   int lives_;
-  int score_;
+  unsigned long long int score_;
 };
 
 #endif  // KETE_ARKA_CLASSES_PLAYER_H_
