@@ -4,7 +4,6 @@
 #include <sstream>
 
 #include "../config.h"
-#include "player.h"
 
 template <typename T> std::string toString(const T &t);
 
@@ -13,9 +12,10 @@ class GUI {
   GUI() {}
   ~GUI() {}
   void draw(sf::RenderWindow &window);
-  void init(const sf::Font &font, Player *ptp);
+  void init(const sf::Font &font);
   void reset();
-  void updateScoreText();
+  void setLivesText(int lives);
+  void setScoreText(unsigned long long int score);
   static void initText( sf::Text              &text, 
                         const sf::String      string_text, 
                         const sf::Font        &font, 
@@ -27,7 +27,6 @@ class GUI {
   sf::Text level_text_;
   sf::Text lives_text_;
   sf::Text score_text_;
-  Player *player_;
 };
 
 #endif  // KETE_ARKA_CLASSES_GUI_H_

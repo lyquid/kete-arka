@@ -16,7 +16,6 @@ void Brick::decreaseResistance(const int decrease_by) {
   if (!resistance_) {
     setActive(false);
     player_->increaseScore(50);
-    gui_->updateScoreText();
   }
 }
 
@@ -110,17 +109,6 @@ bool Brick::isActive() {
 /////////////////////////////////////////////////
 void Brick::setActive(const bool status) {
   active_ = status;
-}
-
-/////////////////////////////////////////////////
-/// @brief Sets the address of the GUI.
-///
-/// @param *ptg GUI's memory address.
-///
-/// Sets the memory address of the GUI.
-/////////////////////////////////////////////////
-void Brick::setGui(GUI *ptg) {
-  gui_ = ptg;
 }
 
 /////////////////////////////////////////////////

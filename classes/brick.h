@@ -2,7 +2,6 @@
 #define KETE_ARKA_CLASSES_BRICK_H_
 
 #include "../config.h"
-#include "gui.h"
 #include "player.h"
 
 class Brick {
@@ -19,7 +18,6 @@ class Brick {
   sf::Vector2f getSize();
   bool isActive();
   void setActive(const bool status);
-  void setGui(GUI *ptg);
   void setPlayer(Player *ptp); // can we make this with a reference instead?
   void setPosition(const sf::Vector2f position);
   void setResistance(const int resistance);
@@ -27,7 +25,6 @@ class Brick {
  private:
   void init();
   bool active_;
-  GUI *gui_;
   Player *player_;
   int resistance_;
   sf::RectangleShape shape_;

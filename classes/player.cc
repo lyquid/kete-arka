@@ -17,6 +17,7 @@ void Player::decreaseLives(int decrease_by) {
   } else {
     lives_ -= decrease_by;
   }
+  gui_->setLivesText(lives_);
 }
 
 /////////////////////////////////////////////////
@@ -28,6 +29,7 @@ void Player::decreaseLives(int decrease_by) {
 /////////////////////////////////////////////////
 void Player::increaseScore(int increase_by) {
   score_ += increase_by;
+  gui_->setScoreText(score_);
 }
 
 /////////////////////////////////////////////////
@@ -47,10 +49,9 @@ bool Player::isDead() {
 /// Sets the dead status to false, the lives to the default 
 /// starting lives and the score to zero.
 /////////////////////////////////////////////////
-void Player::init() {
-  dead_ = false;
-  lives_ = kPlayerDefaultLives;
-  score_ = 0;
+void Player::init(GUI *ptg) {
+  gui_ = ptg;
+  reset();
 }
 
 /////////////////////////////////////////////////
@@ -77,5 +78,7 @@ int Player::getScore() {
 
 ////////////////////////////////////////////////
 void Player::reset() {
-  init();
+  dead_ = false;
+  lives_ = kPlayerDefaultLives;
+  score_ = 0;
 }

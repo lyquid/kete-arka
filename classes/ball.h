@@ -6,24 +6,22 @@
 
 #include "../config.h"
 #include "brick.h"
-#include "gui.h"
 #include "logger.h"
+#include "player.h"
 #include "ship.h"
 
 class Ball {
  public:
-  Ball() {
-    reset();
-  }
+  Ball() {}
   ~Ball() {}
   void draw(sf::RenderWindow &window);
+  void init(Player *ptp);
   void move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]);
   void reset();
 
  private:
   bool checkBrickCollision(Brick bricks[][kBrickDefaultColumns]);
   bool checkBorderCollision();
-  bool checkMachineWins();
   bool checkShipCollision(Ship ship);
   void invertHorizontalDirection(const float variation);
   void invertVerticalDirection(const float variation);
@@ -32,6 +30,7 @@ class Ball {
   float current_radius_;
   sf::Vector2f direction_;
   sf::Vector2f last_position_;
+  Player *player_;
   sf::CircleShape shape_;
   float speed_;
 };

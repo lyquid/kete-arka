@@ -64,21 +64,24 @@ void Game::init() {
     logger_.write("ERROR: Failed loading font.");
     exit(EXIT_FAILURE);
   } else {
-    gui_.init(font_, &player_);
+    gui_.init(font_);
     logger_.write("Successfully initialized GUI.");
     menu_.init(font_);
     logger_.write("Successfully initialized menu.");
+    ball_.init(&player_);
+    logger_.write("Successfully initialized ball.");
+    player_.init(&gui_);
+    logger_.write("Successfully initialized player.");
   }
 }
 
 void Game::initBricks() {
   int i, j;
-  float start_y = 50.f;
+  float start_y = 50.f; // UGLY!
   for (i = 0; i < kBrickDefaultRows; ++i) {
     for (j = 0; j < kBrickDefaultColumns; ++j) {
       bricks_[i][j].setActive(true);
       bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
-      bricks_[i][j].setGui(&gui_);
       bricks_[i][j].setPlayer(&player_);
     }
     start_y = start_y + bricks_[i][j].getSize().y;

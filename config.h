@@ -26,7 +26,7 @@ const sf::String  kGameTitleJ     = "ケテアルカ";
 const sf::String  kPauseText      = "Paused";
 const sf::String  kPressStartText = "Press 1 to start";
 const sf::String  kLevelText      = "LEVEL 01";
-const sf::String  kLivesText      = "LIVES 03";
+const sf::String  kLivesText      = "LIVES ";
 const sf::String  kScoreText      = "SCORE ";
 
 // ball default settings

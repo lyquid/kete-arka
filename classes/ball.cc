@@ -54,17 +54,16 @@ bool Ball::checkBorderCollision() {
     shape_.setPosition(shape_.getPosition().x, current_radius_ + kGUIDefaultHeight + 0.1f);
     collision = true;
   } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
-    // bottom collision (machine wins!)
-    randomizeBounceAngle(Bottom);
-    shape_.setPosition(shape_.getPosition().x, kScreenHeight - current_radius_ - 0.1f);
-    collision = true;
+    // bottom "collision"
+    player_->decreaseLives();
+    if (player_->isDead()) {
+      printf("GAME OVER\n");
+    }
+    reset();
+    /* randomizeBounceAngle(Bottom);
+    shape_.setPosition(shape_.getPosition().x, kScreenHeight - current_radius_ - 0.1f); */
   }
   return collision;
-}
-
-bool Ball::checkMachineWins() {
-  // TODO: check if ball goes beyond kScreenHeight
-  return false;
 }
 
 bool Ball::checkShipCollision(Ship ship) {
@@ -97,6 +96,11 @@ void Ball::draw(sf::RenderWindow &window) {
   window.draw(shape_);
 }
 
+void Ball::init(Player *ptp) {
+  player_ = ptp;
+  reset();
+}
+
 void Ball::invertHorizontalDirection(const float variation) {
   direction_.x = -direction_.x + variation;
 }
@@ -108,9 +112,7 @@ void Ball::invertVerticalDirection(const float variation) {
 void Ball::move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]) {
   float factor = speed_ * delta_time;
   // todo: maybe check everything to prevent the ball bugging
-  if (checkMachineWins()) {
-    // todo: check if ball touches the bottom of the screen
-  } else if (checkBorderCollision()) {
+  if (checkBorderCollision()) {
     // boundary collision
   } else if (checkShipCollision(ship)) {
     // ship collision

@@ -17,19 +17,17 @@ void GUI::draw(sf::RenderWindow &window) {
 /// @brief Initializes the GUI.
 ///
 /// @param font - The sf::Font to be used.
-/// @param ptp - A pointer to the Player.
 ///
 /// Sets everything that needs to be set calling the methods
 /// that need to be called.
 /////////////////////////////////////////////////
-void GUI::init(const sf::Font &font, Player *ptp) {
-  player_ = ptp;
+void GUI::init(const sf::Font &font) {
   // lives
-  initText(lives_text_, kLivesText, font, kGUITextFontSize, kGUIDefaultFontColor);
+  initText(lives_text_, kLivesText + toString(kPlayerDefaultLives), font, kGUITextFontSize, kGUIDefaultFontColor);
   setTextOrigin(lives_text_, TopLeft); // useless but the method looks weird without it
   lives_text_.setPosition(kGUIDefaultMargin, kGUIDefaultMargin);
   // score
-  initText(score_text_, kScoreText + toString(player_->getScore()), font, kGUITextFontSize, kGUIDefaultFontColor);
+  initText(score_text_, kScoreText + toString(0), font, kGUITextFontSize, kGUIDefaultFontColor);
   setTextOrigin(score_text_, Horizontal);
   score_text_.setPosition(kScreenWidth / 2.f, kGUIDefaultMargin);
   // level
@@ -73,8 +71,34 @@ void GUI::initText( sf::Text              &text,
 /////////////////////////////////////////////////
 void GUI::reset() {
   level_text_.setString(kLevelText);
-  lives_text_.setString(kLivesText);
-  updateScoreText();
+  setLivesText(kPlayerDefaultLives);
+  setScoreText(0);
+}
+
+/////////////////////////////////////////////////
+/// @brief Sets the lives text.
+///
+/// @param lives - The lives to be set.
+///
+/// Sets the score text with the lives provided.
+/// Also re-centers the origin of the new lives text.
+/////////////////////////////////////////////////
+void GUI::setLivesText(int lives) {
+  lives_text_.setString(kLivesText + toString(lives));
+  setTextOrigin(lives_text_, Default);
+}
+
+/////////////////////////////////////////////////
+/// @brief Sets the score text.
+///
+/// @param score - The score to be set.
+///
+/// Sets the score text with the score provided.
+/// Also re-centers the origin of the new score text.
+/////////////////////////////////////////////////
+void GUI::setScoreText(unsigned long long int score) {
+  score_text_.setString(kScoreText + toString(score));
+  setTextOrigin(score_text_, Horizontal);
 }
 
 /////////////////////////////////////////////////
@@ -110,17 +134,6 @@ void GUI::setTextOrigin(sf::Text &text, const TextCenterModes mode) {
       // do nothing
       break;
   }
-}
-
-/////////////////////////////////////////////////
-/// @brief Updates the score text.
-///
-/// Updates the score text by reading the current score of the player.
-/// Also re-centers the origin of the new score text.
-/////////////////////////////////////////////////
-void GUI::updateScoreText() {
-  score_text_.setString(kScoreText + toString(player_->getScore()));
-  setTextOrigin(score_text_, Horizontal);
 }
 
 /////////////////////////////////////////////////
