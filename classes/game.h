@@ -6,7 +6,6 @@
 #include "brick.h"
 #include "gui.h"
 #include "logger.h"
-#include "menu.h"
 #include "player.h"
 #include "ship.h"
 
@@ -39,7 +38,6 @@ class Game {
   GUI gui_;
   bool in_title_screen_;
   Logger logger_;
-  Menu menu_;
   bool paused_;
   Player player_;
   bool quit_;

@@ -46,11 +46,11 @@ void Game::handleEvents() {
           switch (event_.key.code) {
             case sf::Keyboard::Escape:
               goToTitle();
-              menu_.setRenderFlashingTextFlag(true);
+              gui_.setRenderFlashingTextFlag(true);
               break;
             case sf::Keyboard::Space:
               paused_ = !paused_;
-              menu_.setRenderFlashingTextFlag(true);
+              gui_.setRenderFlashingTextFlag(true);
               break;
           }
         }
@@ -70,8 +70,6 @@ void Game::init() {
   } else {
     gui_.init(font_);
     logger_.write("Successfully initialized GUI.");
-    menu_.init(font_);
-    logger_.write("Successfully initialized menu.");
     ball_.init(&player_);
     logger_.write("Successfully initialized ball.");
     player_.init(&gui_);
@@ -99,12 +97,12 @@ bool Game::quit() {
 void Game::render() {
   window_.clear();
   if (in_title_screen_) {
-    menu_.drawTitleScreen(window_);
+    gui_.drawTitleScreen(window_);
   } else {
     if (paused_) {
-      menu_.drawPauseScreen(window_);
+      gui_.drawPauseScreen(window_);
     }
-    gui_.draw(window_);
+    gui_.drawInGameGUI(window_);
     ball_.draw(window_);
     ship_.draw(window_);
     drawBricks();
@@ -121,11 +119,11 @@ void Game::update() {
     ball_.move(delta_time, ship_, bricks_);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
      || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-      ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0));
+      ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0.f));
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
      || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-      ship_.move(sf::Vector2f(delta_time * kShipDefaultSpeed, 0));
+      ship_.move(sf::Vector2f(delta_time * kShipDefaultSpeed, 0.f));
     }
   }
 }

@@ -53,8 +53,6 @@
 		<Unit filename="classes/gui.h" />
 		<Unit filename="classes/logger.cc" />
 		<Unit filename="classes/logger.h" />
-		<Unit filename="classes/menu.cc" />
-		<Unit filename="classes/menu.h" />
 		<Unit filename="classes/player.cc" />
 		<Unit filename="classes/player.h" />
 		<Unit filename="classes/ship.cc" />
