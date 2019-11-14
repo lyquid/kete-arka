@@ -22,14 +22,15 @@ class Game {
   void clean();
   void handleEvents();
   void init();
-  bool isPaused();
   bool quit();
   void render();
   void update();
 
  private:
   void drawBricks();
+  void goToTitle();
   void initBricks();
+  bool isPaused();
   Ball ball_;
   Brick bricks_[kBrickDefaultRows][kBrickDefaultColumns];
   sf::Clock clock_;

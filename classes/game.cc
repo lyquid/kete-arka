@@ -15,6 +15,11 @@ void Game::drawBricks() {
   }
 }
 
+void Game::goToTitle() {
+  paused_ = true;
+  in_title_screen_ = true;
+}
+
 void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
@@ -32,7 +37,7 @@ void Game::handleEvents() {
               paused_ = false;
               player_.reset();
               ball_.reset();
-              ship_.resetPosition();
+              ship_.reset();
               gui_.reset();
               initBricks();
               break;
@@ -40,8 +45,7 @@ void Game::handleEvents() {
         } else { // not in menu
           switch (event_.key.code) {
             case sf::Keyboard::Escape:
-              paused_ = true;
-              in_title_screen_ = true;
+              goToTitle();
               menu_.setRenderFlashingTextFlag(true);
               break;
             case sf::Keyboard::Space:
@@ -110,6 +114,9 @@ void Game::render() {
 
 void Game::update() {
   float delta_time = clock_.restart().asSeconds();
+  if(player_.isDead() && !in_title_screen_) {
+    goToTitle();
+  } 
   if (!paused_) {
     ball_.move(delta_time, ship_, bricks_);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 

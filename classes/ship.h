@@ -11,15 +11,16 @@ class Ship {
     init();
   }
   ~Ship() {}
-  void draw(sf::RenderWindow& window);
-  sf::RectangleShape getShipShape();
-  sf::Vector2f getShipSize();
+  void draw(sf::RenderWindow &window);
+  sf::RectangleShape getShape();
+  sf::Vector2f getSize();
   void move(const sf::Vector2f offset);
+  void reset();
   void resetPosition();
 
  private:
   void init();
-  sf::RectangleShape ship_shape_; // maybe rename?
+  sf::RectangleShape shape_;
   float speed_;
 };
 

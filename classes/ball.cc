@@ -56,12 +56,7 @@ bool Ball::checkBorderCollision() {
   } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
     // bottom "collision"
     player_->decreaseLives();
-    if (player_->isDead()) {
-      printf("GAME OVER\n");
-    }
     reset();
-    /* randomizeBounceAngle(Bottom);
-    shape_.setPosition(shape_.getPosition().x, kScreenHeight - current_radius_ - 0.1f); */
   }
   return collision;
 }
@@ -70,10 +65,10 @@ bool Ball::checkShipCollision(Ship ship) {
   bool collision = false;
   float ball_x = shape_.getPosition().x;
   float ball_y = shape_.getPosition().y;
-  float ship_x = ship.getShipShape().getPosition().x;
-  float ship_x_size = ship.getShipSize().x;
-  float ship_y = ship.getShipShape().getPosition().y;
-  if (ship.getShipShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
+  float ship_x = ship.getShape().getPosition().x;
+  float ship_x_size = ship.getSize().x;
+  float ship_y = ship.getShape().getPosition().y;
+  if (ship.getShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
     collision = true;
     if (last_position_.x < ship_x) {
       // left hit
