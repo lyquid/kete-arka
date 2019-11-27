@@ -245,8 +245,8 @@ void Ball::reset() {
   do {  // Get a number between -10 and 10, not including 0.
     random_x_direction = std::rand() % 21 - 10;
   } while (random_x_direction == 0.f);
-  // Take the random number and divide it to make it between -1.0, -0.9, -0.8, ... to 1.0
-  random_x_direction = random_x_direction / 10.f;
+  // Take the random number and divide it to make it between -0.10, -0.09, -0.08, ... to 0.10
+  random_x_direction = random_x_direction / 100.f;
   // We use this displacement to make sure speed is always the same regarding angle
   direction_ = sf::Vector2f(random_x_direction, kBallDefaultDisplacement - std::abs(random_x_direction));
   // Ball's speed_ initialization

@@ -36,7 +36,7 @@ const sf::String  kScoreText        = "SCORE ";
 const float         kBallDefaultRadius        = 5.f;         
 const float         kBallDefaultSpeed         = 400.f;
 const float         kBallDefaultDisplacement  = 1.41f;
-const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidth / 2.f, (float) kScreenHeight * 0.6f);
+const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidth / 2.f, (float) kScreenHeight * 0.7f);
 const sf::Color     kBallDefaultColor         = sf::Color::White;
 
 // brick default settings
