@@ -100,7 +100,7 @@ void Game::init() {
   } else {
     gui_.init(font_);
     logger_.write("Successfully initialized GUI.");
-    ball_.init(&player_);
+    ball_.init(&player_, &ship_);
     logger_.write("Successfully initialized ball.");
     player_.init(&gui_);
     logger_.write("Successfully initialized player.");

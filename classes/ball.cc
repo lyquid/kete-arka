@@ -56,6 +56,7 @@ bool Ball::checkBorderCollision() {
   } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
     // bottom "collision"
     player_->decreaseLives();
+    ship_->reset();
     reset();
   }
   return collision;
@@ -88,11 +89,19 @@ bool Ball::checkShipCollision(Ship ship) {
 }
 
 void Ball::draw(sf::RenderWindow &window) {
-  window.draw(shape_);
+  if (!moving_flag_) {
+    updateFlashFlag();
+    if (ball_flash_flag_) {
+      window.draw(shape_);
+    }
+  } else {
+    window.draw(shape_);
+  }
 }
 
-void Ball::init(Player *ptp) {
+void Ball::init(Player *ptp, Ship *pts) {
   player_ = ptp;
+  ship_ = pts;
   reset();
 }
 
@@ -106,17 +115,21 @@ void Ball::invertVerticalDirection(const float variation) {
 
 void Ball::move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]) {
   float factor = speed_ * delta_time;
-  // todo: maybe check everything to prevent the ball bugging
-  if (checkBorderCollision()) {
-    // boundary collision
-  } else if (checkShipCollision(ship)) {
-    // ship collision
-  } else if (checkBrickCollision(bricks)) {
-    // brick collision
-  }
   last_position_ = shape_.getPosition();
   current_radius_ = shape_.getRadius();
-  shape_.move(direction_.x * factor, direction_.y * factor);
+  if (moving_flag_) {
+    // todo: maybe check everything to prevent the ball bugging
+    if (checkBorderCollision()) {
+      // boundary collision
+    } else if (checkShipCollision(ship)) {
+      // ship collision
+    } else if (checkBrickCollision(bricks)) {
+      // brick collision
+    }
+    shape_.move(direction_.x * factor, direction_.y * factor);
+  } else if (start_clock_.getElapsedTime().asSeconds() > 1.5f) {
+    moving_flag_ = true;
+  }
 }
 
 void Ball::randomizeBounceAngle(const Collisions collision) {
@@ -245,8 +258,20 @@ void Ball::reset() {
   shape_.setPosition(kBallDefaultPosition);
   last_position_ = shape_.getPosition();
   current_radius_ = shape_.getRadius();
+  // Ball start and flash clocks
+  start_clock_.restart();
+  flash_clock_.restart();
+  ball_flash_flag_ = true;
+  moving_flag_ = false;
 }
 
 float Ball::sumAbs(const float num1, const float num2) {
   return std::abs(num1) + std::abs(num2);
+}
+
+void Ball::updateFlashFlag() {
+  if (flash_clock_.getElapsedTime().asSeconds() > 0.15f) {
+    ball_flash_flag_ = !ball_flash_flag_;
+    flash_clock_.restart();
+  }
 }
