@@ -88,9 +88,11 @@ bool Ball::checkShipCollision(Ship ship) {
   return collision; // not doing anything with this right now
 }
 
-void Ball::draw(sf::RenderWindow &window) {
+void Ball::draw(sf::RenderWindow &window, GameStates state) {
   if (!moving_flag_) {
-    updateFlashFlag();
+    if (state == Playing) {
+      updateFlashFlag();
+    }
     if (ball_flash_flag_) {
       window.draw(shape_);
     }

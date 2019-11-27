@@ -14,7 +14,7 @@ class Ball {
  public:
   Ball() {}
   ~Ball() {}
-  void draw(sf::RenderWindow &window);
+  void draw(sf::RenderWindow &window, GameStates state);
   void init(Player *ptp, Ship *pts);
   void move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]);
   void reset();

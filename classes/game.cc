@@ -131,7 +131,7 @@ void Game::render() {
       [[fallthrough]];
     case Playing:
       gui_.drawInGameGUI(window_);
-      ball_.draw(window_);
+      ball_.draw(window_, state_);
       ship_.draw(window_);
       drawBricks();
       break;
