@@ -13,11 +13,13 @@ class GUI {
     render_flashing_text_flag_ = true;
   }
   ~GUI() {}
+  void drawGameOverScreen(sf::RenderWindow &window);
   void drawInGameGUI(sf::RenderWindow &window);
   void drawPauseScreen(sf::RenderWindow &window);
   void drawTitleScreen(sf::RenderWindow &window);
   void init(const sf::Font &font);
   void reset();
+  void setFinalScoreText();
   void setLivesText(const int lives);
   void setScoreText(const unsigned long long int score);
   void setRenderFlashingTextFlag(const bool status);
@@ -32,9 +34,11 @@ class GUI {
  private:
   void checkFlashingTextFlag();
   sf::Clock flashing_text_clock_;
+  sf::Text game_over_text_;
   sf::Text level_text_;
   sf::Text lives_text_;
   sf::Text pause_text_;
+  sf::Text press_any_key_text_;
   sf::Text press_start_text_;
   sf::Text title_text_;
   sf::Text score_text_;

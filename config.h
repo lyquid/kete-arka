@@ -10,6 +10,7 @@ enum Collisions {
   TopShip, BottomShip, LeftShip, RightShip,
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
+enum GameStates { Title, Playing, Paused, GameOver, Quit };
 enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default, Current };
 
 // app default settings
@@ -19,15 +20,17 @@ const int             kScreenHeight   = 768;
 const int             kScreenWidth    = 672;
 
 // app default strings
-const sf::String  kAppName        = "kete-arka";
-const sf::String  kAppVersion     = "0.0";
-const sf::String  kGameTitle      = kAppName;
-const sf::String  kGameTitleJ     = "ケテアルカ";
-const sf::String  kPauseText      = "Paused";
-const sf::String  kPressStartText = "Press 1 to start";
-const sf::String  kLevelText      = "LEVEL 01";
-const sf::String  kLivesText      = "LIVES ";
-const sf::String  kScoreText      = "SCORE ";
+const sf::String  kAppName          = "kete-arka";
+const sf::String  kAppVersion       = "0.0";
+const sf::String  kGameOverText     = "GAME OVER";
+const sf::String  kGameTitle        = kAppName;
+const sf::String  kGameTitleJ       = "ケテアルカ";
+const sf::String  kPauseText        = "Paused";
+const sf::String  kPressAnyKeyText  = "Press any key to continue";
+const sf::String  kPressStartText   = "Press 1 to start";
+const sf::String  kLevelText        = "LEVEL XX";
+const sf::String  kLivesText        = "LIVES ";
+const sf::String  kScoreText        = "SCORE ";
 
 // ball default settings
 const float         kBallDefaultRadius        = 5.f;         
@@ -37,6 +40,7 @@ const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidt
 const sf::Color     kBallDefaultColor         = sf::Color::White;
 
 // brick default settings 
+const float         kBrickDefaultStart        = 80.f;
 const float         kBrickDefaultWidth        = 56.f;
 const float         kBrickDefaultHeight       = 16.f; 
 const sf::Vector2f  kBrickDefaultSize         = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
@@ -45,6 +49,7 @@ const int           kBrickDefaultColumns      = 12;
 const int           kBrickDefaultRows         = 4;
 
 // GUI/Menu default settings
+const int       kGUIGameOverFontSize        = 30;
 const int       kGUIGameTitleFontSize       = 60;
 const int       kGUIPauseTextFontSize       = 20;
 const int       kGUIPressStartTextFontSize  = 20;

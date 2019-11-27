@@ -5,6 +5,10 @@ void Game::clean() {
   logger_.write("Successfully closed window.");
 }
 
+GameStates Game::getGameState() {
+  return state_;
+}
+
 void Game::drawBricks() {
   for (int i = 0; i < kBrickDefaultRows; ++i) {
     for (int j = 0; j < kBrickDefaultColumns; ++j) {
@@ -15,52 +19,78 @@ void Game::drawBricks() {
   }
 }
 
-void Game::goToTitle() {
-  paused_ = true;
-  in_title_screen_ = true;
-}
-
 void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
       case sf::Event::Closed:
-        quit_ = true;
+        state_ = Quit;
         break;
       case sf::Event::KeyPressed:
-        if (in_title_screen_) {
-          switch (event_.key.code) {
-            case sf::Keyboard::Escape:
-              quit_ = true;
-              break;
-            case sf::Keyboard::Num1:
-              in_title_screen_ = false;
-              paused_ = false;
-              player_.reset();
-              ball_.reset();
-              ship_.reset();
-              gui_.reset();
-              initBricks();
-              break;
-          }
-        } else { // not in menu
-          switch (event_.key.code) {
-            case sf::Keyboard::Escape:
-              goToTitle();
-              gui_.setRenderFlashingTextFlag(true);
-              break;
-            case sf::Keyboard::Space:
-              paused_ = !paused_;
-              gui_.setRenderFlashingTextFlag(true);
-              break;
-          }
-        }
+        handleKeyEvents(event_);
         break;
     }
   }
 }
 
+void Game::handleKeyEvents(sf::Event key_event) {
+  switch (state_) {
+    case Title:
+      switch (key_event.key.code) {
+        case sf::Keyboard::Escape:
+          state_ = Quit;
+          break;
+        case sf::Keyboard::Num1:
+          player_.reset();
+          ball_.reset();
+          ship_.reset();
+          gui_.reset();
+          initBricks();
+          state_ = Playing;
+          break;
+      }
+      break;
+    case Playing:
+      switch (key_event.key.code) {
+        case sf::Keyboard::Escape:
+          state_ = Title;
+          gui_.setRenderFlashingTextFlag(true);
+          break;
+        case sf::Keyboard::P:
+        case sf::Keyboard::Pause:
+        case sf::Keyboard::Space:
+          state_ = Paused;
+          gui_.setRenderFlashingTextFlag(true);
+          break;
+      }
+      break;
+    case Paused:
+      switch (key_event.key.code) {
+        case sf::Keyboard::Escape:
+          state_ = Title;
+          gui_.setRenderFlashingTextFlag(true);
+          break;
+        case sf::Keyboard::P:
+        case sf::Keyboard::Pause:
+        case sf::Keyboard::Space:
+          state_ = Playing;
+          gui_.setRenderFlashingTextFlag(true);
+          break;
+      }
+      break;
+    case GameOver:
+      state_ = Title;
+      gui_.setRenderFlashingTextFlag(true);
+      break;
+    case Quit:
+      break;
+  }
+}
+
 void Game::init() {
+  state_ = Title;
+  title_ = kAppName + " - v" + kAppVersion;
   logger_.start();
+  logger_.write("Logger started.");
   window_.create(sf::VideoMode(kScreenWidth, kScreenHeight, 32), title_, sf::Style::Titlebar | sf::Style::Close);
   logger_.write("Successfully created display.");
   window_.setVerticalSyncEnabled(true);
@@ -79,7 +109,7 @@ void Game::init() {
 
 void Game::initBricks() {
   int i, j;
-  float start_y = 50.f; // UGLY!
+  float start_y = kBrickDefaultStart;
   for (i = 0; i < kBrickDefaultRows; ++i) {
     for (j = 0; j < kBrickDefaultColumns; ++j) {
       bricks_[i][j].setActive(true);
@@ -90,40 +120,56 @@ void Game::initBricks() {
   }
 }
 
-bool Game::quit() {
-  return quit_;
-}
-
 void Game::render() {
   window_.clear();
-  if (in_title_screen_) {
-    gui_.drawTitleScreen(window_);
-  } else {
-    if (paused_) {
+  switch (state_) {
+    case Title:
+      gui_.drawTitleScreen(window_);
+      break;
+    case Paused:
       gui_.drawPauseScreen(window_);
-    }
-    gui_.drawInGameGUI(window_);
-    ball_.draw(window_);
-    ship_.draw(window_);
-    drawBricks();
+      [[fallthrough]];
+    case Playing:
+      gui_.drawInGameGUI(window_);
+      ball_.draw(window_);
+      ship_.draw(window_);
+      drawBricks();
+      break;
+    case GameOver:
+      gui_.drawGameOverScreen(window_);
+      break;
+    case Quit:
+      break;
   }
   window_.display();
 }
 
 void Game::update() {
   float delta_time = clock_.restart().asSeconds();
-  if(player_.isDead() && !in_title_screen_) {
-    goToTitle();
-  } 
-  if (!paused_) {
-    ball_.move(delta_time, ship_, bricks_);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
-     || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-      ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0.f));
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
-     || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-      ship_.move(sf::Vector2f(delta_time * kShipDefaultSpeed, 0.f));
-    }
+  switch (state_) {
+    case Title:
+      break;
+    case Playing:
+      if (player_.isDead()) {
+        gui_.setFinalScoreText();
+        state_ = GameOver;
+      } else {
+        ball_.move(delta_time, ship_, bricks_);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
+         || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+          ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0.f));
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
+         || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+          ship_.move(sf::Vector2f(delta_time * kShipDefaultSpeed, 0.f));
+        }
+      }
+      break;
+    case Paused:
+      break;
+    case GameOver:
+      break;
+    case Quit:
+      break;
   }
 }

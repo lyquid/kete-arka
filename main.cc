@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
   game = new Game();
   game->init();
 
-  while (!game->quit()) {
+  while (game->getGameState() != Quit) {
     game->handleEvents();
     game->update();
     game->render();

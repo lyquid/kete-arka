@@ -11,23 +11,18 @@
 
 class Game {
  public:
-  Game() {
-    in_title_screen_ = true;
-    paused_ = true;
-    quit_ = false;
-    title_ = kAppName + " - v" + kAppVersion;
-  }
+  Game() {}
   ~Game() {}
   void clean();
+  GameStates getGameState();
   void handleEvents();
   void init();
-  bool quit();
   void render();
   void update();
 
  private:
   void drawBricks();
-  void goToTitle();
+  void handleKeyEvents(sf::Event key_event);
   void initBricks();
   bool isPaused();
   Ball ball_;
@@ -36,12 +31,10 @@ class Game {
   sf::Event event_;
   sf::Font font_;
   GUI gui_;
-  bool in_title_screen_;
   Logger logger_;
-  bool paused_;
   Player player_;
-  bool quit_;
   Ship ship_;
+  GameStates state_;
   sf::String title_;
   sf::RenderWindow window_;
 };
