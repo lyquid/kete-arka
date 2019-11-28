@@ -7,7 +7,7 @@
 /// If it's more than 0.7 seconds, inverts the flag for the
 /// flashing text and resets the clock.
 /////////////////////////////////////////////////
-void GUI::checkFlashingTextFlag(){
+void GUI::updateFlashingTextFlag(){
   if (flashing_text_clock_.getElapsedTime().asSeconds() > 0.7f) {
     render_flashing_text_flag_ = !render_flashing_text_flag_;
     flashing_text_clock_.restart();
@@ -22,9 +22,9 @@ void GUI::checkFlashingTextFlag(){
 /// Draws the game over screen to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
 void GUI::drawGameOverScreen(sf::RenderWindow &window) {
-  checkFlashingTextFlag();
   window.draw(game_over_text_);
   window.draw(score_text_);
+  updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
     window.draw(press_any_key_text_);
   }
@@ -44,6 +44,20 @@ void GUI::drawInGameGUI(sf::RenderWindow &window) {
 }
 
 /////////////////////////////////////////////////
+/// @brief Draws the menu to the specified sf::RenderWindow.
+///
+/// @param window - The sf::RenderWindow to draw the menu on.
+///
+/// Draws the menu to the specified sf::RenderWindow.
+/////////////////////////////////////////////////
+void GUI::drawMenu(sf::RenderWindow &window) {
+  window.draw(title_text_);
+  window.draw(menu_start_text_);
+  window.draw(menu_level_text_);
+  window.draw(menu_quit_text_);
+}
+
+/////////////////////////////////////////////////
 /// @brief Draws the pause text.
 ///
 /// @param window - The sf::RenderWindow to render the "pause" text on.
@@ -51,7 +65,7 @@ void GUI::drawInGameGUI(sf::RenderWindow &window) {
 /// Draws the pause text on the given RenderWindow.
 /////////////////////////////////////////////////
 void GUI::drawPauseScreen(sf::RenderWindow &window) {
-  checkFlashingTextFlag();
+  updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
     window.draw(pause_text_);
   }
@@ -62,13 +76,13 @@ void GUI::drawPauseScreen(sf::RenderWindow &window) {
 ///
 /// @param window - The sf::RenderWindow to render the texts on.
 ///
-/// Calls checkFlashingTextFlag before drawing
+/// Calls updateFlashingTextFlag before drawing
 /// the game's main title and, if needed, the "press start"
 /// text on the given RenderWindow.
 /////////////////////////////////////////////////
 void GUI::drawTitleScreen(sf::RenderWindow &window) {
-  checkFlashingTextFlag();
   window.draw(title_text_);
+  updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
     window.draw(press_start_text_);
   }
@@ -108,8 +122,17 @@ void GUI::init(const sf::Font &font) {
   initText(game_over_text_, kGameOverText, font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
   game_over_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.33f);
   // press any key
-  initText(press_any_key_text_, kPressAnyKeyText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
+  initText(press_any_key_text_, kContinueText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
   press_any_key_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.75f);
+  // menu level selection
+  initText(menu_level_text_, kMenuLevelText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor, Horizontal);
+  menu_level_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.66f + kGUIMenuItemFontSize * 2);
+  // menu start
+  initText(menu_start_text_, kMenuStartText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor);
+  menu_start_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4, kScreenHeight * 0.66f);
+  // menu exit
+  initText(menu_quit_text_, kMenuQuitText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor);
+  menu_quit_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4, kScreenHeight * 0.66f + kGUIMenuItemFontSize * 4);
 }
 
 /////////////////////////////////////////////////

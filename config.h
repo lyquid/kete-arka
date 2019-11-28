@@ -10,7 +10,7 @@ enum Collisions {
   TopShip, BottomShip, LeftShip, RightShip,
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
-enum GameStates { Title, Playing, Paused, GameOver, Quit };
+enum GameStates { Title, Menu, Playing, Paused, GameOver, Quit };
 enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default, Current };
 
 // app default settings
@@ -20,17 +20,20 @@ const int             kScreenHeight   = 768;
 const int             kScreenWidth    = 672;
 
 // app default strings
-const sf::String  kAppName          = "kete-arka";
-const sf::String  kAppVersion       = "0.0";
-const sf::String  kGameOverText     = "GAME OVER";
-const sf::String  kGameTitle        = kAppName;
-const sf::String  kGameTitleJ       = "ケテアルカ";
-const sf::String  kPauseText        = "Paused";
-const sf::String  kPressAnyKeyText  = "Press any key to continue";
-const sf::String  kPressStartText   = "Press 1 to start";
-const sf::String  kLevelText        = "LEVEL XX";
-const sf::String  kLivesText        = "LIVES ";
-const sf::String  kScoreText        = "SCORE ";
+const sf::String  kAppName        = "kete-arka";
+const sf::String  kAppVersion     = "0.0";
+const sf::String  kGameOverText   = "GAME OVER";
+const sf::String  kGameTitle      = kAppName;
+const sf::String  kGameTitleJ     = "ケテアルカ";
+const sf::String  kPauseText      = "Paused";
+const sf::String  kContinueText   = "Press any key to continue";
+const sf::String  kPressStartText = "Press any key to start";
+const sf::String  kLevelText      = "LEVEL XX";
+const sf::String  kLivesText      = "LIVES ";
+const sf::String  kScoreText      = "SCORE ";
+const sf::String  kMenuStartText  = "(1) Start";
+const sf::String  kMenuLevelText  = "(2) Level selection";
+const sf::String  kMenuQuitText   = "(Q) Quit";
 
 // ball default settings
 const float         kBallDefaultRadius        = 5.f;         
@@ -51,6 +54,7 @@ const int           kBrickDefaultRows         = 4;
 // GUI/Menu default settings
 const int       kGUIGameOverFontSize        = 30;
 const int       kGUIGameTitleFontSize       = 60;
+const int       kGUIMenuItemFontSize        = 20;
 const int       kGUIPauseTextFontSize       = 20;
 const int       kGUIPressStartTextFontSize  = 20;
 const int       kGUITextFontSize            = 15;

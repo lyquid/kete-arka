@@ -15,6 +15,7 @@ class GUI {
   ~GUI() {}
   void drawGameOverScreen(sf::RenderWindow &window);
   void drawInGameGUI(sf::RenderWindow &window);
+  void drawMenu(sf::RenderWindow &window);
   void drawPauseScreen(sf::RenderWindow &window);
   void drawTitleScreen(sf::RenderWindow &window);
   void init(const sf::Font &font);
@@ -32,17 +33,23 @@ class GUI {
   static void setTextOrigin(sf::Text &text, const TextCenterModes mode);
 
  private:
-  void checkFlashingTextFlag();
+  void updateFlashingTextFlag();
+  bool render_flashing_text_flag_;
   sf::Clock flashing_text_clock_;
+  // main and flow
   sf::Text game_over_text_;
-  sf::Text level_text_;
-  sf::Text lives_text_;
   sf::Text pause_text_;
   sf::Text press_any_key_text_;
   sf::Text press_start_text_;
   sf::Text title_text_;
+  // menu items
+  sf::Text menu_start_text_;
+  sf::Text menu_level_text_;
+  sf::Text menu_quit_text_;
+  // in game gui 
+  sf::Text level_text_;
+  sf::Text lives_text_;
   sf::Text score_text_;
-  bool render_flashing_text_flag_;
 };
 
 #endif  // KETE_ARKA_CLASSES_GUI_H_

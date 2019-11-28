@@ -39,6 +39,17 @@ void Game::handleKeyEvents(sf::Event key_event) {
         case sf::Keyboard::Escape:
           state_ = Quit;
           break;
+        default:
+          state_ = Menu;
+          break;
+      }
+      break;
+    case Menu:
+      switch (key_event.key.code) {
+        case sf::Keyboard::Escape:
+        case sf::Keyboard::Q:
+          state_ = Quit;
+          break;
         case sf::Keyboard::Num1:
           player_.reset();
           ball_.reset();
@@ -52,8 +63,7 @@ void Game::handleKeyEvents(sf::Event key_event) {
     case Playing:
       switch (key_event.key.code) {
         case sf::Keyboard::Escape:
-          state_ = Title;
-          gui_.setRenderFlashingTextFlag(true);
+          state_ = Menu;
           break;
         case sf::Keyboard::P:
         case sf::Keyboard::Pause:
@@ -66,20 +76,18 @@ void Game::handleKeyEvents(sf::Event key_event) {
     case Paused:
       switch (key_event.key.code) {
         case sf::Keyboard::Escape:
-          state_ = Title;
-          gui_.setRenderFlashingTextFlag(true);
+        case sf::Keyboard::Q:
+          state_ = Menu;
           break;
         case sf::Keyboard::P:
         case sf::Keyboard::Pause:
         case sf::Keyboard::Space:
           state_ = Playing;
-          gui_.setRenderFlashingTextFlag(true);
           break;
       }
       break;
     case GameOver:
-      state_ = Title;
-      gui_.setRenderFlashingTextFlag(true);
+      state_ = Menu;
       break;
     case Quit:
       break;
@@ -126,6 +134,9 @@ void Game::render() {
     case Title:
       gui_.drawTitleScreen(window_);
       break;
+    case Menu:
+      gui_.drawMenu(window_);
+      break;
     case Paused:
       gui_.drawPauseScreen(window_);
       [[fallthrough]];
@@ -147,12 +158,11 @@ void Game::render() {
 void Game::update() {
   float delta_time = clock_.restart().asSeconds();
   switch (state_) {
-    case Title:
-      break;
     case Playing:
       if (player_.isDead()) {
-        gui_.setFinalScoreText();
         state_ = GameOver;
+        gui_.setRenderFlashingTextFlag(true);
+        gui_.setFinalScoreText();
       } else {
         ball_.move(delta_time, ship_, bricks_);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
@@ -164,12 +174,6 @@ void Game::update() {
           ship_.move(sf::Vector2f(delta_time * kShipDefaultSpeed, 0.f));
         }
       }
-      break;
-    case Paused:
-      break;
-    case GameOver:
-      break;
-    case Quit:
       break;
   }
 }
