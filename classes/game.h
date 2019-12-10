@@ -3,8 +3,8 @@
 
 #include "../config.h"
 #include "ball.h"
-#include "brick.h"
 #include "gui.h"
+#include "level.h"
 #include "logger.h"
 #include "player.h"
 #include "ship.h"
@@ -21,16 +21,16 @@ class Game {
   void update();
 
  private:
-  void drawBricks();
-  void handleKeyEvents(sf::Event key_event);
-  void initBricks();
+  void handleKeyEvents(sf::Event key_event); // maybe const?
   bool isPaused();
+  bool loadLevel(const int num_lvl);
   Ball ball_;
-  Brick bricks_[kBrickDefaultRows][kBrickDefaultColumns];
   sf::Clock clock_;
   sf::Event event_;
   sf::Font font_;
   GUI gui_;
+  Level game_levels_[kTotalLevels];
+  Level *current_level_;
   Logger logger_;
   Player player_;
   Ship ship_;

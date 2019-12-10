@@ -9,16 +9,6 @@ GameStates Game::getGameState() {
   return state_;
 }
 
-void Game::drawBricks() {
-  for (int i = 0; i < kBrickDefaultRows; ++i) {
-    for (int j = 0; j < kBrickDefaultColumns; ++j) {
-      if (bricks_[i][j].isActive()) {
-        bricks_[i][j].draw(window_);
-      }
-    }
-  }
-}
-
 void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
@@ -51,12 +41,13 @@ void Game::handleKeyEvents(sf::Event key_event) {
           state_ = Quit;
           break;
         case sf::Keyboard::Num1:
+          state_ = Playing;
           player_.reset();
           ball_.reset();
           ship_.reset();
           gui_.reset();
-          initBricks();
-          state_ = Playing;
+          loadLevel(1) ? logger_.write("Successfully loaded level 1.") 
+                       : logger_.write("ERROR: Failed loading level number 1.");
           break;
       }
       break;
@@ -96,9 +87,10 @@ void Game::handleKeyEvents(sf::Event key_event) {
 
 void Game::init() {
   state_ = Title;
-  title_ = kAppName + " - v" + kAppVersion;
   logger_.start();
   logger_.write("Logger started.");
+  title_ = kAppName + " - v" + kAppVersion;
+  logger_.write(title_);
   window_.create(sf::VideoMode(kScreenWidth, kScreenHeight, 32), title_, sf::Style::Titlebar | sf::Style::Close);
   logger_.write("Successfully created display.");
   window_.setVerticalSyncEnabled(true);
@@ -112,20 +104,22 @@ void Game::init() {
     logger_.write("Successfully initialized ball.");
     player_.init(&gui_);
     logger_.write("Successfully initialized player.");
+    Level::setLevelsNumbers(game_levels_);
+    logger_.write("Successfully set levels' numbers.");
+    current_level_ = NULL;
   }
 }
 
-void Game::initBricks() {
-  int i, j;
-  float start_y = kBrickDefaultStart;
-  for (i = 0; i < kBrickDefaultRows; ++i) {
-    for (j = 0; j < kBrickDefaultColumns; ++j) {
-      bricks_[i][j].setActive(true);
-      bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
-      bricks_[i][j].setPlayer(&player_);
+bool Game::loadLevel(const int num_lvl) {
+  bool found = false;
+  for (int i = 0; i < kTotalLevels && !found; ++i) {
+    if (game_levels_[i].getLevelNumber() == num_lvl) {
+      found = true;
+      current_level_ = &game_levels_[i];
+      current_level_->init(&player_);
     }
-    start_y = start_y + bricks_[i][j].getSize().y;
   }
+  return found;
 }
 
 void Game::render() {
@@ -144,7 +138,7 @@ void Game::render() {
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
       ship_.draw(window_);
-      drawBricks();
+      current_level_->draw(window_);
       break;
     case GameOver:
       gui_.drawGameOverScreen(window_);
@@ -164,7 +158,7 @@ void Game::update() {
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText();
       } else {
-        ball_.move(delta_time, ship_, bricks_);
+        ball_.move(delta_time, ship_, current_level_->getBricks());
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
          || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
           ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0.f));

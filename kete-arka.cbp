@@ -13,6 +13,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
+					<Add directory="classes" />
 				</Compiler>
 				<Linker>
 					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics-d.a" />
@@ -27,6 +29,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include" />
+					<Add directory="classes" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -51,6 +55,8 @@
 		<Unit filename="classes/game.h" />
 		<Unit filename="classes/gui.cc" />
 		<Unit filename="classes/gui.h" />
+		<Unit filename="classes/level.cc" />
+		<Unit filename="classes/level.h" />
 		<Unit filename="classes/logger.cc" />
 		<Unit filename="classes/logger.h" />
 		<Unit filename="classes/player.cc" />

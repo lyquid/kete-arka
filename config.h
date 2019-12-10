@@ -62,6 +62,9 @@ const sf::Color kGUIDefaultFontColor        = sf::Color::White;
 const float     kGUIDefaultMargin           = 8.f;
 const float     kGUIDefaultHeight           = kGUIDefaultMargin + (float) kGUIPauseTextFontSize;
 
+// level default settings
+const int kTotalLevels = 33;
+
 // player default setting
 const int kPlayerDefaultLives = 3;
 
