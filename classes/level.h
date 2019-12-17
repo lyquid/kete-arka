@@ -3,7 +3,8 @@
 
 #include "../config.h"
 #include "brick.h"
-#include "player.h"
+
+class Player; 
 
 class Level {
  public:
@@ -11,18 +12,20 @@ class Level {
   ~Level() {}
   void draw(sf::RenderWindow &window);
   Brick (*getBricks())[kBrickDefaultColumns];
+  sf::String getLevelName();
   int getLevelNumber();
   void init(Player *ptp);
   void initBricks(Player *ptp);
   bool isCompleted();
-  int setLevelNumber(const int num_lvl);
-  static void setLevelsNumbers(Level *ptl);
+  void setLevelName(const sf::String name);
+  void setLevelNumber(const int num_lvl);
 
  private:
   Brick bricks_[kBrickDefaultRows][kBrickDefaultColumns];
   int bricks_remaining_;
   bool completed_;
-  int lvl_number_;
+  sf::String name_;
+  int number_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

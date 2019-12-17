@@ -29,6 +29,17 @@ Brick (*Level::getBricks())[kBrickDefaultColumns] {
 }
 
 /////////////////////////////////////////////////
+/// @brief Returns the level's name.
+///
+/// @return - A sf::String representing the level's name.
+///
+/// A sf::String representing the level's name.
+/////////////////////////////////////////////////
+sf::String Level::getLevelName() {
+  return name_;
+}
+
+/////////////////////////////////////////////////
 /// @brief Returns the level's number.
 ///
 /// @return - An integer representing the level's number.
@@ -36,7 +47,7 @@ Brick (*Level::getBricks())[kBrickDefaultColumns] {
 /// An integer representing the level's number.
 /////////////////////////////////////////////////
 int Level::getLevelNumber() {
-  return lvl_number_;
+  return number_;
 }
 
 /////////////////////////////////////////////////
@@ -86,6 +97,17 @@ bool Level::isCompleted() {
 }
 
 /////////////////////////////////////////////////
+/// @brief Sets the level's name.
+///
+/// @param name - An sf::String to be set as the level name.
+///
+/// Sets the level's name.
+/////////////////////////////////////////////////
+void Level::setLevelName(const sf::String name) {
+  name_ = name;
+}
+
+/////////////////////////////////////////////////
 /// @brief Sets the level's number.
 ///
 /// @param num_lvl - An integer to be set as the level number.
@@ -93,20 +115,6 @@ bool Level::isCompleted() {
 /// @return The integer supplied.
 /// Sets the level's number.
 /////////////////////////////////////////////////
-int Level::setLevelNumber(const int num_lvl) {
-  lvl_number_ = num_lvl;
-  return lvl_number_;
-}
-
-/////////////////////////////////////////////////
-/// @brief Set the level number for all levels.
-///
-/// @param ptl - A pointer to the array of levels.
-///
-/// TODO: a lot of things
-/////////////////////////////////////////////////
-void Level::setLevelsNumbers(Level *ptl) {
-  for (int i = 0; i < kTotalLevels; ++i) {
-    ptl[i].setLevelNumber(i + 1);
-  } 
+void Level::setLevelNumber(const int num_lvl) {
+  number_ = num_lvl;
 }

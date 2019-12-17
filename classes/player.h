@@ -8,10 +8,10 @@ class Player {
  public:
   Player() {}
   ~Player() {}
-  void decreaseLives(int decrease_by = 1);
+  void decreaseLives(const int decrease_by = 1);
   int getLives();
   int getScore();
-  void increaseScore(int increase_by);
+  void increaseScore(const int increase_by);
   void init(GUI *ptg);
   bool isDead();
   void reset();
@@ -23,4 +23,4 @@ class Player {
   unsigned long long int score_;
 };
 
-#endif  // KETE_ARKA_CLASSES_PLAYER_H_
+#endif // KETE_ARKA_CLASSES_PLAYER_H_

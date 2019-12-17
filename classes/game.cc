@@ -2,7 +2,7 @@
 
 void Game::clean() {
   window_.close();
-  logger_.write("Successfully closed window.");
+  logger_.write("Successfully closed display window.");
 }
 
 GameStates Game::getGameState() {
@@ -22,7 +22,7 @@ void Game::handleEvents() {
   }
 }
 
-void Game::handleKeyEvents(sf::Event key_event) {
+void Game::handleKeyEvents(const sf::Event key_event) {
   switch (state_) {
     case Title:
       switch (key_event.key.code) {
@@ -46,8 +46,18 @@ void Game::handleKeyEvents(sf::Event key_event) {
           ball_.reset();
           ship_.reset();
           gui_.reset();
-          loadLevel(1) ? logger_.write("Successfully loaded level 1.") 
+          loadLevel(1) ? logger_.write("Successfully loaded level 1.")
                        : logger_.write("ERROR: Failed loading level number 1.");
+          break;
+        case sf::Keyboard::Num2:
+          state_ = LevelSelection;
+      }
+      break;
+    case LevelSelection:
+      switch (key_event.key.code) {
+        case sf::Keyboard::Escape:
+        case sf::Keyboard::Q:
+          state_ = Menu;
           break;
       }
       break;
@@ -88,25 +98,36 @@ void Game::handleKeyEvents(sf::Event key_event) {
 void Game::init() {
   state_ = Title;
   logger_.start();
-  logger_.write("Logger started.");
-  title_ = kAppName + " - v" + kAppVersion;
-  logger_.write(title_);
+  title_ = kAppName + " v" + kAppVersion;
+  logger_.write(title_ + " started.");
   window_.create(sf::VideoMode(kScreenWidth, kScreenHeight, 32), title_, sf::Style::Titlebar | sf::Style::Close);
-  logger_.write("Successfully created display.");
+  logger_.write("Successfully created display window.");
   window_.setVerticalSyncEnabled(true);
   if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
     logger_.write("ERROR: Failed loading font.");
     exit(EXIT_FAILURE);
   } else {
+    current_level_ = NULL;
+    initLevelsMenu();
+    logger_.write("Successfully initialized levels menu.");
     gui_.init(font_);
     logger_.write("Successfully initialized GUI.");
     ball_.init(&player_, &ship_);
     logger_.write("Successfully initialized ball.");
     player_.init(&gui_);
     logger_.write("Successfully initialized player.");
-    Level::setLevelsNumbers(game_levels_);
-    logger_.write("Successfully set levels' numbers.");
-    current_level_ = NULL;
+  }
+}
+
+void Game::initLevelsMenu() {
+  for (int i = 0; i < kTotalLevels; ++i) {
+    game_levels_[i].setLevelNumber(i + 1);
+    game_levels_[i].setLevelName("prueba_lvl_" + toString(game_levels_[i].getLevelNumber()));
+    if (game_levels_[i].getLevelNumber() < 10) {
+      gui_.setLevelStrings(i, "0" + toString(game_levels_[i].getLevelNumber()) + " - " + game_levels_[i].getLevelName());
+    } else {
+      gui_.setLevelStrings(i, toString(game_levels_[i].getLevelNumber()) + " - " + game_levels_[i].getLevelName());
+    }
   }
 }
 
@@ -130,6 +151,9 @@ void Game::render() {
       break;
     case Menu:
       gui_.drawMenu(window_);
+      break;
+    case LevelSelection:
+      gui_.drawLevelSelection(window_);
       break;
     case Paused:
       gui_.drawPauseScreen(window_);

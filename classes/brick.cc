@@ -5,9 +5,9 @@
 ///
 /// @param decrease_by The amount to be decreased by.
 ///
-/// Decreases the resistance of the brick by the amount specified. 
-/// If no amount is specified, decreases the resistance by 1. 
-/// If resistance equals 0, sets the brick inactive, increases 
+/// Decreases the resistance of the brick by the amount specified.
+/// If no amount is specified, decreases the resistance by 1.
+/// If resistance equals 0, sets the brick inactive, increases
 /// the player's score and updates the score text.
 /// Note that resistance cannot be decreased below 0.
 /////////////////////////////////////////////////
@@ -77,7 +77,7 @@ sf::Vector2f Brick::getSize() {
 /////////////////////////////////////////////////
 /// @brief Initializes the brick's properties.
 ///
-/// Sets the fill color, outline thickness, outline color and size to their 
+/// Sets the fill color, outline thickness, outline color and size to their
 /// default values. The resistance is set to 1 and activates the brick.
 /////////////////////////////////////////////////
 void Brick::init() {

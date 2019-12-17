@@ -10,7 +10,7 @@
 /// If lives equals 0, sets the player dead.
 /// Note that lives cannot be decreased below 0.
 /////////////////////////////////////////////////
-void Player::decreaseLives(int decrease_by) {
+void Player::decreaseLives(const int decrease_by) {
   if (lives_ - decrease_by <= 0) {
     lives_ = 0;
     dead_ = true;
@@ -27,7 +27,7 @@ void Player::decreaseLives(int decrease_by) {
 ///
 /// Increases the score of the player by the amount specified. 
 /////////////////////////////////////////////////
-void Player::increaseScore(int increase_by) {
+void Player::increaseScore(const int increase_by) {
   score_ += increase_by;
   gui_->setScoreText(score_);
 }

@@ -23,7 +23,7 @@ void GUI::updateFlashingTextFlag(){
 /////////////////////////////////////////////////
 void GUI::drawGameOverScreen(sf::RenderWindow &window) {
   window.draw(game_over_text_);
-  window.draw(score_text_);
+  window.draw(gui_score_text_);
   updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
     window.draw(press_any_key_text_);
@@ -38,9 +38,23 @@ void GUI::drawGameOverScreen(sf::RenderWindow &window) {
 /// Draws the GUI to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
 void GUI::drawInGameGUI(sf::RenderWindow &window) {
-  window.draw(lives_text_);
-  window.draw(score_text_);
-  window.draw(level_text_);
+  window.draw(gui_lives_text_);
+  window.draw(gui_score_text_);
+  window.draw(gui_level_text_);
+}
+
+/////////////////////////////////////////////////
+/// @brief Draws the level selection menu to the specified sf::RenderWindow.
+///
+/// @param window - The sf::RenderWindow to draw the level selection menu on.
+///
+/// Draws the level selection menu to the specified sf::RenderWindow.
+/////////////////////////////////////////////////
+void GUI::drawLevelSelection(sf::RenderWindow &window) {
+  window.draw(level_select_title_text_);
+  for (int i = 0; i < kTotalLevels; ++i) {
+    window.draw(level_info_[i]);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -102,37 +116,61 @@ void GUI::drawTitleScreen(sf::RenderWindow &window) {
 void GUI::init(const sf::Font &font) {
   // main title
   initText(title_text_, kGameTitle, font, kGUIGameTitleFontSize, kGUIDefaultFontColor, BothAxis);
-  title_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.25f);
+  title_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.25f);
   // press start
   initText(press_start_text_, kPressStartText, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
-  press_start_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.75f);
+  press_start_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.75f);
   // pause
   initText(pause_text_, kPauseText, font, kGUIPauseTextFontSize, kGUIDefaultFontColor, BothAxis);
-  pause_text_.setPosition(kScreenWidth / 2.f, kScreenHeight / 2.f);
-  // lives
-  initText(lives_text_, kLivesText + toString(kPlayerDefaultLives), font, kGUITextFontSize, kGUIDefaultFontColor, TopLeft);
-  lives_text_.setPosition(kGUIDefaultMargin, kGUIDefaultMargin);
-  // score
-  initText(score_text_, kScoreText + toString(0), font, kGUITextFontSize, kGUIDefaultFontColor, Horizontal);
-  score_text_.setPosition(kScreenWidth / 2.f, kGUIDefaultMargin);
-  // level
-  initText(level_text_, kLevelText, font, kGUITextFontSize, kGUIDefaultFontColor, TopRight);
-  level_text_.setPosition(kScreenWidth - kGUIDefaultMargin, kGUIDefaultMargin);
+  pause_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight / 2.f);
   // game over
   initText(game_over_text_, kGameOverText, font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
-  game_over_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.33f);
+  game_over_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.33f);
   // press any key
   initText(press_any_key_text_, kContinueText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
-  press_any_key_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.75f);
-  // menu level selection
+  press_any_key_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.75f);
+  // MENU - level selection
   initText(menu_level_text_, kMenuLevelText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor, Horizontal);
-  menu_level_text_.setPosition(kScreenWidth / 2.f, kScreenHeight * 0.66f + kGUIMenuItemFontSize * 2);
-  // menu start
+  menu_level_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 2.f);
+  // MENU - start
   initText(menu_start_text_, kMenuStartText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor);
-  menu_start_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4, kScreenHeight * 0.66f);
-  // menu exit
+  menu_start_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, (float)kScreenHeight * 0.66f);
+  // MENU - exit
   initText(menu_quit_text_, kMenuQuitText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor);
-  menu_quit_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4, kScreenHeight * 0.66f + kGUIMenuItemFontSize * 4);
+  menu_quit_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 4.f);
+  // GUI - lives
+  initText(gui_lives_text_, kGUILivesText + toString(kPlayerDefaultLives), font, kGUITextFontSize, kGUIDefaultFontColor, TopLeft);
+  gui_lives_text_.setPosition(kGUIDefaultMargin, kGUIDefaultMargin);
+  // GUI - score
+  initText(gui_score_text_, kGUIScoreText + toString(0), font, kGUITextFontSize, kGUIDefaultFontColor, Horizontal);
+  gui_score_text_.setPosition((float)kScreenWidth / 2.f, kGUIDefaultMargin);
+  // GUI - level
+  initText(gui_level_text_, kGUILevelText, font, kGUITextFontSize, kGUIDefaultFontColor, TopRight);
+  gui_level_text_.setPosition((float)kScreenWidth - kGUIDefaultMargin, kGUIDefaultMargin);
+  // levels list
+  initLevelsList(font);
+}
+
+/////////////////////////////////////////////////
+/// @brief Initializes the level selection list.
+///
+/// @param font - The sf::Font to be used.
+///
+/// Initializes and sets the position of the texts for 
+/// the level selection screen.
+///
+/// @todo: Fix the bug with the position of the texts.
+/////////////////////////////////////////////////
+void GUI::initLevelsList(const sf::Font &font) {
+  const int x = kScreenWidth / 2;
+  int y = kScreenHeight * 0.1f;
+  initText(level_select_title_text_, kLevelSelectText, font, kGUILevelSelectFontSize, kGUIDefaultFontColor, BothAxis);
+  level_select_title_text_.setPosition(x, y);
+  for (int i = 0; i < kTotalLevels; ++i) {
+    y = (kScreenHeight * 0.15f) + (kGUITextFontSize * (i + 1)) + (8 * i);
+    initText(level_info_[i], level_info_strings_[i], font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
+    level_info_[i].setPosition(x, y);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -170,9 +208,9 @@ void GUI::initText( sf::Text              &text,
 /////////////////////////////////////////////////
 void GUI::reset() {
   setLivesText(kPlayerDefaultLives);
-  score_text_.setCharacterSize(kGUITextFontSize);
+  gui_score_text_.setCharacterSize(kGUITextFontSize);
   setScoreText(0);
-  score_text_.setPosition(kScreenWidth / 2.f, kGUIDefaultMargin);
+  gui_score_text_.setPosition(kScreenWidth / 2.f, kGUIDefaultMargin);
 }
 
 /////////////////////////////////////////////////
@@ -182,35 +220,50 @@ void GUI::reset() {
 /// and the text position to the middle of the screen.
 /////////////////////////////////////////////////
 void GUI::setFinalScoreText() {
-  score_text_.setCharacterSize(kGUIPressStartTextFontSize);
-  setTextOrigin(score_text_, BothAxis);
-  score_text_.setPosition(kScreenWidth / 2.f, kScreenHeight / 2.f);
+  gui_score_text_.setCharacterSize(kGUIPressStartTextFontSize);
+  setTextOrigin(gui_score_text_, BothAxis);
+  gui_score_text_.setPosition(kScreenWidth / 2, kScreenHeight / 2);
+}
+
+/////////////////////////////////////////////////
+/// @brief Sets level info strings into local array level_info_strings_.
+///
+/// @param lvl_position - The position (int) of the level in the array.
+/// @param lvl_info_string - The sf::String containing the level info.
+///
+/// Sets level info strings into local array level_info_strings_, which 
+/// is later used for creating the menu selection list.
+/// The position is usually the level number minus 1 and the string is 
+/// usually the number and name of the level combined (ie. "01 - first_lvl").
+/////////////////////////////////////////////////
+void GUI::setLevelStrings(const int lvl_position, const sf::String lvl_info_string) {
+  level_info_strings_[lvl_position] = lvl_info_string;
 }
 
 /////////////////////////////////////////////////
 /// @brief Sets the lives text.
 ///
-/// @param lives - The lives to be set.
+/// @param lives - The lives (int) to be set.
 ///
-/// Sets the score text with the lives provided.
+/// Sets the lives text with the lives provided.
 /// Also re-centers the origin of the new lives text.
 /////////////////////////////////////////////////
 void GUI::setLivesText(const int lives) {
-  lives_text_.setString(kLivesText + toString(lives));
-  setTextOrigin(lives_text_, Default);
+  gui_lives_text_.setString(kGUILivesText + toString(lives));
+  setTextOrigin(gui_lives_text_, Default);
 }
 
 /////////////////////////////////////////////////
 /// @brief Sets the score text.
 ///
-/// @param score - The score to be set.
+/// @param score - The score (big int) to be set.
 ///
 /// Sets the score text with the score provided.
 /// Also re-centers the origin of the new score text.
 /////////////////////////////////////////////////
 void GUI::setScoreText(const unsigned long long int score) {
-  score_text_.setString(kScoreText + toString(score));
-  setTextOrigin(score_text_, Horizontal);
+  gui_score_text_.setString(kGUIScoreText + toString(score));
+  setTextOrigin(gui_score_text_, Horizontal);
 }
 
 /////////////////////////////////////////////////

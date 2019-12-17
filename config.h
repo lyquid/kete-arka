@@ -5,12 +5,13 @@
 #include <SFML/Graphics.hpp>
 
 // app utils
+/// TODO: make this to enum class
 enum Collisions {
   Top, Bottom, Left, Right,
   TopShip, BottomShip, LeftShip, RightShip,
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
-enum GameStates { Title, Menu, Playing, Paused, GameOver, Quit };
+enum GameStates { Title, Menu, LevelSelection, Playing, Paused, GameOver, Quit };
 enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default, Current };
 
 // app default settings
@@ -20,20 +21,21 @@ const int             kScreenHeight   = 768;
 const int             kScreenWidth    = 672;
 
 // app default strings
-const sf::String  kAppName        = "kete-arka";
-const sf::String  kAppVersion     = "0.0";
-const sf::String  kGameOverText   = "GAME OVER";
-const sf::String  kGameTitle      = kAppName;
-const sf::String  kGameTitleJ     = "ケテアルカ";
-const sf::String  kPauseText      = "Paused";
-const sf::String  kContinueText   = "Press any key to continue";
-const sf::String  kPressStartText = "Press any key to start";
-const sf::String  kLevelText      = "LEVEL XX";
-const sf::String  kLivesText      = "LIVES ";
-const sf::String  kScoreText      = "SCORE ";
-const sf::String  kMenuStartText  = "(1) Start";
-const sf::String  kMenuLevelText  = "(2) Level selection";
-const sf::String  kMenuQuitText   = "(Q) Quit";
+const sf::String  kAppName          = "kete-arka";
+const sf::String  kAppVersion       = "0.0";
+const sf::String  kGameOverText     = "GAME OVER";
+const sf::String  kGameTitle        = kAppName;
+const sf::String  kGameTitleJ       = "ケテアルカ";
+const sf::String  kPauseText        = "Paused";
+const sf::String  kContinueText     = "Press any key to continue";
+const sf::String  kPressStartText   = "Press any key to start";
+const sf::String  kLevelSelectText  = "Select a level";
+const sf::String  kGUILevelText     = "LEVEL XX";
+const sf::String  kGUILivesText     = "LIVES ";
+const sf::String  kGUIScoreText     = "SCORE ";
+const sf::String  kMenuStartText    = "(1) Start";
+const sf::String  kMenuLevelText    = "(2) Level selection";
+const sf::String  kMenuQuitText     = "(Q) Quit";
 
 // ball default settings
 const float         kBallDefaultRadius        = 5.f;         
@@ -54,6 +56,7 @@ const int           kBrickDefaultRows         = 4;
 // GUI/Menu default settings
 const int       kGUIGameOverFontSize        = 30;
 const int       kGUIGameTitleFontSize       = 60;
+const int       kGUILevelSelectFontSize     = 25;
 const int       kGUIMenuItemFontSize        = 20;
 const int       kGUIPauseTextFontSize       = 20;
 const int       kGUIPressStartTextFontSize  = 20;
@@ -63,7 +66,7 @@ const float     kGUIDefaultMargin           = 8.f;
 const float     kGUIDefaultHeight           = kGUIDefaultMargin + (float) kGUIPauseTextFontSize;
 
 // level default settings
-const int kTotalLevels = 33;
+const int kTotalLevels = 20;
 
 // player default setting
 const int kPlayerDefaultLives = 3;

@@ -21,7 +21,8 @@ class Game {
   void update();
 
  private:
-  void handleKeyEvents(sf::Event key_event); // maybe const?
+  void handleKeyEvents(const sf::Event key_event);
+  void initLevelsMenu();
   bool isPaused();
   bool loadLevel(const int num_lvl);
   Ball ball_;
