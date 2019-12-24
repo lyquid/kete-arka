@@ -30,6 +30,7 @@ const sf::String  kPauseText        = "Paused";
 const sf::String  kContinueText     = "Press any key to continue";
 const sf::String  kPressStartText   = "Press any key to start";
 const sf::String  kLevelSelectText  = "Select a level";
+const sf::String  kLevelSelectKeys  = "ESC - Back     UP/DOWN - Select level     INTRO - Play";
 const sf::String  kGUILevelText     = "LEVEL XX";
 const sf::String  kGUILivesText     = "LIVES ";
 const sf::String  kGUIScoreText     = "SCORE ";
@@ -54,16 +55,18 @@ const int           kBrickDefaultColumns      = 12;
 const int           kBrickDefaultRows         = 4;
 
 // GUI/Menu default settings
-const int       kGUIGameOverFontSize        = 30;
-const int       kGUIGameTitleFontSize       = 60;
-const int       kGUILevelSelectFontSize     = 25;
-const int       kGUIMenuItemFontSize        = 20;
-const int       kGUIPauseTextFontSize       = 20;
-const int       kGUIPressStartTextFontSize  = 20;
-const int       kGUITextFontSize            = 15;
-const sf::Color kGUIDefaultFontColor        = sf::Color::White;
-const float     kGUIDefaultMargin           = 8.f;
-const float     kGUIDefaultHeight           = kGUIDefaultMargin + (float) kGUIPauseTextFontSize;
+const int       kGUIGameOverFontSize          = 30;
+const int       kGUIGameTitleFontSize         = 60;
+const int       kGUILevelSelectFontSize       = 25;
+const int       kGUIMenuItemFontSize          = 20;
+const int       kGUIPauseTextFontSize         = 20;
+const int       kGUIPressStartTextFontSize    = 20;
+const int       kGUITextFontSize              = 15;
+const int       kGUILevelSelectKeys           = 12;
+const sf::Color kGUIDefaultFontColor          = sf::Color::White;
+const sf::Color kGUIDefaultSelectedFontColor  = sf::Color::Black;
+const float     kGUIDefaultMargin             = 8.f;
+const float     kGUIDefaultHeight             = kGUIDefaultMargin + (float) kGUIPauseTextFontSize;
 
 // level default settings
 const int kTotalLevels = 20;

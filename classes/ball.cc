@@ -224,10 +224,10 @@ void Ball::randomizeBounceAngle(const Collisions collision) {
     case LogFile:
       // logs to the log file and then fallthrough to Debug case
       Logger::write("(" + collision_with + ")"
-                  + "\tx = " + toString(direction_.x)
-                  + "\ty = " + toString(direction_.y)
-                  + "\trnd = " + toString(random_angle_variation)
-                  + "\tdsp = " + toString(displ)); 
+                  + "\tx = " + GUI::toString(direction_.x)
+                  + "\ty = " + GUI::toString(direction_.y)
+                  + "\trnd = " + GUI::toString(random_angle_variation)
+                  + "\tdsp = " + GUI::toString(displ)); 
       [[fallthrough]];
     case Debug:
       // logs to console

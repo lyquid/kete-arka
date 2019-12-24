@@ -59,6 +59,17 @@ void Game::handleKeyEvents(const sf::Event key_event) {
         case sf::Keyboard::Q:
           state_ = Menu;
           break;
+        case sf::Keyboard::Up:
+        case sf::Keyboard::W:
+          gui_.selectPreviousLevel();
+          break;
+        case sf::Keyboard::Down:
+        case sf::Keyboard::S:
+          gui_.selectNextLevel();
+          break;
+        case sf::Keyboard::Enter:
+          // select level
+          break;
       }
       break;
     case Playing:
@@ -122,11 +133,11 @@ void Game::init() {
 void Game::initLevelsMenu() {
   for (int i = 0; i < kTotalLevels; ++i) {
     game_levels_[i].setLevelNumber(i + 1);
-    game_levels_[i].setLevelName("prueba_lvl_" + toString(game_levels_[i].getLevelNumber()));
+    game_levels_[i].setLevelName("prueba_lvl_" + GUI::toString(game_levels_[i].getLevelNumber()));
     if (game_levels_[i].getLevelNumber() < 10) {
-      gui_.setLevelStrings(i, "0" + toString(game_levels_[i].getLevelNumber()) + " - " + game_levels_[i].getLevelName());
+      gui_.setLevelStrings(i, "0" + GUI::toString(game_levels_[i].getLevelNumber()) + " - " + game_levels_[i].getLevelName());
     } else {
-      gui_.setLevelStrings(i, toString(game_levels_[i].getLevelNumber()) + " - " + game_levels_[i].getLevelName());
+      gui_.setLevelStrings(i, GUI::toString(game_levels_[i].getLevelNumber()) + " - " + game_levels_[i].getLevelName());
     }
   }
 }

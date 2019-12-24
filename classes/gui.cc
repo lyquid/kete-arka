@@ -1,20 +1,6 @@
 #include "gui.h"
 
 /////////////////////////////////////////////////
-/// @brief Checks if the render_flashing_text_flag_ needs to be updated.
-///
-/// Checks how much time has passed since last render.
-/// If it's more than 0.7 seconds, inverts the flag for the
-/// flashing text and resets the clock.
-/////////////////////////////////////////////////
-void GUI::updateFlashingTextFlag(){
-  if (flashing_text_clock_.getElapsedTime().asSeconds() > 0.7f) {
-    render_flashing_text_flag_ = !render_flashing_text_flag_;
-    flashing_text_clock_.restart();
-  }
-}
-
-/////////////////////////////////////////////////
 /// @brief Draws the game over screen to the specified sf::RenderWindow.
 ///
 /// @param window - The sf::RenderWindow to draw the game over screen on.
@@ -52,9 +38,11 @@ void GUI::drawInGameGUI(sf::RenderWindow &window) {
 /////////////////////////////////////////////////
 void GUI::drawLevelSelection(sf::RenderWindow &window) {
   window.draw(level_select_title_text_);
+  window.draw(level_selected_shape_);
   for (int i = 0; i < kTotalLevels; ++i) {
     window.draw(level_info_[i]);
   }
+  window.draw(level_select_keys_);
 }
 
 /////////////////////////////////////////////////
@@ -114,24 +102,25 @@ void GUI::drawTitleScreen(sf::RenderWindow &window) {
 /// that need to be called.
 /////////////////////////////////////////////////
 void GUI::init(const sf::Font &font) {
+  const int halfScreenW = kScreenWidth / 2;
   // main title
   initText(title_text_, kGameTitle, font, kGUIGameTitleFontSize, kGUIDefaultFontColor, BothAxis);
-  title_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.25f);
+  title_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.25f);
   // press start
   initText(press_start_text_, kPressStartText, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
-  press_start_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.75f);
+  press_start_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
   // pause
   initText(pause_text_, kPauseText, font, kGUIPauseTextFontSize, kGUIDefaultFontColor, BothAxis);
-  pause_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight / 2.f);
+  pause_text_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
   // game over
   initText(game_over_text_, kGameOverText, font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
-  game_over_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.33f);
+  game_over_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.33f);
   // press any key
   initText(press_any_key_text_, kContinueText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
-  press_any_key_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.75f);
+  press_any_key_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
   // MENU - level selection
   initText(menu_level_text_, kMenuLevelText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor, Horizontal);
-  menu_level_text_.setPosition((float)kScreenWidth / 2.f, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 2.f);
+  menu_level_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 2.f);
   // MENU - start
   initText(menu_start_text_, kMenuStartText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor);
   menu_start_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, (float)kScreenHeight * 0.66f);
@@ -143,12 +132,15 @@ void GUI::init(const sf::Font &font) {
   gui_lives_text_.setPosition(kGUIDefaultMargin, kGUIDefaultMargin);
   // GUI - score
   initText(gui_score_text_, kGUIScoreText + toString(0), font, kGUITextFontSize, kGUIDefaultFontColor, Horizontal);
-  gui_score_text_.setPosition((float)kScreenWidth / 2.f, kGUIDefaultMargin);
+  gui_score_text_.setPosition(halfScreenW, kGUIDefaultMargin);
   // GUI - level
   initText(gui_level_text_, kGUILevelText, font, kGUITextFontSize, kGUIDefaultFontColor, TopRight);
   gui_level_text_.setPosition((float)kScreenWidth - kGUIDefaultMargin, kGUIDefaultMargin);
-  // levels list
+  // LEVEL SELECTION - levels list
   initLevelsList(font);
+  // LEVEL SELECTION - key guide
+  initText(level_select_keys_, kLevelSelectKeys, font, kGUILevelSelectKeys, kGUIDefaultFontColor, Horizontal);
+  level_select_keys_.setPosition(halfScreenW, static_cast<int>(kScreenHeight - kGUILevelSelectKeys - kGUIDefaultMargin));
 }
 
 /////////////////////////////////////////////////
@@ -171,6 +163,9 @@ void GUI::initLevelsList(const sf::Font &font) {
     initText(level_info_[i], level_info_strings_[i], font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
     level_info_[i].setPosition(x, y);
   }
+  level_selected_ = 0;
+  level_selected_shape_.setFillColor(kGUIDefaultFontColor);
+  updateLevelSelectionShape();
 }
 
 /////////////////////////////////////////////////
@@ -197,7 +192,7 @@ void GUI::initText( sf::Text              &text,
   text.setFillColor(color);
   text.setString(string_text);
   if (mode != Current) {
-    setTextOrigin(text, mode);
+    setOrigin(text, mode);
   }
 }
 
@@ -214,6 +209,40 @@ void GUI::reset() {
 }
 
 /////////////////////////////////////////////////
+/// @brief Changes selected level to the next.
+///
+/// Changes selected level to the next. I there's no next level, 
+/// level selected becomes the first (0). 
+/// Also updates the selection shape by calling updateLevelSelectionShape().
+/////////////////////////////////////////////////
+void GUI::selectNextLevel() {
+  if (level_selected_ >= kTotalLevels - 1) {
+    level_selected_ = 0;
+    updateLevelSelectionShape(kTotalLevels - 1);
+  } else {
+    level_selected_++;
+    updateLevelSelectionShape(level_selected_ - 1);
+  }
+}
+
+/////////////////////////////////////////////////
+/// @brief Changes selected level to the previous.
+///
+/// Changes selected level to the previous. I there's no previous level, 
+/// level selected becomes the last. 
+/// Also updates the selection shape by calling updateLevelSelectionShape().
+/////////////////////////////////////////////////
+void GUI::selectPreviousLevel() {
+  if (level_selected_ <= 0) {
+    level_selected_ = kTotalLevels - 1;
+    updateLevelSelectionShape(0);
+  } else {
+    level_selected_--;
+    updateLevelSelectionShape(level_selected_ + 1);
+  }
+}
+
+/////////////////////////////////////////////////
 /// @brief Sets the score text to be displayed in the "Game Over" screen.
 ///
 /// Sets the score text origin to the center of both axis 
@@ -221,7 +250,7 @@ void GUI::reset() {
 /////////////////////////////////////////////////
 void GUI::setFinalScoreText() {
   gui_score_text_.setCharacterSize(kGUIPressStartTextFontSize);
-  setTextOrigin(gui_score_text_, BothAxis);
+  setOrigin(gui_score_text_, BothAxis);
   gui_score_text_.setPosition(kScreenWidth / 2, kScreenHeight / 2);
 }
 
@@ -250,7 +279,7 @@ void GUI::setLevelStrings(const int lvl_position, const sf::String lvl_info_stri
 /////////////////////////////////////////////////
 void GUI::setLivesText(const int lives) {
   gui_lives_text_.setString(kGUILivesText + toString(lives));
-  setTextOrigin(gui_lives_text_, Default);
+  setOrigin(gui_lives_text_, Default);
 }
 
 /////////////////////////////////////////////////
@@ -263,7 +292,7 @@ void GUI::setLivesText(const int lives) {
 /////////////////////////////////////////////////
 void GUI::setScoreText(const unsigned long long int score) {
   gui_score_text_.setString(kGUIScoreText + toString(score));
-  setTextOrigin(gui_score_text_, Horizontal);
+  setOrigin(gui_score_text_, Horizontal);
 }
 
 /////////////////////////////////////////////////
@@ -282,30 +311,30 @@ void GUI::setRenderFlashingTextFlag(const bool status) {
 /////////////////////////////////////////////////
 /// @brief Sets the origin of a sf::Text as requested.
 ///
-/// @param text - The sf::Text to be changed.
+/// @param shape - The sf::Text to be changed.
 /// @param mode - The TextCenterModes to be used.
 ///
 /// Sets the origin of a sf::Text as requested. Options are:
 /// Horizontal, Vertical, BothAxis, TopRight, TopLeft, Default and Current.
 /////////////////////////////////////////////////
-void GUI::setTextOrigin(sf::Text &text, const TextCenterModes mode) {
-  sf::FloatRect text_rect = text.getLocalBounds();
+template <typename T> void GUI::setOrigin(T &shape, const TextCenterModes mode) {
+  sf::FloatRect shape_rect = shape.getLocalBounds();
   switch (mode) {
     case Horizontal:
-      text.setOrigin(text_rect.left + (text_rect.width / 2.f), text_rect.top);
+      shape.setOrigin(shape_rect.left + (shape_rect.width / 2.f), shape_rect.top);
       break;
     case Vertical:
-      text.setOrigin(text_rect.left, text_rect.top + (text_rect.height / 2.f));
+      shape.setOrigin(shape_rect.left, shape_rect.top + (shape_rect.height / 2.f));
       break;
     case BothAxis:
-      text.setOrigin(text_rect.left + (text_rect.width / 2.f), text_rect.top + (text_rect.height / 2.f));
+      shape.setOrigin(shape_rect.left + (shape_rect.width / 2.f), shape_rect.top + (shape_rect.height / 2.f));
       break;
     case TopRight:
-      text.setOrigin(text_rect.left + text_rect.width, text_rect.top);
+      shape.setOrigin(shape_rect.left + shape_rect.width, shape_rect.top);
       break;
     case TopLeft:
     case Default:
-      text.setOrigin(0.f, 0.f);
+      shape.setOrigin(0.f, 0.f);
       break;
     case Current:
     default:
@@ -323,8 +352,40 @@ void GUI::setTextOrigin(sf::Text &text, const TextCenterModes mode) {
 ///
 /// Converts the parameter t into a std::string and returns it.
 /////////////////////////////////////////////////
-template <typename T> std::string toString(const T &t) { 
+template <typename T> std::string GUI::toString(const T &t) { 
   std::ostringstream oss;
   oss << t; 
   return oss.str();
 }
+
+/////////////////////////////////////////////////
+/// @brief Checks if the render_flashing_text_flag_ needs to be updated.
+///
+/// Checks how much time has passed since last render.
+/// If it's more than 0.7 seconds, inverts the flag for the
+/// flashing text and resets the clock.
+/////////////////////////////////////////////////
+void GUI::updateFlashingTextFlag(){
+  if (flashing_text_clock_.getElapsedTime().asSeconds() > 0.7f) {
+    render_flashing_text_flag_ = !render_flashing_text_flag_;
+    flashing_text_clock_.restart();
+  }
+}
+
+/////////////////////////////////////////////////
+/// @brief Updates the selection shape accordingly.
+///
+/// @param previous_level - The previous selected level.
+///
+/// Changes the previously selected level to it's original state (color)
+/// and the newly selected level to the selected color and adjusts the 
+/// selection shape to fit the new selection.
+/////////////////////////////////////////////////
+void GUI::updateLevelSelectionShape(unsigned int previous_level) {
+  level_info_[previous_level].setFillColor(kGUIDefaultFontColor);
+  level_info_[level_selected_].setFillColor(kGUIDefaultSelectedFontColor);
+  level_selected_shape_.setSize(sf::Vector2f(level_info_[level_selected_].getGlobalBounds().width, level_info_[level_selected_].getGlobalBounds().height));
+  setOrigin(level_selected_shape_, BothAxis);
+  level_selected_shape_.setPosition(level_info_[level_selected_].getPosition());
+}
+

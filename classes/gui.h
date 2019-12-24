@@ -1,12 +1,9 @@
 #ifndef KETE_ARKA_CLASSES_GUI_H_
 #define KETE_ARKA_CLASSES_GUI_H_
 
-#include <sstream>
+#include <sstream> // std::ostringstream
 
 #include "../config.h"
-// #include "level.h"
-
-template <typename T> std::string toString(const T &t);
 
 class GUI {
  public:
@@ -23,6 +20,8 @@ class GUI {
   void init(const sf::Font &font);
   void initLevelsList(const sf::Font &font);
   void reset();
+  void selectNextLevel();
+  void selectPreviousLevel();
   void setFinalScoreText();
   void setLevelStrings(const int lvl_position, const sf::String lvl_info_string);
   void setLivesText(const int lives);
@@ -34,10 +33,12 @@ class GUI {
                         const int             size, 
                         const sf::Color       color, 
                         const TextCenterModes mode = Current);
-  static void setTextOrigin(sf::Text &text, const TextCenterModes mode);
+  template <typename T> static void setOrigin(T &shape, const TextCenterModes mode);
+  template <typename T> static std::string toString(const T &t);
 
  private:
   void updateFlashingTextFlag();
+  void updateLevelSelectionShape(unsigned int previous_level = 0);
   bool render_flashing_text_flag_;
   sf::Clock flashing_text_clock_;
   // titles and flow
@@ -58,6 +59,9 @@ class GUI {
   // levels array and strings
   sf::String level_info_strings_[kTotalLevels];
   sf::Text level_info_[kTotalLevels];
+  sf::Text level_select_keys_;
+  unsigned int level_selected_;
+  sf::RectangleShape level_selected_shape_;
 };
 
 #endif  // KETE_ARKA_CLASSES_GUI_H_

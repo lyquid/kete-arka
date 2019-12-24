@@ -1,8 +1,8 @@
 #ifndef KETE_ARKA_CLASSES_BALL_H_
 #define KETE_ARKA_CLASSES_BALL_H_
 
-#include <cmath>
-#include <iostream>
+#include <cmath>    // std::abs
+#include <iostream> // std::cout
 
 #include "../config.h"
 #include "brick.h"
