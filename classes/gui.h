@@ -17,6 +17,7 @@ class GUI {
   void drawMenu(sf::RenderWindow &window);
   void drawPauseScreen(sf::RenderWindow &window);
   void drawTitleScreen(sf::RenderWindow &window);
+  int getLevelSelectedNumber();
   void init(const sf::Font &font);
   void initLevelsList(const sf::Font &font);
   void reset();
@@ -24,6 +25,7 @@ class GUI {
   void selectPreviousLevel();
   void setFinalScoreText();
   void setLevelStrings(const int lvl_position, const sf::String lvl_info_string);
+  void setLevelText(int level_num);
   void setLivesText(const int lives);
   void setScoreText(const unsigned long long int score);
   void setRenderFlashingTextFlag(const bool status);
@@ -32,13 +34,13 @@ class GUI {
                         const sf::Font        &font, 
                         const int             size, 
                         const sf::Color       color, 
-                        const TextCenterModes mode = Current);
+                        const TextCenterModes mode = Default);
   template <typename T> static void setOrigin(T &shape, const TextCenterModes mode);
   template <typename T> static std::string toString(const T &t);
 
  private:
   void updateFlashingTextFlag();
-  void updateLevelSelectionShape(unsigned int previous_level = 0);
+  void updateLevelSelectionShape(int previous_level = 0);
   bool render_flashing_text_flag_;
   sf::Clock flashing_text_clock_;
   // titles and flow
@@ -60,7 +62,7 @@ class GUI {
   sf::String level_info_strings_[kTotalLevels];
   sf::Text level_info_[kTotalLevels];
   sf::Text level_select_keys_;
-  unsigned int level_selected_;
+  int level_selected_;
   sf::RectangleShape level_selected_shape_;
 };
 

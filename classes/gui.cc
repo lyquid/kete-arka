@@ -90,6 +90,11 @@ void GUI::drawTitleScreen(sf::RenderWindow &window) {
   }
 }
 
+///
+int GUI::getLevelSelectedNumber() {
+  return level_selected_ + 1;  // cutre
+}
+
 /////////////////////////////////////////////////
 /// @brief Initializes the GUI.
 ///
@@ -191,9 +196,7 @@ void GUI::initText( sf::Text              &text,
   text.setCharacterSize(size);
   text.setFillColor(color);
   text.setString(string_text);
-  if (mode != Current) {
-    setOrigin(text, mode);
-  }
+  setOrigin(text, mode);
 }
 
 /////////////////////////////////////////////////
@@ -270,6 +273,21 @@ void GUI::setLevelStrings(const int lvl_position, const sf::String lvl_info_stri
 }
 
 /////////////////////////////////////////////////
+/// @brief Sets the level text.
+///
+/// @param level_num - The level (int) to be set.
+///
+/// Sets the level text with the level provided.
+/// Also re-centers the origin of the new level text.
+/////////////////////////////////////////////////
+void GUI::setLevelText(int level_num) {
+  level_num > 9 ?
+    gui_level_text_.setString(kGUILevelText + toString(level_num))
+    : gui_level_text_.setString(kGUILevelText + "0" + toString(level_num));
+  setOrigin(gui_level_text_, TopRight);
+}
+
+/////////////////////////////////////////////////
 /// @brief Sets the lives text.
 ///
 /// @param lives - The lives (int) to be set.
@@ -336,7 +354,6 @@ template <typename T> void GUI::setOrigin(T &shape, const TextCenterModes mode) 
     case Default:
       shape.setOrigin(0.f, 0.f);
       break;
-    case Current:
     default:
       // do nothing
       break;
@@ -381,7 +398,7 @@ void GUI::updateFlashingTextFlag(){
 /// and the newly selected level to the selected color and adjusts the 
 /// selection shape to fit the new selection.
 /////////////////////////////////////////////////
-void GUI::updateLevelSelectionShape(unsigned int previous_level) {
+void GUI::updateLevelSelectionShape(int previous_level) {
   level_info_[previous_level].setFillColor(kGUIDefaultFontColor);
   level_info_[level_selected_].setFillColor(kGUIDefaultSelectedFontColor);
   level_selected_shape_.setSize(sf::Vector2f(level_info_[level_selected_].getGlobalBounds().width, level_info_[level_selected_].getGlobalBounds().height));

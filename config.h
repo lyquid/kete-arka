@@ -1,7 +1,7 @@
 #ifndef KETE_ARKA_CONFIG_H_
 #define KETE_ARKA_CONFIG_H_
 
-#include <string>
+#include <string> // std::string
 #include <SFML/Graphics.hpp>
 
 // app utils
@@ -12,7 +12,7 @@ enum Collisions {
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
 enum GameStates { Title, Menu, LevelSelection, Playing, Paused, GameOver, Quit };
-enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default, Current };
+enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default };
 
 // app default settings
 const ExecutionModes  kExecutionMode  = Debug;
@@ -31,7 +31,7 @@ const sf::String  kContinueText     = "Press any key to continue";
 const sf::String  kPressStartText   = "Press any key to start";
 const sf::String  kLevelSelectText  = "Select a level";
 const sf::String  kLevelSelectKeys  = "ESC - Back     UP/DOWN - Select level     INTRO - Play";
-const sf::String  kGUILevelText     = "LEVEL XX";
+const sf::String  kGUILevelText     = "LEVEL ";
 const sf::String  kGUILivesText     = "LIVES ";
 const sf::String  kGUIScoreText     = "SCORE ";
 const sf::String  kMenuStartText    = "(1) Start";

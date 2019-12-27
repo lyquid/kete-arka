@@ -41,13 +41,17 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           state_ = Quit;
           break;
         case sf::Keyboard::Num1:
-          state_ = Playing;
           player_.reset();
           ball_.reset();
           ship_.reset();
           gui_.reset();
-          loadLevel(1) ? logger_.write("Successfully loaded level 1.")
-                       : logger_.write("ERROR: Failed loading level number 1.");
+          if (loadLevel(1)) {
+            state_ = Playing;
+            logger_.write("Successfully loaded level 1.");
+            gui_.setLevelText(1);
+          } else {
+            logger_.write("ERROR: Failed loading level 1.");
+          }
           break;
         case sf::Keyboard::Num2:
           state_ = LevelSelection;
@@ -68,7 +72,18 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           gui_.selectNextLevel();
           break;
         case sf::Keyboard::Enter:
-          // select level
+          int lvl_num = gui_.getLevelSelectedNumber();
+          player_.reset();
+          ball_.reset();
+          ship_.reset();
+          gui_.reset();
+          if (loadLevel(lvl_num)) {
+            state_ = Playing;
+            logger_.write("Successfully loaded level " + GUI::toString(lvl_num) + ".");
+            gui_.setLevelText(lvl_num);
+          } else {
+            logger_.write("ERROR: Failed loading level " + GUI::toString(lvl_num) + ".");
+          }
           break;
       }
       break;
@@ -99,6 +114,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
       }
       break;
     case GameOver:
+      // any key goes to Menu
       state_ = Menu;
       break;
     case Quit:
