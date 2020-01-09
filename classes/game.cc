@@ -147,7 +147,7 @@ void Game::init() {
 }
 
 void Game::initLevelsMenu() {
-  for (int i = 0; i < kTotalLevels; ++i) {
+  for (int i = 0; i < kMaxLevels; ++i) {
     game_levels_[i].setLevelNumber(i + 1);
     game_levels_[i].setLevelName("prueba_lvl_" + GUI::toString(game_levels_[i].getLevelNumber()));
     if (game_levels_[i].getLevelNumber() < 10) {
@@ -158,10 +158,10 @@ void Game::initLevelsMenu() {
   }
 }
 
-bool Game::loadLevel(const int num_lvl) {
+bool Game::loadLevel(int lvl_num) {
   bool found = false;
-  for (int i = 0; i < kTotalLevels && !found; ++i) {
-    if (game_levels_[i].getLevelNumber() == num_lvl) {
+  for (int i = 0; i < kMaxLevels && !found; ++i) {
+    if (game_levels_[i].getLevelNumber() == lvl_num) {
       found = true;
       current_level_ = &game_levels_[i];
       current_level_->init(&player_);

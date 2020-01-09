@@ -16,11 +16,11 @@ class Ball {
   ~Ball() {}
   void draw(sf::RenderWindow &window, GameStates state);
   void init(Player *ptp, Ship *pts);
-  void move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]);
+  void move(const float delta_time, Ship ship, Brick bricks[][kLevelMaxColumns]);
   void reset();
 
  private:
-  bool checkBrickCollision(Brick bricks[][kBrickDefaultColumns]);
+  bool checkBrickCollision(Brick bricks[][kLevelMaxColumns]);
   bool checkBorderCollision();
   bool checkShipCollision(Ship ship);
   void invertHorizontalDirection(const float variation);

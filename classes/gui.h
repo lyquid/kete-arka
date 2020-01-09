@@ -59,8 +59,8 @@ class GUI {
   sf::Text gui_lives_text_;
   sf::Text gui_score_text_;
   // levels array and strings
-  sf::String level_info_strings_[kTotalLevels];
-  sf::Text level_info_[kTotalLevels];
+  sf::String level_info_strings_[kMaxLevels];
+  sf::Text level_info_[kMaxLevels];
   sf::Text level_select_keys_;
   int level_selected_;
   sf::RectangleShape level_selected_shape_;

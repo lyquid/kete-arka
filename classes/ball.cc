@@ -1,9 +1,9 @@
 #include "ball.h"
 
-bool Ball::checkBrickCollision(Brick bricks[][kBrickDefaultColumns]) {
+bool Ball::checkBrickCollision(Brick bricks[][kLevelMaxColumns]) {
   bool collision = false;
-  for (int i = 0; i < kBrickDefaultRows; ++i) {
-    for (int j = 0; j < kBrickDefaultColumns; ++j) {
+  for (int i = 0; i < kLevelMaxRows; ++i) {
+    for (int j = 0; j < kLevelMaxColumns; ++j) {
       if (bricks[i][j].isActive() && bricks[i][j].getShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
         float ball_x = shape_.getPosition().x;
         float ball_y = shape_.getPosition().y;
@@ -115,7 +115,7 @@ void Ball::invertVerticalDirection(const float variation) {
   direction_.y = -direction_.y + variation;
 }
 
-void Ball::move(const float delta_time, Ship ship, Brick bricks[][kBrickDefaultColumns]) {
+void Ball::move(const float delta_time, Ship ship, Brick bricks[][kLevelMaxColumns]) {
   float factor = speed_ * delta_time;
   last_position_ = shape_.getPosition();
   current_radius_ = shape_.getRadius();

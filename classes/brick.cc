@@ -118,7 +118,7 @@ void Brick::setActive(const bool status) {
 ///
 /// Sets the memory address of the player.
 /////////////////////////////////////////////////
-void Brick::setPlayer(Player *ptp) {
+void Brick::setPlayer(Player *const ptp) {
   player_ = ptp;
 }
 

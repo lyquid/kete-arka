@@ -51,8 +51,6 @@ const float         kBrickDefaultWidth        = 56.f;
 const float         kBrickDefaultHeight       = 16.f; 
 const sf::Vector2f  kBrickDefaultSize         = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
 const sf::Color     kBrickDefaultOutlineColor = sf::Color::Black;
-const int           kBrickDefaultColumns      = 12;
-const int           kBrickDefaultRows         = 4;
 
 // GUI/Menu default settings
 const int       kGUIGameOverFontSize          = 30;
@@ -69,7 +67,9 @@ const float     kGUIDefaultMargin             = 8.f;
 const float     kGUIDefaultHeight             = kGUIDefaultMargin + (float) kGUIPauseTextFontSize;
 
 // level default settings
-const int kTotalLevels = 20;
+const int kLevelMaxColumns  = 12;
+const int kLevelMaxRows     = 4;
+const int kMaxLevels        = 20;
 
 // player default setting
 const int kPlayerDefaultLives = 3;

@@ -11,17 +11,17 @@ class Level {
   Level() {}
   ~Level() {}
   void draw(sf::RenderWindow &window);
-  Brick (*getBricks())[kBrickDefaultColumns];
+  Brick (*getBricks())[kLevelMaxColumns];
   sf::String getLevelName();
   int getLevelNumber();
   void init(Player *ptp);
   void initBricks(Player *ptp);
   bool isCompleted();
-  void setLevelName(const sf::String name);
-  void setLevelNumber(const int num_lvl);
+  void setLevelName(sf::String name);
+  void setLevelNumber(int lvl_num);
 
  private:
-  Brick bricks_[kBrickDefaultRows][kBrickDefaultColumns];
+  Brick bricks_[kLevelMaxRows][kLevelMaxColumns];
   int bricks_remaining_;
   bool completed_;
   sf::String name_;

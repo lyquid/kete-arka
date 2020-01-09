@@ -39,7 +39,7 @@ void GUI::drawInGameGUI(sf::RenderWindow &window) {
 void GUI::drawLevelSelection(sf::RenderWindow &window) {
   window.draw(level_select_title_text_);
   window.draw(level_selected_shape_);
-  for (int i = 0; i < kTotalLevels; ++i) {
+  for (int i = 0; i < kMaxLevels; ++i) {
     window.draw(level_info_[i]);
   }
   window.draw(level_select_keys_);
@@ -90,9 +90,16 @@ void GUI::drawTitleScreen(sf::RenderWindow &window) {
   }
 }
 
+/////////////////////////////////////////////////
+/// @brief Returns the selected level's number.
 ///
+/// @return window - An integer representing the level selected.
+///
+/// Returns the selected level's number.
+/// Caution: level number != level index in levels array.
+/////////////////////////////////////////////////
 int GUI::getLevelSelectedNumber() {
-  return level_selected_ + 1;  // cutre
+  return level_selected_ + 1;
 }
 
 /////////////////////////////////////////////////
@@ -163,7 +170,7 @@ void GUI::initLevelsList(const sf::Font &font) {
   int y = kScreenHeight * 0.1f;
   initText(level_select_title_text_, kLevelSelectText, font, kGUILevelSelectFontSize, kGUIDefaultFontColor, BothAxis);
   level_select_title_text_.setPosition(x, y);
-  for (int i = 0; i < kTotalLevels; ++i) {
+  for (int i = 0; i < kMaxLevels; ++i) {
     y = (kScreenHeight * 0.15f) + (kGUITextFontSize * (i + 1)) + (8 * i);
     initText(level_info_[i], level_info_strings_[i], font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
     level_info_[i].setPosition(x, y);
@@ -219,9 +226,9 @@ void GUI::reset() {
 /// Also updates the selection shape by calling updateLevelSelectionShape().
 /////////////////////////////////////////////////
 void GUI::selectNextLevel() {
-  if (level_selected_ >= kTotalLevels - 1) {
+  if (level_selected_ >= kMaxLevels - 1) {
     level_selected_ = 0;
-    updateLevelSelectionShape(kTotalLevels - 1);
+    updateLevelSelectionShape(kMaxLevels - 1);
   } else {
     level_selected_++;
     updateLevelSelectionShape(level_selected_ - 1);
@@ -237,7 +244,7 @@ void GUI::selectNextLevel() {
 /////////////////////////////////////////////////
 void GUI::selectPreviousLevel() {
   if (level_selected_ <= 0) {
-    level_selected_ = kTotalLevels - 1;
+    level_selected_ = kMaxLevels - 1;
     updateLevelSelectionShape(0);
   } else {
     level_selected_--;

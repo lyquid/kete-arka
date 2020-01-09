@@ -8,8 +8,8 @@
 /// Draws the level to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
 void Level::draw(sf::RenderWindow &window) {
-  for (int i = 0; i < kBrickDefaultRows; ++i) {
-    for (int j = 0; j < kBrickDefaultColumns; ++j) {
+  for (int i = 0; i < kLevelMaxRows; ++i) {
+    for (int j = 0; j < kLevelMaxColumns; ++j) {
       if (bricks_[i][j].isActive()) {
         bricks_[i][j].draw(window);
       }
@@ -24,7 +24,7 @@ void Level::draw(sf::RenderWindow &window) {
 ///
 /// A multidimensional array with the bricks of the level.
 /////////////////////////////////////////////////
-Brick (*Level::getBricks())[kBrickDefaultColumns] {
+Brick (*Level::getBricks())[kLevelMaxColumns] {
   return bricks_;
 }
 
@@ -74,8 +74,8 @@ void Level::init(Player *ptp) {
 void Level::initBricks(Player *ptp) {
   int i, j;
   float start_y = kBrickDefaultStart;
-  for (i = 0; i < kBrickDefaultRows; ++i) {
-    for (j = 0; j < kBrickDefaultColumns; ++j) {
+  for (i = 0; i < kLevelMaxRows; ++i) {
+    for (j = 0; j < kLevelMaxColumns; ++j) {
       bricks_[i][j].setActive(true);
       bricks_remaining_++;
       bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
@@ -103,18 +103,18 @@ bool Level::isCompleted() {
 ///
 /// Sets the level's name.
 /////////////////////////////////////////////////
-void Level::setLevelName(const sf::String name) {
+void Level::setLevelName(sf::String name) {
   name_ = name;
 }
 
 /////////////////////////////////////////////////
 /// @brief Sets the level's number.
 ///
-/// @param num_lvl - An integer to be set as the level number.
+/// @param lvl_num - An integer to be set as the level number.
 ///
 /// @return The integer supplied.
 /// Sets the level's number.
 /////////////////////////////////////////////////
-void Level::setLevelNumber(const int num_lvl) {
-  number_ = num_lvl;
+void Level::setLevelNumber(int lvl_num) {
+  number_ = lvl_num;
 }

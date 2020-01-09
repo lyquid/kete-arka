@@ -18,7 +18,7 @@ class Brick {
   sf::Vector2f getSize();
   bool isActive();
   void setActive(const bool status);
-  void setPlayer(Player *ptp); // can we make this with a reference instead?
+  void setPlayer(Player *const ptp);
   void setPosition(const sf::Vector2f position);
   void setResistance(const int resistance);
 

@@ -24,13 +24,13 @@ class Game {
   void handleKeyEvents(const sf::Event key_event);
   void initLevelsMenu();
   bool isPaused();
-  bool loadLevel(const int num_lvl);
+  bool loadLevel(int lvl_num);
   Ball ball_;
   sf::Clock clock_;
   sf::Event event_;
   sf::Font font_;
   GUI gui_;
-  Level game_levels_[kTotalLevels];
+  Level game_levels_[kMaxLevels];
   Level *current_level_;
   Logger logger_;
   Player player_;
