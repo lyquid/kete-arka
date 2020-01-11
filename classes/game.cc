@@ -135,6 +135,8 @@ void Game::init() {
     exit(EXIT_FAILURE);
   } else {
     current_level_ = NULL;
+    Level::initProtoLevels(game_levels_);
+    logger_.write("Successfully initialized protolevels.");
     initLevelsMenu();
     logger_.write("Successfully initialized levels menu.");
     gui_.init(font_);
@@ -148,12 +150,11 @@ void Game::init() {
 
 void Game::initLevelsMenu() {
   for (int i = 0; i < kMaxLevels; ++i) {
-    game_levels_[i].setLevelNumber(i + 1);
-    game_levels_[i].setLevelName("prueba_lvl_" + GUI::toString(game_levels_[i].getLevelNumber()));
-    if (game_levels_[i].getLevelNumber() < 10) {
-      gui_.setLevelStrings(i, "0" + GUI::toString(game_levels_[i].getLevelNumber()) + " - " + game_levels_[i].getLevelName());
+    game_levels_[i].setNumber(i + 1);
+    if (game_levels_[i].getNumber() < 10) {
+      gui_.setLevelStrings(i, "0" + GUI::toString(game_levels_[i].getNumber()) + " - " + game_levels_[i].getName());
     } else {
-      gui_.setLevelStrings(i, GUI::toString(game_levels_[i].getLevelNumber()) + " - " + game_levels_[i].getLevelName());
+      gui_.setLevelStrings(i, GUI::toString(game_levels_[i].getNumber()) + " - " + game_levels_[i].getName());
     }
   }
 }
@@ -161,7 +162,7 @@ void Game::initLevelsMenu() {
 bool Game::loadLevel(int lvl_num) {
   bool found = false;
   for (int i = 0; i < kMaxLevels && !found; ++i) {
-    if (game_levels_[i].getLevelNumber() == lvl_num) {
+    if (game_levels_[i].getNumber() == lvl_num) {
       found = true;
       current_level_ = &game_levels_[i];
       current_level_->init(&player_);

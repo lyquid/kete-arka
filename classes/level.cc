@@ -31,11 +31,11 @@ Brick (*Level::getBricks())[kLevelMaxColumns] {
 /////////////////////////////////////////////////
 /// @brief Returns the level's name.
 ///
-/// @return - A sf::String representing the level's name.
+/// @return - A std::string representing the level's name.
 ///
 /// A sf::String representing the level's name.
 /////////////////////////////////////////////////
-sf::String Level::getLevelName() {
+std::string Level::getName() {
   return name_;
 }
 
@@ -46,7 +46,7 @@ sf::String Level::getLevelName() {
 ///
 /// An integer representing the level's number.
 /////////////////////////////////////////////////
-int Level::getLevelNumber() {
+int Level::getNumber() {
   return number_;
 }
 
@@ -54,8 +54,8 @@ int Level::getLevelNumber() {
 /// @brief Initializates a level object.
 ///
 /// @param ptp - A pointer to the player.
-/// 
-/// Sets the compelted flag to false, the bricks remaining 
+///
+/// Sets the completed flag to false, the bricks remaining
 /// to 0 and initializes each brick.
 /////////////////////////////////////////////////
 void Level::init(Player *ptp) {
@@ -67,22 +67,41 @@ void Level::init(Player *ptp) {
 /////////////////////////////////////////////////
 /// @brief Initializates the bricks of a level.
 ///
+/// @param lvl_num - The level's number.
 /// @param ptp - A pointer to the player.
 ///
-/// TODO: This will require some work.
+/// Initializates the bricks of a level.
 /////////////////////////////////////////////////
 void Level::initBricks(Player *ptp) {
   int i, j;
   float start_y = kBrickDefaultStart;
   for (i = 0; i < kLevelMaxRows; ++i) {
     for (j = 0; j < kLevelMaxColumns; ++j) {
-      bricks_[i][j].setActive(true);
-      bricks_remaining_++;
+      if (layout_[i * kLevelMaxColumns + j] == 1) {
+        bricks_[i][j].setActive(true);
+        bricks_remaining_++;
+      } else {
+        bricks_[i][j].setActive(false);
+      }
       bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
       bricks_[i][j].setPlayer(ptp);
     }
     start_y = start_y + bricks_[i][j].getSize().y;
-  } 
+  }
+}
+
+/////////////////////////////////////////////////
+/// @brief Initializates the layouts and names of the levels.
+///
+/// @param ptl - A pointer to the array of levels.
+///
+/// Initializates the layouts and names of the levels.
+/////////////////////////////////////////////////
+void Level::initProtoLevels(Level *ptl) {
+  for (int i = 0; i < kMaxLevels; ++i) {
+    ptl[i].setName(kProtoLevels[i].name);
+    ptl[i].setLayout(kProtoLevels[i].layout);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -97,13 +116,26 @@ bool Level::isCompleted() {
 }
 
 /////////////////////////////////////////////////
+/// @brief Sets the layout of a level.
+///
+/// @param new_layout - A pointer to the array representing the layout.
+///
+/// Sets the layout of a level.
+/////////////////////////////////////////////////
+void Level::setLayout(const int *new_layout) {
+  for (int i = 0; i < kLevelMaxRows * kLevelMaxColumns; ++i) {
+    layout_[i] = new_layout[i];
+  }
+}
+
+/////////////////////////////////////////////////
 /// @brief Sets the level's name.
 ///
-/// @param name - An sf::String to be set as the level name.
+/// @param name - An std::string to be set as the level name.
 ///
 /// Sets the level's name.
 /////////////////////////////////////////////////
-void Level::setLevelName(sf::String name) {
+void Level::setName(std::string name) {
   name_ = name;
 }
 
@@ -112,9 +144,8 @@ void Level::setLevelName(sf::String name) {
 ///
 /// @param lvl_num - An integer to be set as the level number.
 ///
-/// @return The integer supplied.
 /// Sets the level's number.
 /////////////////////////////////////////////////
-void Level::setLevelNumber(int lvl_num) {
+void Level::setNumber(int lvl_num) {
   number_ = lvl_num;
 }

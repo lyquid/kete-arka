@@ -13,13 +13,11 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="include" />
-					<Add directory="classes" />
 				</Compiler>
 				<Linker>
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics-d.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-window-d.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system-d.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-graphics-d.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-window-d.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system-d.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -29,23 +27,21 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add directory="include" />
-					<Add directory="classes" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-window.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-graphics.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-window.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system.a" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/include" />
+			<Add directory="C:/lib/SFML-2.5.1/include" />
 		</Compiler>
 		<Linker>
-			<Add directory="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib" />
+			<Add directory="C:/lib/SFML-2.5.1/lib" />
 		</Linker>
 		<Unit filename="classes/ball.cc" />
 		<Unit filename="classes/ball.h" />
@@ -59,11 +55,14 @@
 		<Unit filename="classes/level.h" />
 		<Unit filename="classes/logger.cc" />
 		<Unit filename="classes/logger.h" />
+		<Unit filename="classes/menu.cc" />
+		<Unit filename="classes/menu.h" />
 		<Unit filename="classes/player.cc" />
 		<Unit filename="classes/player.h" />
 		<Unit filename="classes/ship.cc" />
 		<Unit filename="classes/ship.h" />
 		<Unit filename="config.h" />
+		<Unit filename="levels.h" />
 		<Unit filename="main.cc" />
 		<Extensions>
 			<code_completion />
