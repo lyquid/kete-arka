@@ -59,7 +59,7 @@ int Level::getNumber() {
 /// to 0 and initializes each brick.
 /////////////////////////////////////////////////
 void Level::init(Player *ptp) {
-  completed_ = false;
+  // completed_ = false;
   bricks_remaining_ = 0;
   initBricks(ptp);
 }
@@ -70,7 +70,8 @@ void Level::init(Player *ptp) {
 /// @param lvl_num - The level's number.
 /// @param ptp - A pointer to the player.
 ///
-/// Initializates the bricks of a level.
+/// Initializates the bricks of a level by reading a 
+/// layout and positions them.
 /////////////////////////////////////////////////
 void Level::initBricks(Player *ptp) {
   int i, j;
@@ -112,7 +113,15 @@ void Level::initProtoLevels(Level *ptl) {
 /// True if the level is completed (no brick remains).
 /////////////////////////////////////////////////
 bool Level::isCompleted() {
-  return completed_;
+  bool completed = true;
+  for (int i = 0; i < kLevelMaxRows; ++i) {
+    for (int j = 0; j < kLevelMaxColumns; ++j) {
+      if (bricks_[i][j].isActive()) {
+        completed = false;
+      }
+    }
+  }
+  return completed;
 }
 
 /////////////////////////////////////////////////

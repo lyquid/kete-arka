@@ -113,6 +113,30 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           break;
       }
       break;
+    case LevelCompleted: {
+      //  any key advances level
+      int next_lvl = current_level_->getNumber() + 1;
+      if (next_lvl > kMaxLevels) {
+        state_ = GameCompleted;
+      } else  {
+        player_.reset();
+        ball_.reset();
+        ship_.reset();
+        gui_.reset();
+        if (loadLevel(next_lvl)) {
+          state_ = Playing;
+          logger_.write("Successfully loaded level " + GUI::toString(next_lvl) + ".");
+          gui_.setLevelText(next_lvl);
+          } else {
+          logger_.write("ERROR: Failed loading level " + GUI::toString(next_lvl) + ".");
+        }
+      }
+      break;
+    }
+    case GameCompleted:
+      // any key goes to main menu
+      state_ = Menu;
+      break;
     case GameOver:
       // any key goes to Menu
       state_ = Menu;
@@ -192,6 +216,12 @@ void Game::render() {
       ship_.draw(window_);
       current_level_->draw(window_);
       break;
+    case LevelCompleted:
+      gui_.drawLevelCompletedScreen(window_);
+      break;
+    case GameCompleted:
+      gui_.drawGameCompleted(window_);
+      break;
     case GameOver:
       gui_.drawGameOverScreen(window_);
       break;
@@ -209,6 +239,8 @@ void Game::update() {
         state_ = GameOver;
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText();
+      } else if (current_level_->isCompleted()) {
+        state_ =  LevelCompleted;
       } else {
         ball_.move(delta_time, ship_, current_level_->getBricks());
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 

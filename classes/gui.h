@@ -11,8 +11,10 @@ class GUI {
     render_flashing_text_flag_ = true;
   }
   ~GUI() {}
+  void drawGameCompleted(sf::RenderWindow &window);
   void drawGameOverScreen(sf::RenderWindow &window);
   void drawInGameGUI(sf::RenderWindow &window);
+  void drawLevelCompletedScreen(sf::RenderWindow &window);
   void drawLevelSelection(sf::RenderWindow &window);
   void drawMenu(sf::RenderWindow &window);
   void drawPauseScreen(sf::RenderWindow &window);
@@ -64,6 +66,10 @@ class GUI {
   sf::Text level_select_keys_;
   int level_selected_;
   sf::RectangleShape level_selected_shape_;
+  // level completed
+  sf::Text level_completed_title_;
+  // game completed
+  sf::Text game_completed_;
 };
 
 #endif  // KETE_ARKA_CLASSES_GUI_H_

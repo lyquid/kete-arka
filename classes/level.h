@@ -28,7 +28,7 @@ class Level {
   void initBricks(Player *ptp);
   Brick bricks_[kLevelMaxRows][kLevelMaxColumns];
   int bricks_remaining_;
-  bool completed_;
+  // bool completed_;
   int layout_[kLevelMaxRows * kLevelMaxColumns];
   std::string name_;
   int number_;

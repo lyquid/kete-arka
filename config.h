@@ -11,7 +11,7 @@ enum Collisions {
   TopShip, BottomShip, LeftShip, RightShip,
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
-enum GameStates { Title, Menu, LevelSelection, Playing, Paused, GameOver, Quit };
+enum GameStates { Title, Menu, LevelSelection, Playing, Paused, LevelCompleted, GameCompleted, GameOver, Quit };
 enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default };
 
 // app default settings
