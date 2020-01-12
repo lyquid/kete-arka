@@ -1,5 +1,14 @@
 #include "gui.h"
 
+///
+void GUI::drawGameCompleted(sf::RenderWindow &window) {
+  window.draw(game_completed_);
+  updateFlashingTextFlag();
+  if (render_flashing_text_flag_) {
+    window.draw(press_any_key_text_);
+  }
+}
+
 /////////////////////////////////////////////////
 /// @brief Draws the game over screen to the specified sf::RenderWindow.
 ///
@@ -27,6 +36,15 @@ void GUI::drawInGameGUI(sf::RenderWindow &window) {
   window.draw(gui_lives_text_);
   window.draw(gui_score_text_);
   window.draw(gui_level_text_);
+}
+
+///
+void GUI::drawLevelCompletedScreen(sf::RenderWindow &window) {
+  window.draw(level_completed_title_);
+  updateFlashingTextFlag();
+  if (render_flashing_text_flag_) {
+    window.draw(press_any_key_text_);
+  }
 }
 
 /////////////////////////////////////////////////
@@ -153,6 +171,12 @@ void GUI::init(const sf::Font &font) {
   // LEVEL SELECTION - key guide
   initText(level_select_keys_, kLevelSelectKeys, font, kGUILevelSelectKeys, kGUIDefaultFontColor, Horizontal);
   level_select_keys_.setPosition(halfScreenW, static_cast<int>(kScreenHeight - kGUILevelSelectKeys - kGUIDefaultMargin));
+  // LEVEL COMPLETED
+  initText(level_completed_title_, "level completed!", font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
+  level_completed_title_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
+  // GAME COMPLETED
+  initText(game_completed_, "game completed!", font,  kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
+  game_completed_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
 }
 
 /////////////////////////////////////////////////

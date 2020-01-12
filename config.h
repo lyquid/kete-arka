@@ -11,7 +11,7 @@ enum Collisions {
   TopShip, BottomShip, LeftShip, RightShip,
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
-enum GameStates { Title, Menu, LevelSelection, Playing, Paused, GameOver, Quit };
+enum GameStates { Title, Menu, LevelSelection, Playing, Paused, LevelCompleted, GameCompleted, GameOver, Quit };
 enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default };
 
 // app default settings
@@ -46,10 +46,11 @@ const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidt
 const sf::Color     kBallDefaultColor         = sf::Color::White;
 
 // brick default settings
-const float         kBrickDefaultStart        = 80.f;
-const float         kBrickDefaultWidth        = 56.f;
-const float         kBrickDefaultHeight       = 16.f; 
+const float         kBrickDefaultStart        = 30.f;
+const float         kBrickDefaultWidth        = 61.09f;
+const float         kBrickDefaultHeight       = 30.54f; 
 const sf::Vector2f  kBrickDefaultSize         = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
+const sf::Color     kBrickDefaultColor        = sf::Color::White;
 const sf::Color     kBrickDefaultOutlineColor = sf::Color::Black;
 
 // GUI/Menu default settings
@@ -67,7 +68,7 @@ const float     kGUIDefaultMargin             = 8.f;
 const float     kGUIDefaultHeight             = kGUIDefaultMargin + (float) kGUIPauseTextFontSize;
 
 // level default settings
-const int kLevelMaxColumns  = 12;
+const int kLevelMaxColumns  = 11;
 const int kLevelMaxRows     = 4;
 const int kMaxLevels        = 20;
 

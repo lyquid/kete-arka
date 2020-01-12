@@ -5,7 +5,7 @@
 #include <iostream> // std::cout
 
 #include "../config.h"
-#include "brick.h"
+#include "level.h"
 #include "logger.h"
 #include "player.h"
 #include "ship.h"
@@ -18,6 +18,7 @@ class Ball {
   void init(Player *ptp, Ship *pts);
   void move(const float delta_time, Ship ship, Brick bricks[][kLevelMaxColumns]);
   void reset();
+  void setLevel(Level *ptl);
 
  private:
   bool checkBrickCollision(Brick bricks[][kLevelMaxColumns]);
@@ -33,6 +34,7 @@ class Ball {
   sf::Vector2f direction_;
   sf::Clock flash_clock_;
   sf::Vector2f last_position_;
+  Level *level_;
   bool moving_flag_;
   Player *player_;
   Ship *ship_;

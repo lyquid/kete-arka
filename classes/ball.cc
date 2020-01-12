@@ -4,15 +4,15 @@ bool Ball::checkBrickCollision(Brick bricks[][kLevelMaxColumns]) {
   bool collision = false;
   for (int i = 0; i < kLevelMaxRows; ++i) {
     for (int j = 0; j < kLevelMaxColumns; ++j) {
-      if (bricks[i][j].isActive() && bricks[i][j].getShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
+      if (bricks[i][j].active && bricks[i][j].shape.getGlobalBounds().intersects(shape_.getGlobalBounds())) {
         float ball_x = shape_.getPosition().x;
         float ball_y = shape_.getPosition().y;
-        float brick_x = bricks[i][j].getShape().getPosition().x;
-        float brick_x_size = bricks[i][j].getSize().x;
-        float brick_y = bricks[i][j].getShape().getPosition().y;
-        float brick_y_size = bricks[i][j].getSize().y;
+        float brick_x = bricks[i][j].shape.getPosition().x;
+        float brick_x_size = bricks[i][j].shape.getSize().x;
+        float brick_y = bricks[i][j].shape.getPosition().y;
+        float brick_y_size = bricks[i][j].shape.getSize().y;
         collision = true;
-        bricks[i][j].decreaseResistance();
+        level_->decreaseResistance(i, j);
         if (last_position_.x < brick_x) {
           // left hit
           randomizeBounceAngle(LeftBrick);
@@ -265,6 +265,10 @@ void Ball::reset() {
   flash_clock_.restart();
   ball_flash_flag_ = true;
   moving_flag_ = false;
+}
+
+void Ball::setLevel(Level *ptl) {
+  level_ = ptl;
 }
 
 float Ball::sumAbs(const float num1, const float num2) {
