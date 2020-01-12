@@ -190,6 +190,7 @@ bool Game::loadLevel(int lvl_num) {
       found = true;
       current_level_ = &game_levels_[i];
       current_level_->init(&player_);
+      ball_.setLevel(current_level_);
     }
   }
   return found;

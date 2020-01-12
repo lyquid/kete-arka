@@ -5,14 +5,19 @@
 
 #include "../config.h"
 #include "../levels.h"
-#include "brick.h"
+#include "player.h"
 
-class Player; 
+struct Brick {
+  bool active;
+  unsigned int resistance;
+  sf::RectangleShape shape;
+};
 
 class Level {
  public:
   Level() {}
   ~Level() {}
+  void decreaseResistance(int i, int j);
   void draw(sf::RenderWindow &window);
   Brick (*getBricks())[kLevelMaxColumns];
   std::string getName();
@@ -25,13 +30,14 @@ class Level {
   static void initProtoLevels(Level *ptl); 
 
  private:
-  void initBricks(Player *ptp);
+  void initBricks();
   Brick bricks_[kLevelMaxRows][kLevelMaxColumns];
   int bricks_remaining_;
-  // bool completed_;
+  bool completed_;
   int layout_[kLevelMaxRows * kLevelMaxColumns];
   std::string name_;
   int number_;
+  Player *player_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

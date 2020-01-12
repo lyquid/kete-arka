@@ -1,6 +1,28 @@
 #include "level.h"
 
 /////////////////////////////////////////////////
+/// @brief Decreases the resistance of a brick.
+///
+/// @param i j - The brick  to be decreased.
+///
+/// Decreases the resistance of a brick and sets inactive if needed.
+/// Also updates the score  of the player accordingly.
+/////////////////////////////////////////////////
+void Level::decreaseResistance(int i, int j) {
+  if (bricks_[i][j].resistance  - 1 <= 0) {
+    bricks_[i][j].resistance = 0;
+    bricks_[i][j].active = false;
+    bricks_remaining_--;
+    player_->increaseScore(50);
+    if (!bricks_remaining_)  {
+      completed_ = true;
+    }
+  }  else {
+    bricks_[i][j].resistance--;
+  }
+}
+
+/////////////////////////////////////////////////
 /// @brief Draws the level to the specified sf::RenderWindow.
 ///
 /// @param window - The sf::RenderWindow to draw the level on.
@@ -10,8 +32,8 @@
 void Level::draw(sf::RenderWindow &window) {
   for (int i = 0; i < kLevelMaxRows; ++i) {
     for (int j = 0; j < kLevelMaxColumns; ++j) {
-      if (bricks_[i][j].isActive()) {
-        bricks_[i][j].draw(window);
+      if (bricks_[i][j].active) {
+        window.draw(bricks_[i][j].shape);
       }
     }
   }
@@ -59,35 +81,37 @@ int Level::getNumber() {
 /// to 0 and initializes each brick.
 /////////////////////////////////////////////////
 void Level::init(Player *ptp) {
-  // completed_ = false;
+  player_ = ptp;
+  completed_ = false;
   bricks_remaining_ = 0;
-  initBricks(ptp);
+  initBricks();
 }
 
 /////////////////////////////////////////////////
 /// @brief Initializates the bricks of a level.
 ///
-/// @param lvl_num - The level's number.
-/// @param ptp - A pointer to the player.
-///
 /// Initializates the bricks of a level by reading a 
 /// layout and positions them.
 /////////////////////////////////////////////////
-void Level::initBricks(Player *ptp) {
+void Level::initBricks() {
   int i, j;
   float start_y = kBrickDefaultStart;
   for (i = 0; i < kLevelMaxRows; ++i) {
     for (j = 0; j < kLevelMaxColumns; ++j) {
+      bricks_[i][j].shape.setFillColor(kBrickDefaultColor);
+      bricks_[i][j].shape.setOutlineThickness(-1);
+      bricks_[i][j].shape.setOutlineColor(kBrickDefaultOutlineColor);
+      bricks_[i][j].shape.setSize(kBrickDefaultSize);
+      bricks_[i][j].resistance = 1;
       if (layout_[i * kLevelMaxColumns + j] == 1) {
-        bricks_[i][j].setActive(true);
+        bricks_[i][j].active = true;
         bricks_remaining_++;
       } else {
-        bricks_[i][j].setActive(false);
-      }
-      bricks_[i][j].setPosition(sf::Vector2f(bricks_[i][j].getSize().x * j, start_y));
-      bricks_[i][j].setPlayer(ptp);
+        bricks_[i][j].active = false;
+      } 
+      bricks_[i][j].shape.setPosition(sf::Vector2f(bricks_[i][j].shape.getSize().x * j, start_y));
     }
-    start_y = start_y + bricks_[i][j].getSize().y;
+    start_y = start_y + bricks_[i][j - 1].shape.getSize().y;
   }
 }
 
@@ -113,15 +137,7 @@ void Level::initProtoLevels(Level *ptl) {
 /// True if the level is completed (no brick remains).
 /////////////////////////////////////////////////
 bool Level::isCompleted() {
-  bool completed = true;
-  for (int i = 0; i < kLevelMaxRows; ++i) {
-    for (int j = 0; j < kLevelMaxColumns; ++j) {
-      if (bricks_[i][j].isActive()) {
-        completed = false;
-      }
-    }
-  }
-  return completed;
+  return completed_;
 }
 
 /////////////////////////////////////////////////
