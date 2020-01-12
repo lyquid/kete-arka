@@ -68,6 +68,7 @@ class GUI {
   sf::RectangleShape level_selected_shape_;
   // level completed
   sf::Text level_completed_title_;
+  sf::Text level_completed_continue_;
   // game completed
   sf::Text game_completed_;
 };

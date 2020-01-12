@@ -43,7 +43,7 @@ void GUI::drawLevelCompletedScreen(sf::RenderWindow &window) {
   window.draw(level_completed_title_);
   updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
-    window.draw(press_any_key_text_);
+    window.draw(level_completed_continue_);
   }
 }
 
@@ -172,10 +172,13 @@ void GUI::init(const sf::Font &font) {
   initText(level_select_keys_, kLevelSelectKeys, font, kGUILevelSelectKeys, kGUIDefaultFontColor, Horizontal);
   level_select_keys_.setPosition(halfScreenW, static_cast<int>(kScreenHeight - kGUILevelSelectKeys - kGUIDefaultMargin));
   // LEVEL COMPLETED
-  initText(level_completed_title_, "level completed!", font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
+  initText(level_completed_title_, kLevelCompletedText, font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
   level_completed_title_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
+  // LEVEL COMPLETED - CONTINUE
+  initText(level_completed_continue_, kPressSpaceText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
+  level_completed_continue_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
   // GAME COMPLETED
-  initText(game_completed_, "game completed!", font,  kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
+  initText(game_completed_, kGameCompletedText, font,  kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
   game_completed_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
 }
 

@@ -21,22 +21,25 @@ const int             kScreenHeight   = 768;
 const int             kScreenWidth    = 672;
 
 // app default strings
-const sf::String  kAppName          = "kete-arka";
-const sf::String  kAppVersion       = "0.0";
-const sf::String  kGameOverText     = "GAME OVER";
-const sf::String  kGameTitle        = kAppName;
-const sf::String  kGameTitleJ       = "ケテアルカ";
-const sf::String  kPauseText        = "Paused";
-const sf::String  kContinueText     = "Press any key to continue";
-const sf::String  kPressStartText   = "Press any key to start";
-const sf::String  kLevelSelectText  = "Select a level";
-const sf::String  kLevelSelectKeys  = "ESC - Back     UP/DOWN - Select level     INTRO - Play";
-const sf::String  kGUILevelText     = "LEVEL ";
-const sf::String  kGUILivesText     = "LIVES ";
-const sf::String  kGUIScoreText     = "SCORE ";
-const sf::String  kMenuStartText    = "(1) Start";
-const sf::String  kMenuLevelText    = "(2) Level selection";
-const sf::String  kMenuQuitText     = "(Q) Quit";
+const sf::String  kAppName            = "kete-arka";
+const sf::String  kAppVersion         = "0.0";
+const sf::String  kLevelCompletedText = "LEVEL COMPLETED";
+const sf::String  kGameCompletedText  = "GAME COMPLETED!";
+const sf::String  kGameOverText       = "GAME OVER";
+const sf::String  kGameTitle          = kAppName;
+const sf::String  kGameTitleJ         = "ケテアルカ";
+const sf::String  kPauseText          = "Paused";
+const sf::String  kContinueText       = "Press any key to continue";
+const sf::String  kPressStartText     = "Press any key to start";
+const sf::String  kPressSpaceText     = "Press space to continue";
+const sf::String  kLevelSelectText    = "Select a level";
+const sf::String  kLevelSelectKeys    = "ESC - Back     UP/DOWN - Select level     INTRO - Play";
+const sf::String  kGUILevelText       = "LEVEL ";
+const sf::String  kGUILivesText       = "LIVES ";
+const sf::String  kGUIScoreText       = "SCORE ";
+const sf::String  kMenuStartText      = "(1) Start";
+const sf::String  kMenuLevelText      = "(2) Level selection";
+const sf::String  kMenuQuitText       = "(Q) Quit";
 
 // ball default settings
 const float         kBallDefaultRadius        = 5.f;         

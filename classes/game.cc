@@ -114,22 +114,24 @@ void Game::handleKeyEvents(const sf::Event key_event) {
       }
       break;
     case LevelCompleted: {
-      //  any key advances level
-      int next_lvl = current_level_->getNumber() + 1;
-      if (next_lvl > kMaxLevels) {
-        state_ = GameCompleted;
-      } else  {
-        player_.reset();
-        ball_.reset();
-        ship_.reset();
-        gui_.reset();
-        if (loadLevel(next_lvl)) {
-          state_ = Playing;
-          logger_.write("Successfully loaded level " + GUI::toString(next_lvl) + ".");
-          gui_.setLevelText(next_lvl);
-          } else {
-          logger_.write("ERROR: Failed loading level " + GUI::toString(next_lvl) + ".");
-        }
+      switch (key_event.key.code) {
+        case sf::Keyboard::Space:
+          int next_lvl = current_level_->getNumber() + 1;
+          if (next_lvl > kMaxLevels) {
+            state_ = GameCompleted;
+          } else  {
+            player_.reset();
+            ball_.reset();
+            ship_.reset();
+            gui_.reset();
+            if (loadLevel(next_lvl)) {
+              state_ = Playing;
+              logger_.write("Successfully loaded level " + GUI::toString(next_lvl) + ".");
+              gui_.setLevelText(next_lvl);
+              } else {
+              logger_.write("ERROR: Failed loading level " + GUI::toString(next_lvl) + ".");
+            }
+          }
       }
       break;
     }
