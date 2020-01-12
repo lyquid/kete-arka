@@ -5,7 +5,8 @@
 #include <SFML/Graphics.hpp>
 
 // app utils
-/// TODO: make this to enum class
+enum BrickTypes {_, W, O, L, G, R, B, P, Y, S, A};
+/// TODO: make this to enum class_
 enum Collisions {
   Top, Bottom, Left, Right,
   TopShip, BottomShip, LeftShip, RightShip,
@@ -49,12 +50,24 @@ const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidt
 const sf::Color     kBallDefaultColor         = sf::Color::White;
 
 // brick default settings
-const float         kBrickDefaultStart        = 30.f;
-const float         kBrickDefaultWidth        = 61.09f;
-const float         kBrickDefaultHeight       = 30.54f; 
-const sf::Vector2f  kBrickDefaultSize         = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
-const sf::Color     kBrickDefaultColor        = sf::Color::White;
-const sf::Color     kBrickDefaultOutlineColor = sf::Color::Black;
+const float         kBrickDefaultStart  = 30.f;
+const float         kBrickDefaultWidth  = 61.09f;
+const float         kBrickDefaultHeight = 30.54f; 
+const sf::Vector2f  kBrickDefaultSize   = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
+
+// brick colors
+const sf::Color kBrickDefaultColor        = sf::Color::White;
+const sf::Color kBrickDefaultOutlineColor = sf::Color::Black;
+const sf::Color kBrickWhite               = sf::Color(252, 252, 252);
+const sf::Color kBrickOrange              = sf::Color(252, 116, 96);
+const sf::Color kBrickLighBlue            = sf::Color(60, 188, 252);
+const sf::Color kBrickGreen               = sf::Color(128, 208, 16);
+const sf::Color kBrickRed                 = sf::Color(216, 40, 0);
+const sf::Color kBrickBlue                = sf::Color(0, 112, 236);
+const sf::Color kBrickPink                = sf::Color(252, 116, 180);
+const sf::Color kBrickYellow              = sf::Color(252, 152, 56);
+const sf::Color kBrickSilver              = sf::Color(188, 188, 188);
+const sf::Color kBrickGold                = sf::Color(240, 188, 60);
 
 // GUI/Menu default settings
 const int       kGUIGameOverFontSize          = 30;
@@ -72,7 +85,7 @@ const float     kGUIDefaultHeight             = kGUIDefaultMargin + (float) kGUI
 
 // level default settings
 const int kLevelMaxColumns  = 11;
-const int kLevelMaxRows     = 4;
+const int kLevelMaxRows     = 11;
 const int kMaxLevels        = 20;
 
 // player default setting

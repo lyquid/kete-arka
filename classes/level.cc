@@ -13,7 +13,7 @@ void Level::decreaseResistance(int i, int j) {
     bricks_[i][j].resistance = 0;
     bricks_[i][j].active = false;
     bricks_remaining_--;
-    player_->increaseScore(50);
+    player_->increaseScore(bricks_[i][j].points);
     if (!bricks_remaining_)  {
       completed_ = true;
     }
@@ -98,16 +98,97 @@ void Level::initBricks() {
   float start_y = kBrickDefaultStart;
   for (i = 0; i < kLevelMaxRows; ++i) {
     for (j = 0; j < kLevelMaxColumns; ++j) {
-      bricks_[i][j].shape.setFillColor(kBrickDefaultColor);
+      bricks_[i][j].shape.setSize(kBrickDefaultSize);
       bricks_[i][j].shape.setOutlineThickness(-1);
       bricks_[i][j].shape.setOutlineColor(kBrickDefaultOutlineColor);
-      bricks_[i][j].shape.setSize(kBrickDefaultSize);
-      bricks_[i][j].resistance = 1;
-      if (layout_[i * kLevelMaxColumns + j] == 1) {
-        bricks_[i][j].active = true;
-        bricks_remaining_++;
-      } else {
-        bricks_[i][j].active = false;
+      switch(layout_[i * kLevelMaxColumns + j])  {
+        case W:
+          bricks_[i][j].type = W;
+          bricks_[i][j].shape.setFillColor(kBrickWhite);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 1;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case O:
+          bricks_[i][j].type = O;
+          bricks_[i][j].shape.setFillColor(kBrickOrange);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 1;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case L:
+          bricks_[i][j].type = L;
+          bricks_[i][j].shape.setFillColor(kBrickLighBlue);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 1;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case G:
+          bricks_[i][j].type = G;
+          bricks_[i][j].shape.setFillColor(kBrickGreen);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 1;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case R:
+          bricks_[i][j].type = R;
+          bricks_[i][j].shape.setFillColor(kBrickRed);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 1;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case B:
+          bricks_[i][j].type = B;
+          bricks_[i][j].shape.setFillColor(kBrickBlue);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 1;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case P:
+          bricks_[i][j].type = P;
+          bricks_[i][j].shape.setFillColor(kBrickPink);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 1;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case Y:
+          bricks_[i][j].type = Y;
+          bricks_[i][j].shape.setFillColor(kBrickYellow);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 1;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case S:
+          bricks_[i][j].type = S;
+          bricks_[i][j].shape.setFillColor(kBrickSilver);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 2;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case A:
+          bricks_[i][j].type = A;
+          bricks_[i][j].shape.setFillColor(kBrickGold);
+          bricks_[i][j].active = true;
+          bricks_[i][j].resistance = 3;
+          bricks_[i][j].points = 50;
+          bricks_remaining_++;
+          break;
+        case _:
+        default:
+          bricks_[i][j].type = _;
+          bricks_[i][j].active = false;
+          bricks_[i][j].resistance = 0;
+          bricks_[i][j].points = NULL;
+          break;
       } 
       bricks_[i][j].shape.setPosition(sf::Vector2f(bricks_[i][j].shape.getSize().x * j, start_y));
     }
@@ -147,7 +228,7 @@ bool Level::isCompleted() {
 ///
 /// Sets the layout of a level.
 /////////////////////////////////////////////////
-void Level::setLayout(const int *new_layout) {
+void Level::setLayout(const BrickTypes *new_layout) {
   for (int i = 0; i < kLevelMaxRows * kLevelMaxColumns; ++i) {
     layout_[i] = new_layout[i];
   }
