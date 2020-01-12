@@ -9,16 +9,18 @@
 /// Also updates the score  of the player accordingly.
 /////////////////////////////////////////////////
 void Level::decreaseResistance(int i, int j) {
-  if (bricks_[i][j].resistance  - 1 <= 0) {
-    bricks_[i][j].resistance = 0;
-    bricks_[i][j].active = false;
-    bricks_remaining_--;
-    player_->increaseScore(bricks_[i][j].points);
-    if (!bricks_remaining_)  {
-      completed_ = true;
+  if (bricks_[i][j].type != A) {
+    if (bricks_[i][j].resistance  - 1 <= 0) {
+      bricks_[i][j].resistance = 0;
+      bricks_[i][j].active = false;
+      bricks_remaining_--;
+      player_->increaseScore(bricks_[i][j].points);
+      if (!bricks_remaining_)  {
+        completed_ = true;
+      }
+    }  else {
+      bricks_[i][j].resistance--;
     }
-  }  else {
-    bricks_[i][j].resistance--;
   }
 }
 
@@ -115,7 +117,7 @@ void Level::initBricks() {
           bricks_[i][j].shape.setFillColor(kBrickOrange);
           bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 50;
+          bricks_[i][j].points = 60;
           bricks_remaining_++;
           break;
         case L:
@@ -123,7 +125,7 @@ void Level::initBricks() {
           bricks_[i][j].shape.setFillColor(kBrickLighBlue);
           bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 50;
+          bricks_[i][j].points = 70;
           bricks_remaining_++;
           break;
         case G:
@@ -131,7 +133,7 @@ void Level::initBricks() {
           bricks_[i][j].shape.setFillColor(kBrickGreen);
           bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 50;
+          bricks_[i][j].points = 80;
           bricks_remaining_++;
           break;
         case R:
@@ -139,7 +141,7 @@ void Level::initBricks() {
           bricks_[i][j].shape.setFillColor(kBrickRed);
           bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 50;
+          bricks_[i][j].points = 90;
           bricks_remaining_++;
           break;
         case B:
@@ -147,7 +149,7 @@ void Level::initBricks() {
           bricks_[i][j].shape.setFillColor(kBrickBlue);
           bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 50;
+          bricks_[i][j].points = 100;
           bricks_remaining_++;
           break;
         case P:
@@ -155,7 +157,7 @@ void Level::initBricks() {
           bricks_[i][j].shape.setFillColor(kBrickPink);
           bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 50;
+          bricks_[i][j].points = 110;
           bricks_remaining_++;
           break;
         case Y:
@@ -163,7 +165,7 @@ void Level::initBricks() {
           bricks_[i][j].shape.setFillColor(kBrickYellow);
           bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 50;
+          bricks_[i][j].points = 120;
           bricks_remaining_++;
           break;
         case S:
@@ -171,23 +173,22 @@ void Level::initBricks() {
           bricks_[i][j].shape.setFillColor(kBrickSilver);
           bricks_[i][j].active = true;
           bricks_[i][j].resistance = 2;
-          bricks_[i][j].points = 50;
+          bricks_[i][j].points = 50 * number_;
           bricks_remaining_++;
           break;
         case A:
           bricks_[i][j].type = A;
           bricks_[i][j].shape.setFillColor(kBrickGold);
           bricks_[i][j].active = true;
-          bricks_[i][j].resistance = 3;
-          bricks_[i][j].points = 50;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 0;
+          bricks_[i][j].points = 0;
           break;
         case _:
         default:
           bricks_[i][j].type = _;
           bricks_[i][j].active = false;
           bricks_[i][j].resistance = 0;
-          bricks_[i][j].points = NULL;
+          bricks_[i][j].points = 0;
           break;
       } 
       bricks_[i][j].shape.setPosition(sf::Vector2f(bricks_[i][j].shape.getSize().x * j, start_y));
