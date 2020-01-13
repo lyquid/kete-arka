@@ -68,11 +68,12 @@ int Player::getLives() {
 /////////////////////////////////////////////////
 /// @brief Returns the players's score.
 ///
-/// @return An integer representing the player's score.
+/// @return An unsigned long long int representing the player's score.
 ///
-/// An integer representing the player's current score.
+/// An unsigned long long int representing the player's 
+/// current score.
 /////////////////////////////////////////////////
-int Player::getScore() {
+unsigned long long int Player::getScore() {
   return score_;
 }
 

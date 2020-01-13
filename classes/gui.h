@@ -25,7 +25,7 @@ class GUI {
   void reset();
   void selectNextLevel();
   void selectPreviousLevel();
-  void setFinalScoreText();
+  void setFinalScoreText(unsigned long long int score);
   void setLevelStrings(const int lvl_position, const sf::String lvl_info_string);
   void setLevelText(int level_num);
   void setLivesText(const int lives);
@@ -52,6 +52,7 @@ class GUI {
   sf::Text press_any_key_text_;
   sf::Text press_start_text_;
   sf::Text title_text_;
+  sf::Text total_score_text_;
   // main menu items
   sf::Text menu_start_text_;
   sf::Text menu_level_text_;

@@ -40,6 +40,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
         case sf::Keyboard::Q:
           state_ = Quit;
           break;
+        /* New game start */
         case sf::Keyboard::Num1:
           player_.reset();
           ball_.reset();
@@ -71,6 +72,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
         case sf::Keyboard::S:
           gui_.selectNextLevel();
           break;
+        /* Level selection start */
         case sf::Keyboard::Enter:
           int lvl_num = gui_.getLevelSelectedNumber();
           player_.reset();
@@ -89,6 +91,11 @@ void Game::handleKeyEvents(const sf::Event key_event) {
       break;
     case Playing:
       switch (key_event.key.code) {
+        case sf::Keyboard::C:
+          if (kExecutionMode != Normal) {
+            current_level_->complete(); // cheat!
+          }
+          break;
         case sf::Keyboard::Escape:
           state_ = Menu;
           break;
@@ -115,15 +122,14 @@ void Game::handleKeyEvents(const sf::Event key_event) {
       break;
     case LevelCompleted: {
       switch (key_event.key.code) {
+        /* Next level */
         case sf::Keyboard::Space:
           int next_lvl = current_level_->getNumber() + 1;
           if (next_lvl > kMaxLevels) {
             state_ = GameCompleted;
           } else  {
-            player_.reset();
             ball_.reset();
             ship_.reset();
-            gui_.reset();
             if (loadLevel(next_lvl)) {
               state_ = Playing;
               logger_.write("Successfully loaded level " + GUI::toString(next_lvl) + ".");
@@ -241,9 +247,11 @@ void Game::update() {
       if (player_.isDead()) {
         state_ = GameOver;
         gui_.setRenderFlashingTextFlag(true);
-        gui_.setFinalScoreText();
+        gui_.setFinalScoreText(player_.getScore());
       } else if (current_level_->isCompleted()) {
         state_ =  LevelCompleted;
+        gui_.setRenderFlashingTextFlag(true);
+        gui_.setFinalScoreText(player_.getScore());
       } else {
         ball_.move(delta_time, ship_, current_level_->getBricks());
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 

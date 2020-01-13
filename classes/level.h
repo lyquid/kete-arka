@@ -19,6 +19,7 @@ class Level {
  public:
   Level() {}
   ~Level() {}
+  void complete();
   void decreaseResistance(int i, int j);
   void draw(sf::RenderWindow &window);
   Brick (*getBricks())[kLevelMaxColumns];

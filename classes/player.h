@@ -10,7 +10,7 @@ class Player {
   ~Player() {}
   void decreaseLives(const int decrease_by = 1);
   int getLives();
-  int getScore();
+  unsigned long long int getScore();
   void increaseScore(const int increase_by);
   void init(GUI *ptg);
   bool isDead();

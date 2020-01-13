@@ -1,5 +1,10 @@
 #include "level.h"
 
+///
+void Level::complete() {
+  completed_ = true;
+}
+
 /////////////////////////////////////////////////
 /// @brief Decreases the resistance of a brick.
 ///

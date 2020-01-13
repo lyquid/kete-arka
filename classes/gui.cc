@@ -18,7 +18,7 @@ void GUI::drawGameCompleted(sf::RenderWindow &window) {
 /////////////////////////////////////////////////
 void GUI::drawGameOverScreen(sf::RenderWindow &window) {
   window.draw(game_over_text_);
-  window.draw(gui_score_text_);
+  window.draw(total_score_text_);
   updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
     window.draw(press_any_key_text_);
@@ -41,6 +41,7 @@ void GUI::drawInGameGUI(sf::RenderWindow &window) {
 ///
 void GUI::drawLevelCompletedScreen(sf::RenderWindow &window) {
   window.draw(level_completed_title_);
+  window.draw(total_score_text_);
   updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
     window.draw(level_completed_continue_);
@@ -148,6 +149,9 @@ void GUI::init(const sf::Font &font) {
   // press any key
   initText(press_any_key_text_, kContinueText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
   press_any_key_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
+  // total score
+  initText(total_score_text_, kTotalScoreText, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
+  total_score_text_.setPosition(halfScreenW, kScreenHeight / 2);
   // MENU - level selection
   initText(menu_level_text_, kMenuLevelText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor, Horizontal);
   menu_level_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 2.f);
@@ -173,7 +177,7 @@ void GUI::init(const sf::Font &font) {
   level_select_keys_.setPosition(halfScreenW, static_cast<int>(kScreenHeight - kGUILevelSelectKeys - kGUIDefaultMargin));
   // LEVEL COMPLETED
   initText(level_completed_title_, kLevelCompletedText, font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
-  level_completed_title_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
+  level_completed_title_.setPosition(halfScreenW, (float)kScreenHeight * 0.25f);
   // LEVEL COMPLETED - CONTINUE
   initText(level_completed_continue_, kPressSpaceText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
   level_completed_continue_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
@@ -285,10 +289,9 @@ void GUI::selectPreviousLevel() {
 /// Sets the score text origin to the center of both axis 
 /// and the text position to the middle of the screen.
 /////////////////////////////////////////////////
-void GUI::setFinalScoreText() {
-  gui_score_text_.setCharacterSize(kGUIPressStartTextFontSize);
-  setOrigin(gui_score_text_, BothAxis);
-  gui_score_text_.setPosition(kScreenWidth / 2, kScreenHeight / 2);
+void GUI::setFinalScoreText(unsigned long long int score) {
+  total_score_text_.setString(kTotalScoreText + toString(score));
+  setOrigin(total_score_text_, BothAxis);
 }
 
 /////////////////////////////////////////////////

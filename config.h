@@ -27,6 +27,7 @@ const sf::String  kAppVersion         = "0.0";
 const sf::String  kLevelCompletedText = "LEVEL COMPLETED";
 const sf::String  kGameCompletedText  = "GAME COMPLETED!";
 const sf::String  kGameOverText       = "GAME OVER";
+const sf::String  kTotalScoreText     = "Score ";
 const sf::String  kGameTitle          = kAppName;
 const sf::String  kGameTitleJ         = "ケテアルカ";
 const sf::String  kPauseText          = "Paused";
