@@ -51,7 +51,7 @@ const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidt
 const sf::Color     kBallDefaultColor         = sf::Color::White;
 
 // brick default settings
-const float         kBrickDefaultStart  = 30.f;
+const float         kBrickDefaultStart  = 0.f;
 const float         kBrickDefaultWidth  = 61.09f;
 const float         kBrickDefaultHeight = 30.54f; 
 const sf::Vector2f  kBrickDefaultSize   = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
@@ -60,15 +60,15 @@ const sf::Vector2f  kBrickDefaultSize   = sf::Vector2f(kBrickDefaultWidth, kBric
 const sf::Color kBrickDefaultColor        = sf::Color::White;
 const sf::Color kBrickDefaultOutlineColor = sf::Color::Black;
 const sf::Color kBrickWhite               = sf::Color(252, 252, 252);
-const sf::Color kBrickOrange              = sf::Color(252, 116, 96);
-const sf::Color kBrickLighBlue            = sf::Color(60, 188, 252);
-const sf::Color kBrickGreen               = sf::Color(128, 208, 16);
-const sf::Color kBrickRed                 = sf::Color(216, 40, 0);
-const sf::Color kBrickBlue                = sf::Color(0, 112, 236);
+const sf::Color kBrickOrange              = sf::Color(252, 116,  96);
+const sf::Color kBrickLighBlue            = sf::Color( 60, 188, 252);
+const sf::Color kBrickGreen               = sf::Color(128, 208,  16);
+const sf::Color kBrickRed                 = sf::Color(216,  40,   0);
+const sf::Color kBrickBlue                = sf::Color(  0, 112, 236);
 const sf::Color kBrickPink                = sf::Color(252, 116, 180);
-const sf::Color kBrickYellow              = sf::Color(252, 152, 56);
+const sf::Color kBrickYellow              = sf::Color(252, 152,  56);
 const sf::Color kBrickSilver              = sf::Color(188, 188, 188);
-const sf::Color kBrickGold                = sf::Color(240, 188, 60);
+const sf::Color kBrickGold                = sf::Color(240, 188,  60);
 
 // GUI/Menu default settings
 const int       kGUIGameOverFontSize          = 30;
@@ -82,7 +82,7 @@ const int       kGUILevelSelectKeys           = 12;
 const sf::Color kGUIDefaultFontColor          = sf::Color::White;
 const sf::Color kGUIDefaultSelectedFontColor  = sf::Color::Black;
 const float     kGUIDefaultMargin             = 8.f;
-const float     kGUIDefaultHeight             = kGUIDefaultMargin + (float) kGUIPauseTextFontSize;
+const float     kGUIDefaultHeight             = 0.f;
 
 // level default settings
 const int kLevelMaxColumns  = 11;
