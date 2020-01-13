@@ -12,8 +12,10 @@ struct Proto_level  {
 
 static const Proto_level kProtoLevels[kMaxLevels] = {
   {
-    "begin", /* Level 01 */
+    "begin1", /* Level 01 */
     { _, _, _, _, _, _, _, _, _, _, _,
+      _, _, _, _, _, _, _, _, _, _, _,
+      _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       S, S, S, S, S, S, S, S, S, S, S,
       R, R, R, R, R, R, R, R, R, R, R,
@@ -24,7 +26,9 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "begin2", /* Level 02 */
-    { O, _, _, _, _, _, _, _, _, _, _,
+    { _, _, _, _, _, _, _, _, _, _, _,
+      _, _, _, _, _, _, _, _, _, _, _,
+      O, _, _, _, _, _, _, _, _, _, _,
       O, L, _, _, _, _, _, _, _, _, _,
       O, L, G, _, _, _, _, _, _, _, _,
       O, L, G, B, _, _, _, _, _, _, _,
@@ -37,7 +41,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
       S, S, S, S, S, S, S, S, S, S, O }
   },
   {
-    "begin", /* Level 03 */
+    "begin3", /* Level 03 */
     { R, _, _, _, _, _, _, _, _, _, B,
       _, _, _, _, _, _, _, _, _, _, R,
       _, _, _, _, _, _, _, _, _, _, G,

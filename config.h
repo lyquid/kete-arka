@@ -86,7 +86,7 @@ const float     kGUIDefaultHeight             = 0.f;
 
 // level default settings
 const int kLevelMaxColumns  = 11;
-const int kLevelMaxRows     = 11;
+const int kLevelMaxRows     = 13;
 const int kMaxLevels        = 20;
 
 // player default setting
