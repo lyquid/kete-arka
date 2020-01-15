@@ -174,7 +174,7 @@ void GUI::init(const sf::Font &font) {
   initLevelsList(font);
   // LEVEL SELECTION - key guide
   initText(level_select_keys_, kLevelSelectKeys, font, kGUILevelSelectKeys, kGUIDefaultFontColor, Horizontal);
-  level_select_keys_.setPosition(halfScreenW, static_cast<int>(kScreenHeight - kGUILevelSelectKeys - kGUIDefaultMargin));
+  level_select_keys_.setPosition(halfScreenW, static_cast<int>(kScreenHeight - kGUILevelSelectKeys));
   // LEVEL COMPLETED
   initText(level_completed_title_, kLevelCompletedText, font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
   level_completed_title_.setPosition(halfScreenW, (float)kScreenHeight * 0.25f);
@@ -198,12 +198,12 @@ void GUI::init(const sf::Font &font) {
 /////////////////////////////////////////////////
 void GUI::initLevelsList(const sf::Font &font) {
   const int x = kScreenWidth / 2;
-  int y = kScreenHeight * 0.1f;
+  int y = kGUIDefaultMargin + kGUILevelSelectFontSize / 2;
   initText(level_select_title_text_, kLevelSelectText, font, kGUILevelSelectFontSize, kGUIDefaultFontColor, BothAxis);
   level_select_title_text_.setPosition(x, y);
   for (int i = 0; i < kMaxLevels; ++i) {
-    y = (kScreenHeight * 0.15f) + (kGUITextFontSize * (i + 1)) + (8 * i);
-    initText(level_info_[i], level_info_strings_[i], font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
+    y = (kGUIDefaultMargin + kGUILevelSelectKeys * 2) + (kGUILevelSelectKeys * (i + 1)) + (8 * i);
+    initText(level_info_[i], level_info_strings_[i], font, kGUILevelSelectKeys, kGUIDefaultFontColor, BothAxis);
     level_info_[i].setPosition(x, y);
   }
   level_selected_ = 0;
