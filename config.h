@@ -47,7 +47,7 @@ const sf::String  kMenuQuitText       = "(Q) Quit";
 const float         kBallDefaultRadius        = 5.f;         
 const float         kBallDefaultSpeed         = 400.f;
 const float         kBallDefaultDisplacement  = 1.41f;
-const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidth / 2.f, (float) kScreenHeight * 0.7f);
+const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidth / 2.f, (float) kScreenHeight * 0.75f);
 const sf::Color     kBallDefaultColor         = sf::Color::White;
 
 // brick default settings
@@ -73,7 +73,7 @@ const sf::Color kBrickGold                = sf::Color(240, 188,  60);
 // GUI/Menu default settings
 const int       kGUIGameOverFontSize          = 30;
 const int       kGUIGameTitleFontSize         = 60;
-const int       kGUILevelSelectFontSize       = 25;
+const int       kGUILevelSelectFontSize       = 18;
 const int       kGUIMenuItemFontSize          = 20;
 const int       kGUIPauseTextFontSize         = 20;
 const int       kGUIPressStartTextFontSize    = 20;
@@ -81,13 +81,13 @@ const int       kGUITextFontSize              = 15;
 const int       kGUILevelSelectKeys           = 12;
 const sf::Color kGUIDefaultFontColor          = sf::Color::White;
 const sf::Color kGUIDefaultSelectedFontColor  = sf::Color::Black;
-const float     kGUIDefaultMargin             = 8.f;
+const float     kGUIDefaultMargin             = 4.f;
 const float     kGUIDefaultHeight             = 0.f;
 
 // level default settings
 const int kLevelMaxColumns  = 11;
-const int kLevelMaxRows     = 13;
-const int kMaxLevels        = 20;
+const int kLevelMaxRows     = 18;
+const int kMaxLevels        = 36;
 
 // player default setting
 const int kPlayerDefaultLives = 3;
@@ -96,7 +96,7 @@ const int kPlayerDefaultLives = 3;
 const float         kShipDefaultWidth     = 80.f;
 const float         kShipDefaultHeight    = 15.f;
 const sf::Vector2f  kShipDefaultSize      = sf::Vector2f(kShipDefaultWidth, kShipDefaultHeight);
-const sf::Vector2f  kShipDefaultPosition  = sf::Vector2f(((float) kScreenWidth - kShipDefaultSize.x) / 2.f, (float) kScreenHeight * 0.85f);
+const sf::Vector2f  kShipDefaultPosition  = sf::Vector2f(((float) kScreenWidth - kShipDefaultSize.x) / 2.f, (float) kScreenHeight * 0.9f);
 const float         kShipDefaultSpeed     = 500.f;
 const sf::Color     kShipDefaultColor     = sf::Color::White;
 
