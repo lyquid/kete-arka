@@ -3,12 +3,14 @@
 
 #include <string> // std::string
 
+#include <SFML/Graphics.hpp>
+
 #include "../config.h"
 #include "../levels.h"
 #include "player.h"
 
 struct Brick {
-  BrickTypes type = _;
+  BrickTypes type;
   bool active;
   unsigned int resistance;
   unsigned int points;
@@ -27,10 +29,8 @@ class Level {
   int getNumber();
   void init(Player *ptp);
   bool isCompleted();
-  void setLayout(const BrickTypes *new_layout);
-  void setName(std::string name);
+  static void initProtoLevels(Level *ptl);
   void setNumber(int lvl_num);
-  static void initProtoLevels(Level *ptl); 
 
  private:
   void initBricks();
@@ -40,7 +40,12 @@ class Level {
   BrickTypes layout_[kLevelMaxRows * kLevelMaxColumns];
   std::string name_;
   int number_;
-  Player *player_;
+  Player *player_; 
+  // level background
+  void initBackground();
+  Background background_;
+  sf::VertexArray background_va_;
+  sf::Texture background_texture_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

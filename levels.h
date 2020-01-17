@@ -5,8 +5,11 @@
 
 #include "config.h"
 
+enum class Background { Blue, Green, BlueCircuit, RedCircuit, Moai };
+
 struct Proto_level  {
   const std::string name;
+  const Background background;
   const BrickTypes layout[kLevelMaxRows * kLevelMaxColumns];
 };
 
@@ -34,6 +37,7 @@ struct Proto_level  {
 static const Proto_level kProtoLevels[kMaxLevels] = {
   {
     "Trunyu va", /* Level 01 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -47,6 +51,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Escala ensopida", /* Level 02 */
+    Background::Green,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       O, _, _, _, _, _, _, _, _, _, _,
@@ -63,6 +68,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Serp ondulada", /* Level 03 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -84,6 +90,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Columnes de Rossetta", /* Level 04 */
+    Background::RedCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -105,6 +112,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "L'invasor", /* Level 05 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, Y, _, _, _, Y, _, _, _,
@@ -124,6 +132,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Pont de Londres", /* Level 06 */
+    Background::Green,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -141,6 +150,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Llaminadura poligonera", /* Level 07 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -160,6 +170,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Papallona eteria", /* Level 08 */
+    Background::RedCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -177,6 +188,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Poals d'or", /* Level 09 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, A, _, A, _, _, _, A, _, A, _,
@@ -193,6 +205,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Bufar i fer ampolles", /* Level 10 */
+    Background::Green,
     { _, A, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, A, _, _, _, _, _, _, _, _, _,
@@ -212,6 +225,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "El bunquer insipid", /* Level 11 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -228,6 +242,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Bany embussat", /* Level 12 */
+    Background::RedCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       A, A, A, A, A, A, A, A, A, A, A,
@@ -246,6 +261,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Parenceria d'imaginacio", /* Level 13 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -261,6 +277,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Les primes linies", /* Level 14 */
+    Background::Green,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -281,6 +298,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Finestres '20", /* Level 15 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -299,6 +317,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Pit d'esquelet", /* Level 16 */
+    Background::RedCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, A, _, _, _, _, _,
@@ -318,6 +337,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Al maig tota cuca viu", /* Level 17 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, S, _, _, _, _, _,
@@ -335,6 +355,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Acropoli insubmisa", /* Level 18 */
+    Background::Green,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -351,6 +372,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "I? H? Erra, ge, be!", /* Level 19 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -366,6 +388,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "El nan rosa", /* Level 20 */
+    Background::RedCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -384,6 +407,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Joier en joier", /* Level 21 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -401,6 +425,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Quatre indis", /* Level 22 */
+    Background::Green,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -416,6 +441,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Profund mar blau", /* Level 23 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       B, B, B, B, B, B, B, B, B, B, B,
@@ -434,6 +460,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Elasmobranqui gegant", /* Level 24 */
+    Background::RedCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -451,6 +478,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Palau del sulta", /* Level 25 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -468,6 +496,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Flor de foc", /* Level 26 */
+    Background::Green,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -482,6 +511,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Estat feixista", /* Level 27 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -499,6 +529,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Super dona", /* Level 28 */
+    Background::RedCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -515,6 +546,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Moises al mar de l'amor", /* Level 29 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -531,6 +563,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Cap abaix", /* Level 30 */
+    Background::Green,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -548,6 +581,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Osti quin pal!", /* Level 31 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -568,6 +602,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "U.S.C.S.S. Nostromo", /* Level 32 */
+    Background::RedCircuit,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -585,6 +620,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Escurabutxaques", /* Level 33 */
+    Background::Blue,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, R, R, _, _, _, _,
@@ -604,6 +640,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Gelat de nabius", /* Level 34 */
+    Background::Green,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
@@ -625,6 +662,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
   },
   {
     "Flor de carn i sang", /* Level 35 */
+    Background::BlueCircuit,
     { _, _, _, _, _, _, _, _, _, W, _,
       _, _, _, _, _, _, _, _, _, W, W,
       _, _, _, W, W, W, W, _, _, _, _,
@@ -642,7 +680,8 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
       A, A, G, A, G, _, _, G, G, _, _ } 
   },
   {
-    "Mohai", /* Level 36 */
+    "Moai", /* Level 36 */
+    Background::Moai,
     { _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,

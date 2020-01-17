@@ -1,6 +1,10 @@
 #include "level.h"
 
+/////////////////////////////////////////////////
+/// @brief Completes the level.
 ///
+/// Completes the level. Mainly used for cheating.
+/////////////////////////////////////////////////
 void Level::complete() {
   completed_ = true;
 }
@@ -37,8 +41,9 @@ void Level::decreaseResistance(int i, int j) {
 /// Draws the level to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
 void Level::draw(sf::RenderWindow &window) {
-  for (int i = 0; i < kLevelMaxRows; ++i) {
-    for (int j = 0; j < kLevelMaxColumns; ++j) {
+  window.draw(background_va_, &background_texture_);
+  for (unsigned int i = 0; i < kLevelMaxRows; ++i) {
+    for (unsigned int j = 0; j < kLevelMaxColumns; ++j) {
       if (bricks_[i][j].active) {
         window.draw(bricks_[i][j].shape);
       }
@@ -91,7 +96,53 @@ void Level::init(Player *ptp) {
   player_ = ptp;
   completed_ = false;
   bricks_remaining_ = 0;
+  initBackground();
   initBricks();
+}
+
+///
+void Level::initBackground() {
+  const std::string path = "assets/img/";
+  switch (background_) {
+    case Background::Moai:
+      if (!background_texture_.loadFromFile(path + "bg_moai.png")) {
+        exit(EXIT_FAILURE);
+      }
+      break;
+    case Background::RedCircuit:
+      if (!background_texture_.loadFromFile(path + "bg_circuit_red.png")) {
+        exit(EXIT_FAILURE);
+      }
+      break;
+    case Background::BlueCircuit:
+      if (!background_texture_.loadFromFile(path + "bg_circuit_blue.png")) {
+        exit(EXIT_FAILURE);
+      }
+      break;
+    case Background::Green:
+      if (!background_texture_.loadFromFile(path + "bg_green.png")) {
+        exit(EXIT_FAILURE);
+      }
+      break;
+    case Background::Blue:
+      [[fallthrough]];
+    default:
+      if (!background_texture_.loadFromFile(path + "bg_blue.png")) {
+        exit(EXIT_FAILURE);
+      }
+      break;
+  }
+  background_texture_.setRepeated(true);
+  background_va_.resize(4);
+  background_va_.setPrimitiveType(sf::Quads);
+  background_va_[0] = sf::Vector2f(         0.f,           0.f);
+  background_va_[1] = sf::Vector2f(kScreenWidth,           0.f);
+  background_va_[2] = sf::Vector2f(kScreenWidth, kScreenHeight);
+  background_va_[3] = sf::Vector2f(         0.f, kScreenHeight);
+  background_va_[0].texCoords = sf::Vector2f(         0.f,           0.f);
+  background_va_[1].texCoords = sf::Vector2f(kScreenWidth,           0.f);
+  background_va_[2].texCoords = sf::Vector2f(kScreenWidth, kScreenHeight);
+  background_va_[3].texCoords = sf::Vector2f(         0.f, kScreenHeight);
 }
 
 /////////////////////////////////////////////////
@@ -210,9 +261,12 @@ void Level::initBricks() {
 /// Initializates the layouts and names of the levels.
 /////////////////////////////////////////////////
 void Level::initProtoLevels(Level *ptl) {
-  for (int i = 0; i < kMaxLevels; ++i) {
-    ptl[i].setName(kProtoLevels[i].name);
-    ptl[i].setLayout(kProtoLevels[i].layout);
+  for (unsigned int i = 0; i < kMaxLevels; ++i) {
+    ptl[i].name_ = kProtoLevels[i].name;
+    ptl[i].background_ = kProtoLevels[i].background;
+    for (unsigned int j = 0; j < kLevelMaxRows * kLevelMaxColumns; ++j) {
+      ptl[i].layout_[j] = kProtoLevels[i].layout[j];
+    }
   }
 }
 
@@ -225,30 +279,6 @@ void Level::initProtoLevels(Level *ptl) {
 /////////////////////////////////////////////////
 bool Level::isCompleted() {
   return completed_;
-}
-
-/////////////////////////////////////////////////
-/// @brief Sets the layout of a level.
-///
-/// @param new_layout - A pointer to the array representing the layout.
-///
-/// Sets the layout of a level.
-/////////////////////////////////////////////////
-void Level::setLayout(const BrickTypes *new_layout) {
-  for (int i = 0; i < kLevelMaxRows * kLevelMaxColumns; ++i) {
-    layout_[i] = new_layout[i];
-  }
-}
-
-/////////////////////////////////////////////////
-/// @brief Sets the level's name.
-///
-/// @param name - An std::string to be set as the level name.
-///
-/// Sets the level's name.
-/////////////////////////////////////////////////
-void Level::setName(std::string name) {
-  name_ = name;
 }
 
 /////////////////////////////////////////////////

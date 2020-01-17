@@ -5,8 +5,8 @@
 #include <SFML/Graphics.hpp>
 
 // app utils
-enum BrickTypes {_, W, O, L, G, R, B, P, Y, S, A};
-/// TODO: make this to enum class_
+enum BrickTypes { _, W, O, L, G, R, B, P, Y, S, A };
+/// TODO: make this to enum class
 enum Collisions {
   Top, Bottom, Left, Right,
   TopShip, BottomShip, LeftShip, RightShip,
@@ -79,8 +79,10 @@ const int       kGUIPauseTextFontSize         = 20;
 const int       kGUIPressStartTextFontSize    = 20;
 const int       kGUITextFontSize              = 15;
 const int       kGUILevelSelectKeys           = 12;
+const int       kGUIDefaultFontOutline        = 1;
 const sf::Color kGUIDefaultFontColor          = sf::Color::White;
 const sf::Color kGUIDefaultSelectedFontColor  = sf::Color::Black;
+const sf::Color kGUIDefaultFontOutlineColor   = sf::Color::Black;
 const float     kGUIDefaultMargin             = 4.f;
 const float     kGUIDefaultHeight             = 0.f;
 

@@ -156,28 +156,34 @@ void Game::handleKeyEvents(const sf::Event key_event) {
 
 void Game::init() {
   state_ = Title;
-  logger_.start();
   title_ = kAppName + " v" + kAppVersion;
+  /* Logger */
+  logger_.start();
   logger_.write(title_ + " started.");
-  window_.create(sf::VideoMode(kScreenWidth, kScreenHeight, 32), title_, sf::Style::Titlebar | sf::Style::Close);
+  /* Display window */ 
+  window_.create(sf::VideoMode(kScreenWidth, kScreenHeight), title_, sf::Style::Titlebar | sf::Style::Close);
   logger_.write("Successfully created display window.");
   window_.setVerticalSyncEnabled(true);
+  /* Font */
   if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
     logger_.write("ERROR: Failed loading font.");
     exit(EXIT_FAILURE);
-  } else {
-    current_level_ = NULL;
-    Level::initProtoLevels(game_levels_);
-    logger_.write("Successfully initialized protolevels.");
-    initLevelsMenu();
-    logger_.write("Successfully initialized levels menu.");
-    gui_.init(font_);
-    logger_.write("Successfully initialized GUI.");
-    ball_.init(&player_, &ship_);
-    logger_.write("Successfully initialized ball.");
-    player_.init(&gui_);
-    logger_.write("Successfully initialized player.");
   }
+  /* Proto levels and level selection menu */
+  current_level_ = NULL;
+  Level::initProtoLevels(game_levels_);
+  logger_.write("Successfully initialized protolevels.");
+  initLevelsMenu();
+  logger_.write("Successfully initialized levels menu.");
+  /* GUI */
+  gui_.init(font_);
+  logger_.write("Successfully initialized GUI.");
+  /* Ball */ 
+  ball_.init(&player_, &ship_);
+  logger_.write("Successfully initialized ball.");
+  /* Player */
+  player_.init(&gui_);
+  logger_.write("Successfully initialized player.");
 }
 
 void Game::initLevelsMenu() {
@@ -217,13 +223,17 @@ void Game::render() {
       gui_.drawLevelSelection(window_);
       break;
     case Paused:
+      current_level_->draw(window_);
       gui_.drawPauseScreen(window_);
-      [[fallthrough]];
-    case Playing:
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
       ship_.draw(window_);
+      break;
+    case Playing:
       current_level_->draw(window_);
+      gui_.drawInGameGUI(window_);
+      ball_.draw(window_, state_);
+      ship_.draw(window_);
       break;
     case LevelCompleted:
       gui_.drawLevelCompletedScreen(window_);

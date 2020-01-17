@@ -234,6 +234,8 @@ void GUI::initText( sf::Text              &text,
   text.setCharacterSize(size);
   text.setFillColor(color);
   text.setString(string_text);
+  text.setOutlineColor(kGUIDefaultFontOutlineColor);
+  text.setOutlineThickness(kGUIDefaultFontOutline);
   setOrigin(text, mode);
 }
 
@@ -437,7 +439,9 @@ void GUI::updateFlashingTextFlag(){
 /////////////////////////////////////////////////
 void GUI::updateLevelSelectionShape(int previous_level) {
   level_info_[previous_level].setFillColor(kGUIDefaultFontColor);
+  level_info_[previous_level].setOutlineThickness(kGUIDefaultFontOutline);
   level_info_[level_selected_].setFillColor(kGUIDefaultSelectedFontColor);
+  level_info_[level_selected_].setOutlineThickness(0);
   level_selected_shape_.setSize(sf::Vector2f(level_info_[level_selected_].getGlobalBounds().width, level_info_[level_selected_].getGlobalBounds().height));
   setOrigin(level_selected_shape_, BothAxis);
   level_selected_shape_.setPosition(level_info_[level_selected_].getPosition());
