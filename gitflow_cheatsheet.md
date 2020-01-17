@@ -22,7 +22,7 @@ git checkout develop
 git merge feature_branch
 git checkout master
 git merge develop
-git branch -D feature_branch
+git branch -d feature_branch
 ~~~
 
 ###### Release branch ######
@@ -40,7 +40,7 @@ git checkout develop
 git merge release/0.1.0
 git checkout master
 git merge release/0.1.0
-git branch -D release/0.1.0
+git branch -d release/0.1.0
 ~~~
 
 ###### Hotfix branch ######
