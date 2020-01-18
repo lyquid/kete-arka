@@ -38,23 +38,23 @@ bool Ball::checkBrickCollision(Brick bricks[][kLevelMaxColumns]) {
 
 bool Ball::checkBorderCollision() {
   bool collision = false;
-  if (shape_.getPosition().x - current_radius_ <= 0.f) {
-    // left collision
+  // left collision
+  if (shape_.getPosition().x - current_radius_ <= kGUIBorderThickness) {
     randomizeBounceAngle(Left);
-    shape_.setPosition(current_radius_ + 0.1f, shape_.getPosition().y); 
+    shape_.setPosition(kGUIBorderThickness + current_radius_ + 0.1f, shape_.getPosition().y); 
     collision = true;
-  } else if (shape_.getPosition().x + current_radius_ >= kScreenWidth) {
-    // right collision
+  // right collision
+  } else if (shape_.getPosition().x + current_radius_ >= kScreenWidth - kGUIBorderThickness) {
     randomizeBounceAngle(Right);
-    shape_.setPosition(kScreenWidth - current_radius_ - 0.1f, shape_.getPosition().y); 
+    shape_.setPosition(kScreenWidth - kGUIBorderThickness - current_radius_ - 0.1f, shape_.getPosition().y); 
     collision = true;
-  } else if (shape_.getPosition().y - current_radius_ <= kGUIDefaultHeight) {
-    // top collision
+  // top collision
+  } else if (shape_.getPosition().y - current_radius_ <= kGUIBorderThickness) {
     randomizeBounceAngle(Top);
-    shape_.setPosition(shape_.getPosition().x, current_radius_ + kGUIDefaultHeight + 0.1f);
+    shape_.setPosition(shape_.getPosition().x, current_radius_ + kGUIBorderThickness + 0.1f);
     collision = true;
+  // bottom "collision"
   } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
-    // bottom "collision"
     player_->decreaseLives();
     ship_->reset();
     reset();

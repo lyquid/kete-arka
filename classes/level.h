@@ -41,11 +41,17 @@ class Level {
   std::string name_;
   int number_;
   Player *player_; 
-  // level background
-  void initBackground();
+  // level background and borders
+  void initGraphics();
   Background background_;
   sf::VertexArray background_va_;
-  sf::Texture background_texture_;
+  sf::Texture background_tx_;
+  sf::VertexArray border_left_;         
+  sf::Texture border_left_tx_;
+  sf::VertexArray border_right_;
+  sf::Texture border_right_tx_;
+  sf::VertexArray border_top_;
+  sf::Texture border_top_tx_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_
