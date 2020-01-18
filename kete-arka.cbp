@@ -15,12 +15,12 @@
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<!-- <Add library="C:/lib/SFML-2.5.1/lib/libsfml-graphics-d.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-graphics-d.a" />
 					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-window-d.a" /> 
-					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system-d.a" /> -->
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics-d.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system-d.a" /> 
+					<!--  <Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics-d.a" />
 					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-window-d.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system-d.a" />
+					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system-d.a" /> -->
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -33,12 +33,12 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<!-- <Add library="C:/lib/SFML-2.5.1/lib/libsfml-graphics.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-graphics.a" />
 					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-window.a" />
-					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system.a" /> -->
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system.a" /> 
+					<!-- <Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics.a" />
 					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-window.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system.a" />
+					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system.a" /> -->
 				</Linker>
 			</Target>
 		</Build>

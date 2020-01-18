@@ -163,13 +163,13 @@ void GUI::init(const sf::Font &font) {
   menu_quit_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 4.f);
   // GUI - lives
   initText(gui_lives_text_, kGUILivesText + toString(kPlayerDefaultLives), font, kGUITextFontSize, kGUIDefaultFontColor, TopLeft);
-  gui_lives_text_.setPosition(kGUIDefaultMargin, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
+  gui_lives_text_.setPosition(kGUIDefaultMargin + kGUIBorderThickness, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
   // GUI - score
   initText(gui_score_text_, kGUIScoreText + toString(0), font, kGUITextFontSize, kGUIDefaultFontColor, Horizontal);
   gui_score_text_.setPosition(halfScreenW, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
   // GUI - level
   initText(gui_level_text_, kGUILevelText, font, kGUITextFontSize, kGUIDefaultFontColor, TopRight);
-  gui_level_text_.setPosition((float)kScreenWidth - kGUIDefaultMargin, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
+  gui_level_text_.setPosition((float)kScreenWidth - kGUIDefaultMargin - kGUIBorderThickness, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
   // LEVEL SELECTION - levels list
   initLevelsList(font);
   // LEVEL SELECTION - key guide

@@ -52,8 +52,8 @@ const sf::Color     kBallDefaultColor         = sf::Color::White;
 
 // brick default settings
 const float         kBrickDefaultStart  = 0.f;
-const float         kBrickDefaultWidth  = 61.09f;
-const float         kBrickDefaultHeight = 30.54f; 
+const float         kBrickDefaultWidth  = 56.f;
+const float         kBrickDefaultHeight = 28.f; 
 const sf::Vector2f  kBrickDefaultSize   = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
 
 // brick colors
@@ -84,7 +84,7 @@ const sf::Color kGUIDefaultFontColor          = sf::Color::White;
 const sf::Color kGUIDefaultSelectedFontColor  = sf::Color::Black;
 const sf::Color kGUIDefaultFontOutlineColor   = sf::Color::Black;
 const float     kGUIDefaultMargin             = 4.f;
-const float     kGUIDefaultHeight             = 0.f;
+const float     kGUIBorderThickness           = 28.f;
 
 // level default settings
 const int kLevelMaxColumns  = 11;

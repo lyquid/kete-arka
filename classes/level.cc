@@ -41,7 +41,10 @@ void Level::decreaseResistance(int i, int j) {
 /// Draws the level to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
 void Level::draw(sf::RenderWindow &window) {
-  window.draw(background_va_, &background_texture_);
+  window.draw(background_va_, &background_tx_);
+  window.draw(border_left_, &border_left_tx_);
+  window.draw(border_right_, &border_right_tx_);
+  window.draw(border_top_, &border_top_tx_);
   for (unsigned int i = 0; i < kLevelMaxRows; ++i) {
     for (unsigned int j = 0; j < kLevelMaxColumns; ++j) {
       if (bricks_[i][j].active) {
@@ -96,43 +99,86 @@ void Level::init(Player *ptp) {
   player_ = ptp;
   completed_ = false;
   bricks_remaining_ = 0;
-  initBackground();
+  initGraphics();
   initBricks();
 }
 
 ///
-void Level::initBackground() {
+void Level::initGraphics() {
   const std::string path = "assets/img/";
+  /* left border */
+  if (!border_left_tx_.loadFromFile(path + "border_left.png")) {
+    exit(EXIT_FAILURE);
+  }
+  border_left_.resize(4); 
+  border_left_.setPrimitiveType(sf::Quads);
+  border_left_[0] = sf::Vector2f(0.f, 0.f);
+  border_left_[1] = sf::Vector2f(28.f, 0.f);
+  border_left_[2] = sf::Vector2f(28.f, kScreenHeight);
+  border_left_[3] = sf::Vector2f(0.f, kScreenHeight);
+  border_left_[0].texCoords = sf::Vector2f(0.f, 0.f);
+  border_left_[1].texCoords = sf::Vector2f(28.f, 0.f);
+  border_left_[2].texCoords = sf::Vector2f(28.f, kScreenHeight);
+  border_left_[3].texCoords = sf::Vector2f(0.f, kScreenHeight);
+  /* right border */
+  if (!border_right_tx_.loadFromFile(path + "border_right.png")) {
+    exit(EXIT_FAILURE);
+  }
+  border_right_.resize(4);
+  border_right_.setPrimitiveType(sf::Quads);
+  border_right_[0] = sf::Vector2f(kScreenWidth - 28.f, 0.f);
+  border_right_[1] = sf::Vector2f(kScreenWidth, 0.f);
+  border_right_[2] = sf::Vector2f(kScreenWidth, kScreenHeight);
+  border_right_[3] = sf::Vector2f(kScreenWidth - 28.f, kScreenHeight);
+  border_right_[0].texCoords = sf::Vector2f(0.f, 0.f);
+  border_right_[1].texCoords = sf::Vector2f(28.f, 0.f);
+  border_right_[2].texCoords = sf::Vector2f(28.f, kScreenHeight);
+  border_right_[3].texCoords = sf::Vector2f(0.f, kScreenHeight);
+  /* top border */
+  if (!border_top_tx_.loadFromFile(path + "border_top.png")) {
+    exit(EXIT_FAILURE);
+  }
+  border_top_.resize(4);
+  border_top_.setPrimitiveType(sf::Quads);
+  border_top_[0] = sf::Vector2f(0.f, 0.f);
+  border_top_[1] = sf::Vector2f(kScreenWidth, 0.f);
+  border_top_[2] = sf::Vector2f(kScreenWidth, 28.f);
+  border_top_[3] = sf::Vector2f(0, 28.f);
+  border_top_[0].texCoords = sf::Vector2f(0.f, 0.f);
+  border_top_[1].texCoords = sf::Vector2f(kScreenWidth, 0.f);
+  border_top_[2].texCoords = sf::Vector2f(kScreenWidth, 28.f);
+  border_top_[3].texCoords = sf::Vector2f(0, 28.f);
+  /* background */ 
   switch (background_) {
     case Background::Moai:
-      if (!background_texture_.loadFromFile(path + "bg_moai.png")) {
+      if (!background_tx_.loadFromFile(path + "bg_moai.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::RedCircuit:
-      if (!background_texture_.loadFromFile(path + "bg_circuit_red.png")) {
+      if (!background_tx_.loadFromFile(path + "bg_circuit_red.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::BlueCircuit:
-      if (!background_texture_.loadFromFile(path + "bg_circuit_blue.png")) {
+      if (!background_tx_.loadFromFile(path + "bg_circuit_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Green:
-      if (!background_texture_.loadFromFile(path + "bg_green.png")) {
+      if (!background_tx_.loadFromFile(path + "bg_green.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Blue:
       [[fallthrough]];
     default:
-      if (!background_texture_.loadFromFile(path + "bg_blue.png")) {
+      if (!background_tx_.loadFromFile(path + "bg_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
   }
-  background_texture_.setRepeated(true);
+  background_tx_.setRepeated(true);
   background_va_.resize(4);
   background_va_.setPrimitiveType(sf::Quads);
   background_va_[0] = sf::Vector2f(         0.f,           0.f);
@@ -153,7 +199,7 @@ void Level::initBackground() {
 /////////////////////////////////////////////////
 void Level::initBricks() {
   int i, j;
-  float start_y = kBrickDefaultStart;
+  float start_y = kBrickDefaultStart + kGUIBorderThickness;
   for (i = 0; i < kLevelMaxRows; ++i) {
     for (j = 0; j < kLevelMaxColumns; ++j) {
       bricks_[i][j].shape.setSize(kBrickDefaultSize);
@@ -247,7 +293,7 @@ void Level::initBricks() {
           bricks_[i][j].points = 0;
           break;
       } 
-      bricks_[i][j].shape.setPosition(sf::Vector2f(bricks_[i][j].shape.getSize().x * j, start_y));
+      bricks_[i][j].shape.setPosition(sf::Vector2f(bricks_[i][j].shape.getSize().x * j + kGUIBorderThickness, start_y));
     }
     start_y = start_y + bricks_[i][j - 1].shape.getSize().y;
   }

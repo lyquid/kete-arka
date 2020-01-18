@@ -56,10 +56,13 @@ void Ship::init() {
 /// Checks if we want to move the ship right or left and 
 /// keeps the ship within the screen boundaries.
 /////////////////////////////////////////////////
-void Ship::move(const sf::Vector2f offset) {
-  if ((offset.x < 0 && shape_.getPosition().x > 0)                                     // wants to go left
-   || (offset.x > 0 && shape_.getPosition().x + kShipDefaultSize.x < kScreenWidth)) {  // wants to go right
-    shape_.move(offset);
+void Ship::move(sf::Vector2f offset) {
+  if (offset.x < 0 && shape_.getPosition().x + offset.x >= kGUIBorderThickness) {
+    // wants to go left
+      shape_.move(offset);
+  } else if (offset.x > 0 && shape_.getPosition().x + kShipDefaultSize.x + offset.x <= kScreenWidth - kGUIBorderThickness) {
+    // wants to go right
+      shape_.move(offset);
   }
 }
 
