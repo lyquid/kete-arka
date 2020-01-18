@@ -5,6 +5,12 @@
 
 #include "../config.h"
 
+struct LevelInfo {
+  unsigned int number;
+  std::string name;
+  std::string select_text;
+};
+
 class GUI {
  public:
   GUI() {
@@ -26,8 +32,7 @@ class GUI {
   void selectNextLevel();
   void selectPreviousLevel();
   void setFinalScoreText(unsigned long long int score);
-  void setLevelStrings(const int lvl_position, const sf::String lvl_info_string);
-  void setLevelText(int level_num);
+  void setLevelInfo(int lvl_position, int lvl_num, sf::String lvl_name);
   void setLivesText(const int lives);
   void setScoreText(const unsigned long long int score);
   void setRenderFlashingTextFlag(const bool status);
@@ -39,10 +44,13 @@ class GUI {
                         const TextCenterModes mode = Default);
   template <typename T> static void setOrigin(T &shape, const TextCenterModes mode);
   template <typename T> static std::string toString(const T &t);
+  void update(unsigned int lvl_num, std::string lvl_name);
+  void update(unsigned int lvl_num, std::string lvl_name, std::string next_lvl_name);
 
  private:
   void updateFlashingTextFlag();
   void updateLevelSelectionShape(int previous_level = 0);
+  unsigned int current_level_;
   bool render_flashing_text_flag_;
   sf::Clock flashing_text_clock_;
   // titles and flow
@@ -52,7 +60,6 @@ class GUI {
   sf::Text press_any_key_text_;
   sf::Text press_start_text_;
   sf::Text title_text_;
-  sf::Text total_score_text_;
   // main menu items
   sf::Text menu_start_text_;
   sf::Text menu_level_text_;
@@ -62,13 +69,17 @@ class GUI {
   sf::Text gui_lives_text_;
   sf::Text gui_score_text_;
   // levels array and strings
-  sf::String level_info_strings_[kMaxLevels];
-  sf::Text level_info_[kMaxLevels];
+  LevelInfo level_info_[kMaxLevels];
+  sf::Text level_info_texts_[kMaxLevels];
   sf::Text level_select_keys_;
-  int level_selected_;
+  unsigned int level_selected_;
   sf::RectangleShape level_selected_shape_;
   // level completed
   sf::Text level_completed_title_;
+  sf::Text level_completed_name_;
+  sf::Text level_completed_next_;
+  sf::Text level_completed_next_name_;
+  sf::Text total_score_text_;
   sf::Text level_completed_continue_;
   // game completed
   sf::Text game_completed_;

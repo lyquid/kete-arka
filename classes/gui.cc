@@ -41,7 +41,12 @@ void GUI::drawInGameGUI(sf::RenderWindow &window) {
 ///
 void GUI::drawLevelCompletedScreen(sf::RenderWindow &window) {
   window.draw(level_completed_title_);
+  window.draw(level_completed_name_);
   window.draw(total_score_text_);
+  if (current_level_ < kMaxLevels) {
+    window.draw(level_completed_next_);
+    window.draw(level_completed_next_name_);
+  }
   updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
     window.draw(level_completed_continue_);
@@ -59,7 +64,7 @@ void GUI::drawLevelSelection(sf::RenderWindow &window) {
   window.draw(level_select_title_text_);
   window.draw(level_selected_shape_);
   for (int i = 0; i < kMaxLevels; ++i) {
-    window.draw(level_info_[i]);
+    window.draw(level_info_texts_[i]);
   }
   window.draw(level_select_keys_);
 }
@@ -149,9 +154,6 @@ void GUI::init(const sf::Font &font) {
   // press any key
   initText(press_any_key_text_, kContinueText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
   press_any_key_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
-  // total score
-  initText(total_score_text_, kTotalScoreText, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
-  total_score_text_.setPosition(halfScreenW, kScreenHeight / 2);
   // MENU - level selection
   initText(menu_level_text_, kMenuLevelText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor, Horizontal);
   menu_level_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 2.f);
@@ -175,12 +177,22 @@ void GUI::init(const sf::Font &font) {
   // LEVEL SELECTION - key guide
   initText(level_select_keys_, kLevelSelectKeys, font, kGUILevelSelectKeys, kGUIDefaultFontColor, Horizontal);
   level_select_keys_.setPosition(halfScreenW, static_cast<int>(kScreenHeight - kGUILevelSelectKeys));
-  // LEVEL COMPLETED
-  initText(level_completed_title_, kLevelCompletedText, font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
+  // LEVEL COMPLETED - Title
+  initText(level_completed_title_, kLevelCompletedText, font, kGUILevelCompletedFontSize, kGUIDefaultFontColor, BothAxis);
   level_completed_title_.setPosition(halfScreenW, (float)kScreenHeight * 0.25f);
-  // LEVEL COMPLETED - CONTINUE
+  // LEVEL COMPLETED - Level name
+  initText(level_completed_name_, "", font, kGUILevelCompletedFontSize, kGUIDefaultFontColor, BothAxis);
+  // LEVEL COMPLETED - Total score
+  initText(total_score_text_, kTotalScoreText, font, kGUILevelCompletedFontSize, kGUIDefaultFontColor, BothAxis);
+  total_score_text_.setPosition(halfScreenW, kScreenHeight * 0.40f);
+  // LEVEL COMPLETED - Next
+  initText(level_completed_next_, kLevelCompletedNext, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
+  level_completed_next_.setPosition(halfScreenW, (float)kScreenHeight * 0.70f);
+  // LEVEL COMPLETED - Next name
+  initText(level_completed_next_name_, "", font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
+  // LEVEL COMPLETED - Continue
   initText(level_completed_continue_, kPressSpaceText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
-  level_completed_continue_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
+  level_completed_continue_.setPosition(halfScreenW, (float)kScreenHeight * 0.85f);
   // GAME COMPLETED
   initText(game_completed_, kGameCompletedText, font,  kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
   game_completed_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
@@ -201,10 +213,10 @@ void GUI::initLevelsList(const sf::Font &font) {
   int y = kGUIDefaultMargin + kGUILevelSelectFontSize / 2;
   initText(level_select_title_text_, kLevelSelectText, font, kGUILevelSelectFontSize, kGUIDefaultFontColor, BothAxis);
   level_select_title_text_.setPosition(x, y);
-  for (int i = 0; i < kMaxLevels; ++i) {
+  for (unsigned int i = 0; i < kMaxLevels; ++i) {
     y = (kGUIDefaultMargin + kGUILevelSelectKeys * 2) + (kGUILevelSelectKeys * (i + 1)) + (8 * i);
-    initText(level_info_[i], level_info_strings_[i], font, kGUILevelSelectKeys, kGUIDefaultFontColor, BothAxis);
-    level_info_[i].setPosition(x, y);
+    initText(level_info_texts_[i], level_info_[i].select_text, font, kGUILevelSelectKeys, kGUIDefaultFontColor, BothAxis);
+    level_info_texts_[i].setPosition(x, y);
   }
   level_selected_ = 0;
   level_selected_shape_.setFillColor(kGUIDefaultFontColor);
@@ -300,15 +312,18 @@ void GUI::setFinalScoreText(unsigned long long int score) {
 /// @brief Sets level info strings into local array level_info_strings_.
 ///
 /// @param lvl_position - The position (int) of the level in the array.
-/// @param lvl_info_string - The sf::String containing the level info.
+/// @param lvl_num - An int containing the level number.
+/// @param lvl_name - The sf::String containing the level name.
 ///
-/// Sets level info strings into local array level_info_strings_, which 
-/// is later used for creating the menu selection list.
-/// The position is usually the level number minus 1 and the string is 
-/// usually the number and name of the level combined (ie. "01 - first_lvl").
 /////////////////////////////////////////////////
-void GUI::setLevelStrings(const int lvl_position, const sf::String lvl_info_string) {
-  level_info_strings_[lvl_position] = lvl_info_string;
+void GUI::setLevelInfo(int lvl_position, int lvl_num, sf::String lvl_name) {
+  level_info_[lvl_position].number = lvl_num;
+  level_info_[lvl_position].name = lvl_name;
+  if (lvl_num < 10) {
+    level_info_[lvl_position].select_text = "0" + toString(lvl_num) + " - " + lvl_name;
+  } else {
+    level_info_[lvl_position].select_text = toString(lvl_num) + " - " + lvl_name;
+  }
 }
 
 /////////////////////////////////////////////////
@@ -319,13 +334,13 @@ void GUI::setLevelStrings(const int lvl_position, const sf::String lvl_info_stri
 /// Sets the level text with the level provided.
 /// Also re-centers the origin of the new level text.
 /////////////////////////////////////////////////
-void GUI::setLevelText(int level_num) {
+/* void GUI::setLevelText(int level_num) {
   level_num > 9 ?
     gui_level_text_.setString(kGUILevelText + toString(level_num))
     : gui_level_text_.setString(kGUILevelText + "0" + toString(level_num));
   setOrigin(gui_level_text_, TopRight);
-}
-
+} 
+ */
 /////////////////////////////////////////////////
 /// @brief Sets the lives text.
 ///
@@ -428,6 +443,37 @@ void GUI::updateFlashingTextFlag(){
   }
 }
 
+///
+void GUI::update(unsigned int lvl_num, std::string lvl_name) {
+  current_level_ = lvl_num;
+  
+  level_completed_name_.setString("\"" + lvl_name + "\"");
+  setOrigin(level_completed_name_, BothAxis);
+  level_completed_name_.setPosition(kScreenWidth * 0.5f, kScreenHeight * 0.30f);
+
+  lvl_num > 9 ?
+    gui_level_text_.setString(kGUILevelText + toString(lvl_num))
+    : gui_level_text_.setString(kGUILevelText + "0" + toString(lvl_num));
+  setOrigin(gui_level_text_, TopRight);
+}
+
+void GUI::update(unsigned int lvl_num, std::string lvl_name, std::string next_lvl_name) {
+  current_level_ = lvl_num;
+
+  level_completed_name_.setString("\"" + lvl_name + "\"");
+  setOrigin(level_completed_name_, BothAxis);
+  level_completed_name_.setPosition(kScreenWidth * 0.5f, kScreenHeight * 0.30f);
+
+  level_completed_next_name_.setString("\"" + next_lvl_name + "\"");
+  setOrigin(level_completed_next_name_, BothAxis);
+  level_completed_next_name_.setPosition(kScreenWidth * 0.5f, kScreenHeight * 0.75f);
+
+  lvl_num > 9 ?
+    gui_level_text_.setString(kGUILevelText + toString(lvl_num))
+    : gui_level_text_.setString(kGUILevelText + "0" + toString(lvl_num));
+  setOrigin(gui_level_text_, TopRight);
+}
+
 /////////////////////////////////////////////////
 /// @brief Updates the selection shape accordingly.
 ///
@@ -438,12 +484,12 @@ void GUI::updateFlashingTextFlag(){
 /// selection shape to fit the new selection.
 /////////////////////////////////////////////////
 void GUI::updateLevelSelectionShape(int previous_level) {
-  level_info_[previous_level].setFillColor(kGUIDefaultFontColor);
-  level_info_[previous_level].setOutlineThickness(kGUIDefaultFontOutline);
-  level_info_[level_selected_].setFillColor(kGUIDefaultSelectedFontColor);
-  level_info_[level_selected_].setOutlineThickness(0);
-  level_selected_shape_.setSize(sf::Vector2f(level_info_[level_selected_].getGlobalBounds().width, level_info_[level_selected_].getGlobalBounds().height));
+  level_info_texts_[previous_level].setFillColor(kGUIDefaultFontColor);
+  level_info_texts_[previous_level].setOutlineThickness(kGUIDefaultFontOutline);
+  level_info_texts_[level_selected_].setFillColor(kGUIDefaultSelectedFontColor);
+  level_info_texts_[level_selected_].setOutlineThickness(0);
+  level_selected_shape_.setSize(sf::Vector2f(level_info_texts_[level_selected_].getGlobalBounds().width, level_info_texts_[level_selected_].getGlobalBounds().height));
   setOrigin(level_selected_shape_, BothAxis);
-  level_selected_shape_.setPosition(level_info_[level_selected_].getPosition());
+  level_selected_shape_.setPosition(level_info_texts_[level_selected_].getPosition());
 }
 

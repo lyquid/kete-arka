@@ -49,7 +49,6 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           if (loadLevel(1)) {
             state_ = Playing;
             logger_.write("Successfully loaded level 1.");
-            gui_.setLevelText(1);
           } else {
             logger_.write("ERROR: Failed loading level 1.");
           }
@@ -74,6 +73,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           break;
         /* Level selection start */
         case sf::Keyboard::Enter:
+        case sf::Keyboard::Space:
           int lvl_num = gui_.getLevelSelectedNumber();
           player_.reset();
           ball_.reset();
@@ -82,7 +82,6 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           if (loadLevel(lvl_num)) {
             state_ = Playing;
             logger_.write("Successfully loaded level " + GUI::toString(lvl_num) + ".");
-            gui_.setLevelText(lvl_num);
           } else {
             logger_.write("ERROR: Failed loading level " + GUI::toString(lvl_num) + ".");
           }
@@ -122,6 +121,10 @@ void Game::handleKeyEvents(const sf::Event key_event) {
       break;
     case LevelCompleted: {
       switch (key_event.key.code) {
+        case sf::Keyboard::Escape:
+        case sf::Keyboard::Q:
+          state_ = Menu;
+          break;
         /* Next level */
         case sf::Keyboard::Space:
           int next_lvl = current_level_->getNumber() + 1;
@@ -133,7 +136,6 @@ void Game::handleKeyEvents(const sf::Event key_event) {
             if (loadLevel(next_lvl)) {
               state_ = Playing;
               logger_.write("Successfully loaded level " + GUI::toString(next_lvl) + ".");
-              gui_.setLevelText(next_lvl);
               } else {
               logger_.write("ERROR: Failed loading level " + GUI::toString(next_lvl) + ".");
             }
@@ -187,24 +189,25 @@ void Game::init() {
 }
 
 void Game::initLevelsMenu() {
-  for (int i = 0; i < kMaxLevels; ++i) {
+  for (unsigned int i = 0; i < kMaxLevels; ++i) {
     game_levels_[i].setNumber(i + 1);
-    if (game_levels_[i].getNumber() < 10) {
-      gui_.setLevelStrings(i, "0" + GUI::toString(game_levels_[i].getNumber()) + " - " + game_levels_[i].getName());
-    } else {
-      gui_.setLevelStrings(i, GUI::toString(game_levels_[i].getNumber()) + " - " + game_levels_[i].getName());
-    }
+    gui_.setLevelInfo(i, game_levels_[i].getNumber(), game_levels_[i].getName());
   }
 }
 
 bool Game::loadLevel(int lvl_num) {
   bool found = false;
-  for (int i = 0; i < kMaxLevels && !found; ++i) {
+  for (unsigned int i = 0; i < kMaxLevels && !found; ++i) {
     if (game_levels_[i].getNumber() == lvl_num) {
       found = true;
       current_level_ = &game_levels_[i];
       current_level_->init(&player_);
       ball_.setLevel(current_level_);
+      if (current_level_->getNumber() >= kMaxLevels) {
+        gui_.update(current_level_->getNumber(), current_level_->getName());
+      } else {
+        gui_.update(current_level_->getNumber(), current_level_->getName(), game_levels_[i + 1].getName());
+      }
     }
   }
   return found;
@@ -236,6 +239,7 @@ void Game::render() {
       ship_.draw(window_);
       break;
     case LevelCompleted:
+      current_level_->draw(window_);
       gui_.drawLevelCompletedScreen(window_);
       break;
     case GameCompleted:
