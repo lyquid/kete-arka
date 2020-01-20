@@ -144,14 +144,15 @@ void Level::initBackground() {
   background_tx_.setRepeated(true);
   background_va_.resize(4);
   background_va_.setPrimitiveType(sf::Quads);
-  background_va_[0] = sf::Vector2f(         0.f,           0.f);
-  background_va_[1] = sf::Vector2f(kScreenWidth,           0.f);
-  background_va_[2] = sf::Vector2f(kScreenWidth, kScreenHeight);
-  background_va_[3] = sf::Vector2f(         0.f, kScreenHeight);
-  background_va_[0].texCoords = sf::Vector2f(         0.f,           0.f);
-  background_va_[1].texCoords = sf::Vector2f(kScreenWidth,           0.f);
-  background_va_[2].texCoords = sf::Vector2f(kScreenWidth, kScreenHeight);
-  background_va_[3].texCoords = sf::Vector2f(         0.f, kScreenHeight);
+  background_va_[0] = sf::Vector2f(               kGUIBorderThickness, kGUIBorderThickness);
+  background_va_[1] = sf::Vector2f(kScreenWidth - kGUIBorderThickness, kGUIBorderThickness);
+  background_va_[2] = sf::Vector2f(kScreenWidth - kGUIBorderThickness,       kScreenHeight);
+  background_va_[3] = sf::Vector2f(               kGUIBorderThickness,       kScreenHeight);
+
+  background_va_[0].texCoords = sf::Vector2f(                                     0.f,                                 0.f);
+  background_va_[1].texCoords = sf::Vector2f(kScreenWidth - (kGUIBorderThickness * 2),                                 0.f);
+  background_va_[2].texCoords = sf::Vector2f(kScreenWidth - (kGUIBorderThickness * 2), kScreenHeight - kGUIBorderThickness);
+  background_va_[3].texCoords = sf::Vector2f(                                     0.f, kScreenHeight - kGUIBorderThickness);
 }
 
 ///
@@ -160,7 +161,7 @@ void Level::initBorderGraphics() {
   if (!border_left_tx_.loadFromFile(kImagePath + "border_left.png")) {
     exit(EXIT_FAILURE);
   }
-  border_left_.resize(4); 
+  border_left_.resize(4);
   border_left_.setPrimitiveType(sf::Quads);
   border_left_[0] = sf::Vector2f(                0.f,           0.f);
   border_left_[1] = sf::Vector2f(kGUIBorderThickness,           0.f);
