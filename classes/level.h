@@ -17,6 +17,8 @@ struct Brick {
   sf::RectangleShape shape;
 };
 
+const std::string kImagePath = "assets/img/";
+
 class Level {
  public:
   Level() {}
@@ -28,11 +30,13 @@ class Level {
   std::string getName();
   int getNumber();
   void init(Player *ptp);
-  bool isCompleted();
+  static void initBorderGraphics();
   static void initProtoLevels(Level *ptl);
+  bool isCompleted();
   void setNumber(int lvl_num);
-
+ 
  private:
+  void initBackground();
   void initBricks();
   Brick bricks_[kLevelMaxRows][kLevelMaxColumns];
   int bricks_remaining_;
@@ -42,16 +46,15 @@ class Level {
   int number_;
   Player *player_; 
   // level background and borders
-  void initGraphics();
   Background background_;
   sf::VertexArray background_va_;
   sf::Texture background_tx_;
-  sf::VertexArray border_left_;         
-  sf::Texture border_left_tx_;
-  sf::VertexArray border_right_;
-  sf::Texture border_right_tx_;
-  sf::VertexArray border_top_;
-  sf::Texture border_top_tx_;
+  static sf::VertexArray border_left_;         
+  static sf::Texture border_left_tx_;
+  static sf::VertexArray border_right_;
+  static sf::Texture border_right_tx_;
+  static sf::VertexArray border_top_;
+  static sf::Texture border_top_tx_; 
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

@@ -171,10 +171,12 @@ void Game::init() {
     logger_.write("ERROR: Failed loading font.");
     exit(EXIT_FAILURE);
   }
-  /* Proto levels and level selection menu */
+  /* Proto levels, graphics and level selection menu */
   current_level_ = NULL;
   Level::initProtoLevels(game_levels_);
   logger_.write("Successfully initialized protolevels.");
+  Level::initBorderGraphics();
+  logger_.write("Successfully initialized levels' graphics.");
   initLevelsMenu();
   logger_.write("Successfully initialized levels menu.");
   /* GUI */

@@ -1,5 +1,12 @@
 #include "level.h"
 
+sf::VertexArray Level::border_left_;         
+sf::Texture Level::border_left_tx_;
+sf::VertexArray Level::border_right_;
+sf::Texture Level::border_right_tx_;
+sf::VertexArray Level::border_top_;
+sf::Texture Level::border_top_tx_;
+
 /////////////////////////////////////////////////
 /// @brief Completes the level.
 ///
@@ -19,7 +26,7 @@ void Level::complete() {
 /////////////////////////////////////////////////
 void Level::decreaseResistance(int i, int j) {
   if (bricks_[i][j].type != A) {
-    if (bricks_[i][j].resistance  - 1 <= 0) {
+    if (bricks_[i][j].resistance - 1 <= 0) {
       bricks_[i][j].resistance = 0;
       bricks_[i][j].active = false;
       bricks_remaining_--;
@@ -99,81 +106,37 @@ void Level::init(Player *ptp) {
   player_ = ptp;
   completed_ = false;
   bricks_remaining_ = 0;
-  initGraphics();
+  initBackground();
   initBricks();
 }
 
 ///
-void Level::initGraphics() {
-  const std::string path = "assets/img/";
-  /* left border */
-  if (!border_left_tx_.loadFromFile(path + "border_left.png")) {
-    exit(EXIT_FAILURE);
-  }
-  border_left_.resize(4); 
-  border_left_.setPrimitiveType(sf::Quads);
-  border_left_[0] = sf::Vector2f(0.f, 0.f);
-  border_left_[1] = sf::Vector2f(28.f, 0.f);
-  border_left_[2] = sf::Vector2f(28.f, kScreenHeight);
-  border_left_[3] = sf::Vector2f(0.f, kScreenHeight);
-  border_left_[0].texCoords = sf::Vector2f(0.f, 0.f);
-  border_left_[1].texCoords = sf::Vector2f(28.f, 0.f);
-  border_left_[2].texCoords = sf::Vector2f(28.f, kScreenHeight);
-  border_left_[3].texCoords = sf::Vector2f(0.f, kScreenHeight);
-  /* right border */
-  if (!border_right_tx_.loadFromFile(path + "border_right.png")) {
-    exit(EXIT_FAILURE);
-  }
-  border_right_.resize(4);
-  border_right_.setPrimitiveType(sf::Quads);
-  border_right_[0] = sf::Vector2f(kScreenWidth - 28.f, 0.f);
-  border_right_[1] = sf::Vector2f(kScreenWidth, 0.f);
-  border_right_[2] = sf::Vector2f(kScreenWidth, kScreenHeight);
-  border_right_[3] = sf::Vector2f(kScreenWidth - 28.f, kScreenHeight);
-  border_right_[0].texCoords = sf::Vector2f(0.f, 0.f);
-  border_right_[1].texCoords = sf::Vector2f(28.f, 0.f);
-  border_right_[2].texCoords = sf::Vector2f(28.f, kScreenHeight);
-  border_right_[3].texCoords = sf::Vector2f(0.f, kScreenHeight);
-  /* top border */
-  if (!border_top_tx_.loadFromFile(path + "border_top.png")) {
-    exit(EXIT_FAILURE);
-  }
-  border_top_.resize(4);
-  border_top_.setPrimitiveType(sf::Quads);
-  border_top_[0] = sf::Vector2f(0.f, 0.f);
-  border_top_[1] = sf::Vector2f(kScreenWidth, 0.f);
-  border_top_[2] = sf::Vector2f(kScreenWidth, 28.f);
-  border_top_[3] = sf::Vector2f(0, 28.f);
-  border_top_[0].texCoords = sf::Vector2f(0.f, 0.f);
-  border_top_[1].texCoords = sf::Vector2f(kScreenWidth, 0.f);
-  border_top_[2].texCoords = sf::Vector2f(kScreenWidth, 28.f);
-  border_top_[3].texCoords = sf::Vector2f(0, 28.f);
-  /* background */ 
+void Level::initBackground() {
   switch (background_) {
     case Background::Moai:
-      if (!background_tx_.loadFromFile(path + "bg_moai.png")) {
+      if (!background_tx_.loadFromFile(kImagePath + "bg_moai.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::RedCircuit:
-      if (!background_tx_.loadFromFile(path + "bg_circuit_red.png")) {
+      if (!background_tx_.loadFromFile(kImagePath + "bg_circuit_red.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::BlueCircuit:
-      if (!background_tx_.loadFromFile(path + "bg_circuit_blue.png")) {
+      if (!background_tx_.loadFromFile(kImagePath + "bg_circuit_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Green:
-      if (!background_tx_.loadFromFile(path + "bg_green.png")) {
+      if (!background_tx_.loadFromFile(kImagePath + "bg_green.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Blue:
       [[fallthrough]];
     default:
-      if (!background_tx_.loadFromFile(path + "bg_blue.png")) {
+      if (!background_tx_.loadFromFile(kImagePath + "bg_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
@@ -189,6 +152,52 @@ void Level::initGraphics() {
   background_va_[1].texCoords = sf::Vector2f(kScreenWidth,           0.f);
   background_va_[2].texCoords = sf::Vector2f(kScreenWidth, kScreenHeight);
   background_va_[3].texCoords = sf::Vector2f(         0.f, kScreenHeight);
+}
+
+///
+void Level::initBorderGraphics() {
+  /* left border */
+  if (!border_left_tx_.loadFromFile(kImagePath + "border_left.png")) {
+    exit(EXIT_FAILURE);
+  }
+  border_left_.resize(4); 
+  border_left_.setPrimitiveType(sf::Quads);
+  border_left_[0] = sf::Vector2f(                0.f,           0.f);
+  border_left_[1] = sf::Vector2f(kGUIBorderThickness,           0.f);
+  border_left_[2] = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
+  border_left_[3] = sf::Vector2f(                0.f, kScreenHeight);
+  border_left_[0].texCoords = sf::Vector2f(                0.f,           0.f);
+  border_left_[1].texCoords = sf::Vector2f(kGUIBorderThickness,           0.f);
+  border_left_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
+  border_left_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
+  /* right border */
+  if (!border_right_tx_.loadFromFile(kImagePath + "border_right.png")) {
+    exit(EXIT_FAILURE);
+  }
+  border_right_.resize(4);
+  border_right_.setPrimitiveType(sf::Quads);
+  border_right_[0] = sf::Vector2f(kScreenWidth - kGUIBorderThickness,           0.f);
+  border_right_[1] = sf::Vector2f(                      kScreenWidth,           0.f);
+  border_right_[2] = sf::Vector2f(                      kScreenWidth, kScreenHeight);
+  border_right_[3] = sf::Vector2f(kScreenWidth - kGUIBorderThickness, kScreenHeight);
+  border_right_[0].texCoords = sf::Vector2f(                0.f,           0.f);
+  border_right_[1].texCoords = sf::Vector2f(kGUIBorderThickness,           0.f);
+  border_right_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
+  border_right_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
+  /* top border */
+  if (!border_top_tx_.loadFromFile(kImagePath + "border_top.png")) {
+    exit(EXIT_FAILURE);
+  }
+  border_top_.resize(4);
+  border_top_.setPrimitiveType(sf::Quads);
+  border_top_[0] = sf::Vector2f(         0.f,                 0.f);
+  border_top_[1] = sf::Vector2f(kScreenWidth,                 0.f);
+  border_top_[2] = sf::Vector2f(kScreenWidth, kGUIBorderThickness);
+  border_top_[3] = sf::Vector2f(         0.f, kGUIBorderThickness);
+  border_top_[0].texCoords = sf::Vector2f(         0.f,                 0.f);
+  border_top_[1].texCoords = sf::Vector2f(kScreenWidth,                 0.f);
+  border_top_[2].texCoords = sf::Vector2f(kScreenWidth, kGUIBorderThickness);
+  border_top_[3].texCoords = sf::Vector2f(         0.f, kGUIBorderThickness);
 }
 
 /////////////////////////////////////////////////
@@ -292,7 +301,7 @@ void Level::initBricks() {
           bricks_[i][j].resistance = 0;
           bricks_[i][j].points = 0;
           break;
-      } 
+      }
       bricks_[i][j].shape.setPosition(sf::Vector2f(bricks_[i][j].shape.getSize().x * j + kGUIBorderThickness, start_y));
     }
     start_y = start_y + bricks_[i][j - 1].shape.getSize().y;
