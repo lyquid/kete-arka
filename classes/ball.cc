@@ -2,8 +2,8 @@
 
 bool Ball::checkBrickCollision(Brick bricks[][kLevelMaxColumns]) {
   bool collision = false;
-  for (int i = 0; i < kLevelMaxRows; ++i) {
-    for (int j = 0; j < kLevelMaxColumns; ++j) {
+  for (unsigned int i = 0; i < kLevelMaxRows; ++i) {
+    for (unsigned int j = 0; j < kLevelMaxColumns; ++j) {
       if (bricks[i][j].active && bricks[i][j].shape.getGlobalBounds().intersects(shape_.getGlobalBounds())) {
         float ball_x = shape_.getPosition().x;
         float ball_y = shape_.getPosition().y;
@@ -12,7 +12,7 @@ bool Ball::checkBrickCollision(Brick bricks[][kLevelMaxColumns]) {
         float brick_y = bricks[i][j].shape.getPosition().y;
         float brick_y_size = bricks[i][j].shape.getSize().y;
         collision = true;
-        level_->decreaseResistance(i, j);
+        level_->decreaseResistance({i, j});
         if (last_position_.x < brick_x) {
           // left hit
           randomizeBounceAngle(LeftBrick);

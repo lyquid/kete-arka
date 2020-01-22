@@ -52,10 +52,12 @@ const sf::Vector2f  kBallDefaultPosition      = sf::Vector2f((float) kScreenWidt
 const sf::Color     kBallDefaultColor         = sf::Color::White;
 
 // brick default settings
-const float         kBrickDefaultStart  = 0.f;
-const float         kBrickDefaultWidth  = 56.f;
-const float         kBrickDefaultHeight = 28.f; 
-const sf::Vector2f  kBrickDefaultSize   = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
+const float         kBrickDefaultStart    = 0.f;
+const float         kBrickDefaultWidth    = 56.f;
+const float         kBrickDefaultHeight   = 28.f;
+const float         kBrickDefaultOutline  = -1.5f;
+const float         kBrickDefaultBevel    = 5.f; 
+const sf::Vector2f  kBrickDefaultSize     = sf::Vector2f(kBrickDefaultWidth, kBrickDefaultHeight);
 
 // brick colors
 const sf::Color kBrickDefaultColor        = sf::Color::White;

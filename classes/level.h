@@ -1,7 +1,7 @@
 #ifndef KETE_ARKA_CLASSES_LEVEL_H_
 #define KETE_ARKA_CLASSES_LEVEL_H_
 
-#include <string> // std::string
+#include <string>
 
 #include <SFML/Graphics.hpp>
 
@@ -15,16 +15,16 @@ struct Brick {
   unsigned int resistance;
   unsigned int points;
   sf::RectangleShape shape;
+  bool beveled;
+  sf::VertexArray bevel;
 };
-
-const std::string kImagePath = "assets/img/";
 
 class Level {
  public:
   Level() {}
   ~Level() {}
   void complete();
-  void decreaseResistance(int i, int j);
+  void decreaseResistance(sf::Vector2u brick);
   void draw(sf::RenderWindow &window);
   Brick (*getBricks())[kLevelMaxColumns];
   std::string getName();
@@ -38,6 +38,7 @@ class Level {
  private:
   void initBackground();
   void initBricks();
+  void setBevel(sf::Vector2f position, sf::Vector2u brick);
   Brick bricks_[kLevelMaxRows][kLevelMaxColumns];
   int bricks_remaining_;
   bool completed_;
@@ -45,16 +46,16 @@ class Level {
   std::string name_;
   int number_;
   Player *player_; 
-  // level background and borders
+  /* Level background and borders */
   Background background_;
   sf::VertexArray background_va_;
   sf::Texture background_tx_;
-  static sf::VertexArray border_left_;         
+  static sf::VertexArray border_left_;
   static sf::Texture border_left_tx_;
   static sf::VertexArray border_right_;
   static sf::Texture border_right_tx_;
   static sf::VertexArray border_top_;
-  static sf::Texture border_top_tx_; 
+  static sf::Texture border_top_tx_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

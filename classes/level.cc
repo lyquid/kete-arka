@@ -1,5 +1,8 @@
 #include "level.h"
 
+/* Image path */
+const std::string kImagePath = "assets/img/";
+/* Borders VertexArrays and Textures */
 sf::VertexArray Level::border_left_;         
 sf::Texture Level::border_left_tx_;
 sf::VertexArray Level::border_right_;
@@ -19,23 +22,23 @@ void Level::complete() {
 /////////////////////////////////////////////////
 /// @brief Decreases the resistance of a brick.
 ///
-/// @param i j - The brick  to be decreased.
+/// @param brick - The brick  to be decreased.
 ///
 /// Decreases the resistance of a brick and sets inactive if needed.
 /// Also updates the score  of the player accordingly.
 /////////////////////////////////////////////////
-void Level::decreaseResistance(int i, int j) {
-  if (bricks_[i][j].type != A) {
-    if (bricks_[i][j].resistance - 1 <= 0) {
-      bricks_[i][j].resistance = 0;
-      bricks_[i][j].active = false;
-      bricks_remaining_--;
-      player_->increaseScore(bricks_[i][j].points);
+void Level::decreaseResistance(sf::Vector2u brick) {
+  if (bricks_[brick.x][brick.y].type != A) {
+    if (bricks_[brick.x][brick.y].resistance - 1 <= 0) {
+      bricks_[brick.x][brick.y].resistance = 0u;
+      bricks_[brick.x][brick.y].active = false;
+      --bricks_remaining_;
+      player_->increaseScore(bricks_[brick.x][brick.y].points);
       if (!bricks_remaining_)  {
         completed_ = true;
       }
-    }  else {
-      bricks_[i][j].resistance--;
+    } else {
+      --bricks_[brick.x][brick.y].resistance;
     }
   }
 }
@@ -56,6 +59,9 @@ void Level::draw(sf::RenderWindow &window) {
     for (unsigned int j = 0; j < kLevelMaxColumns; ++j) {
       if (bricks_[i][j].active) {
         window.draw(bricks_[i][j].shape);
+        if (bricks_[i][j].beveled) {
+          window.draw(bricks_[i][j].bevel);
+        }
       }
     }
   }
@@ -77,7 +83,7 @@ Brick (*Level::getBricks())[kLevelMaxColumns] {
 ///
 /// @return - A std::string representing the level's name.
 ///
-/// A sf::String representing the level's name.
+/// A std::string representing the level's name.
 /////////////////////////////////////////////////
 std::string Level::getName() {
   return name_;
@@ -208,18 +214,22 @@ void Level::initBorderGraphics() {
 /// layout and positions them.
 /////////////////////////////////////////////////
 void Level::initBricks() {
-  int i, j;
+  unsigned int i, j;
+  sf::Vector2f position;
   float start_y = kBrickDefaultStart + kGUIBorderThickness;
   for (i = 0; i < kLevelMaxRows; ++i) {
     for (j = 0; j < kLevelMaxColumns; ++j) {
       bricks_[i][j].shape.setSize(kBrickDefaultSize);
-      bricks_[i][j].shape.setOutlineThickness(-1);
+      bricks_[i][j].shape.setOutlineThickness(kBrickDefaultOutline);
       bricks_[i][j].shape.setOutlineColor(kBrickDefaultOutlineColor);
+      position = sf::Vector2f(bricks_[i][j].shape.getSize().x * j + kGUIBorderThickness, start_y);
+      bricks_[i][j].shape.setPosition(position);
+      bricks_[i][j].active = true;
+      bricks_[i][j].beveled = false;
       switch(layout_[i * kLevelMaxColumns + j])  {
         case W:
           bricks_[i][j].type = W;
           bricks_[i][j].shape.setFillColor(kBrickWhite);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
           bricks_[i][j].points = 50;
           bricks_remaining_++;
@@ -227,7 +237,6 @@ void Level::initBricks() {
         case O:
           bricks_[i][j].type = O;
           bricks_[i][j].shape.setFillColor(kBrickOrange);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
           bricks_[i][j].points = 60;
           bricks_remaining_++;
@@ -235,7 +244,6 @@ void Level::initBricks() {
         case L:
           bricks_[i][j].type = L;
           bricks_[i][j].shape.setFillColor(kBrickLighBlue);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
           bricks_[i][j].points = 70;
           bricks_remaining_++;
@@ -243,7 +251,6 @@ void Level::initBricks() {
         case G:
           bricks_[i][j].type = G;
           bricks_[i][j].shape.setFillColor(kBrickGreen);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
           bricks_[i][j].points = 80;
           bricks_remaining_++;
@@ -251,7 +258,6 @@ void Level::initBricks() {
         case R:
           bricks_[i][j].type = R;
           bricks_[i][j].shape.setFillColor(kBrickRed);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
           bricks_[i][j].points = 90;
           bricks_remaining_++;
@@ -259,7 +265,6 @@ void Level::initBricks() {
         case B:
           bricks_[i][j].type = B;
           bricks_[i][j].shape.setFillColor(kBrickBlue);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
           bricks_[i][j].points = 100;
           bricks_remaining_++;
@@ -267,7 +272,6 @@ void Level::initBricks() {
         case P:
           bricks_[i][j].type = P;
           bricks_[i][j].shape.setFillColor(kBrickPink);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
           bricks_[i][j].points = 110;
           bricks_remaining_++;
@@ -275,7 +279,6 @@ void Level::initBricks() {
         case Y:
           bricks_[i][j].type = Y;
           bricks_[i][j].shape.setFillColor(kBrickYellow);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 1;
           bricks_[i][j].points = 120;
           bricks_remaining_++;
@@ -283,17 +286,19 @@ void Level::initBricks() {
         case S:
           bricks_[i][j].type = S;
           bricks_[i][j].shape.setFillColor(kBrickSilver);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 2;
           bricks_[i][j].points = 50 * number_;
           bricks_remaining_++;
+          bricks_[i][j].beveled = true;
+          setBevel(position, {i, j});
           break;
         case A:
           bricks_[i][j].type = A;
           bricks_[i][j].shape.setFillColor(kBrickGold);
-          bricks_[i][j].active = true;
           bricks_[i][j].resistance = 0;
           bricks_[i][j].points = 0;
+          bricks_[i][j].beveled = true;
+          setBevel(position, {i, j});
           break;
         case _:
         default:
@@ -303,7 +308,6 @@ void Level::initBricks() {
           bricks_[i][j].points = 0;
           break;
       }
-      bricks_[i][j].shape.setPosition(sf::Vector2f(bricks_[i][j].shape.getSize().x * j + kGUIBorderThickness, start_y));
     }
     start_y = start_y + bricks_[i][j - 1].shape.getSize().y;
   }
@@ -335,6 +339,24 @@ void Level::initProtoLevels(Level *ptl) {
 /////////////////////////////////////////////////
 bool Level::isCompleted() {
   return completed_;
+}
+
+///
+void Level::setBevel(sf::Vector2f position, sf::Vector2u brick) {
+  sf::VertexArray new_bevel(sf::TriangleStrip, 6);
+  new_bevel[0].color = sf::Color::Black;
+  new_bevel[1].color = sf::Color::Black;
+  new_bevel[2].color = sf::Color::Black;
+  new_bevel[3].color = sf::Color::Black;
+  new_bevel[4].color = sf::Color::Black;
+  new_bevel[5].color = sf::Color::Black;
+  new_bevel[0].position = sf::Vector2f(position.x + kBrickDefaultBevel, position.y + kBrickDefaultSize.y);
+  new_bevel[1].position = sf::Vector2f(position.x + kBrickDefaultBevel, position.y + kBrickDefaultSize.y - kBrickDefaultBevel);
+  new_bevel[2].position = sf::Vector2f(position.x + kBrickDefaultSize.x, position.y + kBrickDefaultSize.y);
+  new_bevel[3].position = sf::Vector2f(position.x + kBrickDefaultSize.x - kBrickDefaultBevel, position.y + kBrickDefaultSize.y - kBrickDefaultBevel);
+  new_bevel[4].position = sf::Vector2f(position.x + kBrickDefaultSize.x, position.y + kBrickDefaultBevel);
+  new_bevel[5].position = sf::Vector2f(position.x + kBrickDefaultSize.x - kBrickDefaultBevel, position.y + kBrickDefaultBevel);
+  bricks_[brick.x][brick.y].bevel = new_bevel; 
 }
 
 /////////////////////////////////////////////////
