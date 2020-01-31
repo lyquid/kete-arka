@@ -1,7 +1,7 @@
 #include "level.h"
 
 /* Image path */
-const std::string kImagePath = "assets/img/";
+const std::string Level::kImagePath = "assets/img/";
 /* Borders VertexArrays and Textures */
 sf::VertexArray Level::border_left_;         
 sf::Texture Level::border_left_tx_;
@@ -9,6 +9,20 @@ sf::VertexArray Level::border_right_;
 sf::Texture Level::border_right_tx_;
 sf::VertexArray Level::border_top_;
 sf::Texture Level::border_top_tx_;
+/* Power up constants */
+const sf::Vector2f Level::kPowerUpSize = sf::Vector2f(30.f, 15.f);
+const float Level::kPowerUpSpeed = 400.f;
+
+///
+bool Level::checkPowerUpSpawn() {
+  if (!pwrup_on_screen_) {
+    --bricks_to_pwup_;
+    if (!bricks_to_pwup_) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /////////////////////////////////////////////////
 /// @brief Completes the level.
@@ -36,6 +50,10 @@ void Level::decreaseResistance(sf::Vector2u brick) {
       player_->increaseScore(bricks_[brick.x][brick.y].points);
       if (!bricks_remaining_)  {
         completed_ = true;
+        return;
+      }
+      if (checkPowerUpSpawn()) {
+        spawnPowerUp(bricks_[brick.x][brick.y].shape.getPosition());
       }
     } else {
       --bricks_[brick.x][brick.y].resistance;
@@ -64,6 +82,9 @@ void Level::draw(sf::RenderWindow &window) {
         }
       }
     }
+  }
+  if (power_up_.active) {
+    window.draw(power_up_.shape);
   }
 }
 
@@ -108,10 +129,14 @@ int Level::getNumber() {
 /// Sets the completed flag to false, the bricks remaining
 /// to 0 and initializes each brick.
 /////////////////////////////////////////////////
-void Level::init(Player *ptp) {
+void Level::init(Player* ptp) {
   player_ = ptp;
   completed_ = false;
   bricks_remaining_ = 0;
+  pwrup_on_screen_ = false;
+  power_up_.active = false;
+  power_up_.shape.setSize(kPowerUpSize);
+  power_up_.shape.setFillColor(sf::Color::Yellow);
   initBackground();
   initBricks();
 }
@@ -214,11 +239,11 @@ void Level::initBorderGraphics() {
 /// layout and positions them.
 /////////////////////////////////////////////////
 void Level::initBricks() {
-  unsigned int i, j;
+  unsigned int i, j, surprise_bricks = 0u;
   sf::Vector2f position;
   float start_y = kBrickDefaultStart + kGUIBorderThickness;
-  for (i = 0; i < kLevelMaxRows; ++i) {
-    for (j = 0; j < kLevelMaxColumns; ++j) {
+  for (i = 0u; i < kLevelMaxRows; ++i) {
+    for (j = 0u; j < kLevelMaxColumns; ++j) {
       bricks_[i][j].shape.setSize(kBrickDefaultSize);
       bricks_[i][j].shape.setOutlineThickness(kBrickDefaultOutline);
       bricks_[i][j].shape.setOutlineColor(kBrickDefaultOutlineColor);
@@ -230,73 +255,81 @@ void Level::initBricks() {
         case W:
           bricks_[i][j].type = W;
           bricks_[i][j].shape.setFillColor(kBrickWhite);
-          bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 50;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 1u;
+          bricks_[i][j].points = 50u;
+          ++bricks_remaining_;
+          ++surprise_bricks;
           break;
         case O:
           bricks_[i][j].type = O;
           bricks_[i][j].shape.setFillColor(kBrickOrange);
-          bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 60;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 1u;
+          bricks_[i][j].points = 60u;
+          ++bricks_remaining_;
+          ++surprise_bricks;
           break;
         case L:
           bricks_[i][j].type = L;
           bricks_[i][j].shape.setFillColor(kBrickLighBlue);
-          bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 70;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 1u;
+          bricks_[i][j].points = 70u;
+          ++bricks_remaining_;
+          ++surprise_bricks;
           break;
         case G:
           bricks_[i][j].type = G;
           bricks_[i][j].shape.setFillColor(kBrickGreen);
-          bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 80;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 1u;
+          bricks_[i][j].points = 80u;
+          ++bricks_remaining_;
+          ++surprise_bricks;
           break;
         case R:
           bricks_[i][j].type = R;
           bricks_[i][j].shape.setFillColor(kBrickRed);
-          bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 90;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 1u;
+          bricks_[i][j].points = 90u;
+          ++bricks_remaining_;
+          ++surprise_bricks;
           break;
         case B:
           bricks_[i][j].type = B;
           bricks_[i][j].shape.setFillColor(kBrickBlue);
-          bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 100;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 1u;
+          bricks_[i][j].points = 100u;
+          ++bricks_remaining_;
+          ++surprise_bricks;
           break;
         case P:
           bricks_[i][j].type = P;
           bricks_[i][j].shape.setFillColor(kBrickPink);
-          bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 110;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 1u;
+          bricks_[i][j].points = 110u;
+          ++bricks_remaining_;
+          ++surprise_bricks;
           break;
         case Y:
           bricks_[i][j].type = Y;
           bricks_[i][j].shape.setFillColor(kBrickYellow);
-          bricks_[i][j].resistance = 1;
-          bricks_[i][j].points = 120;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 1u;
+          bricks_[i][j].points = 120u;
+          ++bricks_remaining_;
+          ++surprise_bricks;
           break;
         case S:
           bricks_[i][j].type = S;
           bricks_[i][j].shape.setFillColor(kBrickSilver);
-          bricks_[i][j].resistance = 2;
-          bricks_[i][j].points = 50 * number_;
-          bricks_remaining_++;
+          bricks_[i][j].resistance = 2u;
+          bricks_[i][j].points = 50u * number_;
+          ++bricks_remaining_;
           bricks_[i][j].beveled = true;
           setBevel(position, {i, j});
           break;
         case A:
           bricks_[i][j].type = A;
           bricks_[i][j].shape.setFillColor(kBrickGold);
-          bricks_[i][j].resistance = 0;
-          bricks_[i][j].points = 0;
+          bricks_[i][j].resistance = 0u;
+          bricks_[i][j].points = 0u;
           bricks_[i][j].beveled = true;
           setBevel(position, {i, j});
           break;
@@ -304,13 +337,14 @@ void Level::initBricks() {
         default:
           bricks_[i][j].type = _;
           bricks_[i][j].active = false;
-          bricks_[i][j].resistance = 0;
-          bricks_[i][j].points = 0;
+          bricks_[i][j].resistance = 0u;
+          bricks_[i][j].points = 0u;
           break;
       }
     }
-    start_y = start_y + bricks_[i][j - 1].shape.getSize().y;
+    start_y = start_y + bricks_[i][j - 1u].shape.getSize().y;
   }
+  generatePowerUpSequence(surprise_bricks);
 }
 
 /////////////////////////////////////////////////
@@ -320,11 +354,11 @@ void Level::initBricks() {
 ///
 /// Initializates the layouts and names of the levels.
 /////////////////////////////////////////////////
-void Level::initProtoLevels(Level *ptl) {
-  for (unsigned int i = 0; i < kMaxLevels; ++i) {
+void Level::initProtoLevels(Level* ptl) {
+  for (unsigned int i = 0u; i < kMaxLevels; ++i) {
     ptl[i].name_ = kProtoLevels[i].name;
     ptl[i].background_ = kProtoLevels[i].background;
-    for (unsigned int j = 0; j < kLevelMaxRows * kLevelMaxColumns; ++j) {
+    for (unsigned int j = 0u; j < kLevelMaxRows * kLevelMaxColumns; ++j) {
       ptl[i].layout_[j] = kProtoLevels[i].layout[j];
     }
   }
@@ -339,6 +373,28 @@ void Level::initProtoLevels(Level *ptl) {
 /////////////////////////////////////////////////
 bool Level::isCompleted() {
   return completed_;
+}
+
+///
+void Level::generatePowerUpSequence(unsigned int surprise_bricks) {
+  if (!surprise_bricks || surprise_bricks <= 0u) {
+    // seq_it_ = nullptr;
+    // bricks_to_pwup_ =  
+    /* we should do something with this */
+    return;
+  }
+  auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::mt19937 generator(seed);
+  std::uniform_int_distribution<unsigned int> distribution(1u, surprise_bricks / 7u);
+  pwrup_sequence_.clear();
+  pwrup_sequence_.resize(surprise_bricks);
+  printf("surprise_bricks = %d\n", surprise_bricks);
+  for (auto& x : pwrup_sequence_) {
+    x = distribution(generator);
+    printf("bricks to pwup = %d\n", x);
+  }
+  seq_it_ = pwrup_sequence_.cbegin();
+  bricks_to_pwup_ = *seq_it_;
 }
 
 ///
@@ -368,4 +424,14 @@ void Level::setBevel(sf::Vector2f position, sf::Vector2u brick) {
 /////////////////////////////////////////////////
 void Level::setNumber(int lvl_num) {
   number_ = lvl_num;
+}
+
+///
+void Level::spawnPowerUp(const sf::Vector2f &where) {
+  // pwrup_on_screen_ = true;
+  ++seq_it_;
+  bricks_to_pwup_ = *seq_it_;
+  power_up_.shape.setPosition(where);
+  power_up_.active = true;
+  printf("POWER UP SPAWNED at %f, %f!\n", power_up_.shape.getPosition().x, power_up_.shape.getPosition().y);
 }

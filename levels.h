@@ -1,7 +1,7 @@
 #ifndef KETE_ARKA_LEVELS_H_
 #define KETE_ARKA_LEVELS_H_
 
-#include <string> // std::string
+#include <string>
 
 #include "config.h"
 
@@ -16,6 +16,7 @@ struct Proto_level  {
 /*  - level scaffold -
 {
   "LVL NAME", 
+  Background::XXX
   { _, _, _, _, _, _, _, _, _, _, _,
     _, _, _, _, _, _, _, _, _, _, _,
     _, _, _, _, _, _, _, _, _, _, _,
@@ -377,7 +378,7 @@ static const Proto_level kProtoLevels[kMaxLevels] = {
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, _, _, _, _, _, _, _, _, _,
       _, _, A, A, A, A, A, A, A, _, _,
-      _, _, G, A, B, A, B, R, G, _, _,
+      _, _, G, R, B, A, B, R, G, _, _,
       _, _, G, R, B, A, B, R, G, _, _,
       _, _, G, R, B, A, B, R, G, _, _,
       _, _, G, R, B, A, B, R, G, _, _,

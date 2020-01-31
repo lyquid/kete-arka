@@ -1,13 +1,21 @@
 #ifndef KETE_ARKA_CLASSES_LEVEL_H_
 #define KETE_ARKA_CLASSES_LEVEL_H_
 
+#include <chrono>
+#include <random>
 #include <string>
+#include <vector>
 
 #include <SFML/Graphics.hpp>
 
 #include "../config.h"
 #include "../levels.h"
 #include "player.h"
+
+enum class PowerUpTypes { 
+  Bounce, Catch, Duplicate, 
+  Enlarge, Laser, Pitufo, SpeedDown 
+};
 
 struct Brick {
   BrickTypes type;
@@ -17,6 +25,12 @@ struct Brick {
   sf::RectangleShape shape;
   bool beveled;
   sf::VertexArray bevel;
+};
+
+struct PowerUp {
+  bool active;
+  sf::RectangleShape shape;
+  PowerUpTypes type;
 };
 
 class Level {
@@ -29,9 +43,9 @@ class Level {
   Brick (*getBricks())[kLevelMaxColumns];
   std::string getName();
   int getNumber();
-  void init(Player *ptp);
+  void init(Player* ptp);
   static void initBorderGraphics();
-  static void initProtoLevels(Level *ptl);
+  static void initProtoLevels(Level* ptl);
   bool isCompleted();
   void setNumber(int lvl_num);
  
@@ -45,7 +59,7 @@ class Level {
   BrickTypes layout_[kLevelMaxRows * kLevelMaxColumns];
   std::string name_;
   int number_;
-  Player *player_; 
+  Player* player_;
   /* Level background and borders */
   Background background_;
   sf::VertexArray background_va_;
@@ -56,6 +70,18 @@ class Level {
   static sf::Texture border_right_tx_;
   static sf::VertexArray border_top_;
   static sf::Texture border_top_tx_;
+  static const std::string kImagePath;
+  /* Power-up stuff */
+  bool checkPowerUpSpawn();
+  void generatePowerUpSequence(unsigned int surprise_bricks);
+  void spawnPowerUp(const sf::Vector2f &where);
+  std::vector<unsigned int> pwrup_sequence_;
+  std::vector<unsigned int>::const_iterator seq_it_;
+  unsigned int bricks_to_pwup_;
+  bool pwrup_on_screen_;
+  PowerUp power_up_;
+  static const sf::Vector2f kPowerUpSize;
+  static const float kPowerUpSpeed;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

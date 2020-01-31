@@ -16,19 +16,19 @@ bool Ball::checkBrickCollision(Brick bricks[][kLevelMaxColumns]) {
         if (last_position_.x < brick_x) {
           // left hit
           randomizeBounceAngle(LeftBrick);
-          shape_.setPosition(brick_x - current_radius_, ball_y);
+          shape_.setPosition(brick_x - current_radius_ - 1.f, ball_y);
         } else if (last_position_.x > brick_x + brick_x_size) {
           // right hit
           randomizeBounceAngle(RightBrick);
-          shape_.setPosition(brick_x + brick_x_size + current_radius_, ball_y);
+          shape_.setPosition(brick_x + brick_x_size + current_radius_ + 1.f, ball_y);
         } else if (last_position_.y < brick_y) {
           // top hit
           randomizeBounceAngle(TopBrick);
-          shape_.setPosition(ball_x, brick_y - current_radius_);
+          shape_.setPosition(ball_x, brick_y - current_radius_ - 1.f);
         } else {
           // bottom hit
           randomizeBounceAngle(BottomBrick);
-          shape_.setPosition(ball_x, brick_y + brick_y_size + current_radius_);
+          shape_.setPosition(ball_x, brick_y + brick_y_size + current_radius_ + 1.f);
         }
       }
     }
@@ -85,7 +85,7 @@ bool Ball::checkShipCollision(Ship ship) {
       shape_.setPosition(ball_x, ship_y - current_radius_ - 0.1f);
     }
   }
-  return collision; // not doing anything with this right now
+  return collision;
 }
 
 void Ball::draw(sf::RenderWindow &window, GameStates state) {
@@ -116,18 +116,26 @@ void Ball::invertVerticalDirection(const float variation) {
 }
 
 void Ball::move(const float delta_time, Ship ship, Brick bricks[][kLevelMaxColumns]) {
+  // bool collision = false;
   float factor = speed_ * delta_time;
   last_position_ = shape_.getPosition();
   current_radius_ = shape_.getRadius();
   if (moving_flag_) {
-    // todo: maybe check everything to prevent the ball bugging
-    if (checkBorderCollision()) {
-      // boundary collision
-    } else if (checkShipCollision(ship)) {
-      // ship collision
-    } else if (checkBrickCollision(bricks)) {
-      // brick collision
-    }
+    /* This simple checking sometimes makes the ball to go through some bricks. Especially golden bricks. */
+    checkBrickCollision(bricks);
+    checkBorderCollision();
+    checkShipCollision(ship);
+
+    /* This "do while" method sometimes gets stuck infinitely. */
+    /* do { } while (checkBrickCollision(bricks));
+    do { } while (checkBorderCollision());
+    do { } while (checkShipCollision(ship)); */
+
+    /* This also gets stuck to infinity. */
+    /* do {
+      collision = checkBrickCollision(bricks) || checkBorderCollision() || checkShipCollision(ship);
+    } while (collision == true); */
+
     shape_.move(direction_.x * factor, direction_.y * factor);
   } else if (start_clock_.getElapsedTime().asSeconds() > 1.5f) {
     moving_flag_ = true;
