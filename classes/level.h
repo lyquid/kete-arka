@@ -14,7 +14,8 @@
 
 enum class PowerUpTypes { 
   Bounce, Catch, Duplicate, 
-  Enlarge, Laser, Pitufo, SpeedDown 
+  Enlarge, Laser, Pitufo, SpeedDown,
+  count
 };
 
 struct Brick {
@@ -48,6 +49,7 @@ class Level {
   static void initProtoLevels(Level* ptl);
   bool isCompleted();
   void setNumber(int lvl_num);
+  void updatePowerUp(float delta_time);
  
  private:
   void initBackground();
@@ -70,7 +72,7 @@ class Level {
   static sf::Texture border_right_tx_;
   static sf::VertexArray border_top_;
   static sf::Texture border_top_tx_;
-  static const std::string kImagePath;
+  static const std::string kImagePath_;
   /* Power-up stuff */
   bool checkPowerUpSpawn();
   void generatePowerUpSequence(unsigned int surprise_bricks);
@@ -80,8 +82,8 @@ class Level {
   unsigned int bricks_to_pwup_;
   bool pwrup_on_screen_;
   PowerUp power_up_;
-  static const sf::Vector2f kPowerUpSize;
-  static const float kPowerUpSpeed;
+  static const sf::Vector2f kPowerUpSize_;
+  static const float kPowerUpSpeed_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

@@ -270,6 +270,7 @@ void Game::update() {
         gui_.setFinalScoreText(player_.getScore());
       } else {
         ball_.move(delta_time, ship_, current_level_->getBricks());
+        current_level_->updatePowerUp(delta_time);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
          || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
           ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0.f));

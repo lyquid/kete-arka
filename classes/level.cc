@@ -1,7 +1,7 @@
 #include "level.h"
 
 /* Image path */
-const std::string Level::kImagePath = "assets/img/";
+const std::string Level::kImagePath_ = "assets/img/";
 /* Borders VertexArrays and Textures */
 sf::VertexArray Level::border_left_;         
 sf::Texture Level::border_left_tx_;
@@ -10,8 +10,8 @@ sf::Texture Level::border_right_tx_;
 sf::VertexArray Level::border_top_;
 sf::Texture Level::border_top_tx_;
 /* Power up constants */
-const sf::Vector2f Level::kPowerUpSize = sf::Vector2f(30.f, 15.f);
-const float Level::kPowerUpSpeed = 400.f;
+const sf::Vector2f Level::kPowerUpSize_ = sf::Vector2f(30.f, 15.f);
+const float Level::kPowerUpSpeed_ = 200.f;
 
 ///
 bool Level::checkPowerUpSpawn() {
@@ -52,7 +52,7 @@ void Level::decreaseResistance(sf::Vector2u brick) {
         completed_ = true;
         return;
       }
-      if (checkPowerUpSpawn()) {
+      if (bricks_[brick.x][brick.y].type != S && checkPowerUpSpawn()) {
         spawnPowerUp(bricks_[brick.x][brick.y].shape.getPosition());
       }
     } else {
@@ -135,8 +135,7 @@ void Level::init(Player* ptp) {
   bricks_remaining_ = 0;
   pwrup_on_screen_ = false;
   power_up_.active = false;
-  power_up_.shape.setSize(kPowerUpSize);
-  power_up_.shape.setFillColor(sf::Color::Yellow);
+  power_up_.shape.setSize(kPowerUpSize_);
   initBackground();
   initBricks();
 }
@@ -145,29 +144,29 @@ void Level::init(Player* ptp) {
 void Level::initBackground() {
   switch (background_) {
     case Background::Moai:
-      if (!background_tx_.loadFromFile(kImagePath + "bg_moai.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "bg_moai.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::RedCircuit:
-      if (!background_tx_.loadFromFile(kImagePath + "bg_circuit_red.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "bg_circuit_red.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::BlueCircuit:
-      if (!background_tx_.loadFromFile(kImagePath + "bg_circuit_blue.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "bg_circuit_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Green:
-      if (!background_tx_.loadFromFile(kImagePath + "bg_green.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "bg_green.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Blue:
       [[fallthrough]];
     default:
-      if (!background_tx_.loadFromFile(kImagePath + "bg_blue.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "bg_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
@@ -189,7 +188,7 @@ void Level::initBackground() {
 ///
 void Level::initBorderGraphics() {
   /* left border */
-  if (!border_left_tx_.loadFromFile(kImagePath + "border_left.png")) {
+  if (!border_left_tx_.loadFromFile(kImagePath_ + "border_left.png")) {
     exit(EXIT_FAILURE);
   }
   border_left_.resize(4);
@@ -203,7 +202,7 @@ void Level::initBorderGraphics() {
   border_left_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
   border_left_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
   /* right border */
-  if (!border_right_tx_.loadFromFile(kImagePath + "border_right.png")) {
+  if (!border_right_tx_.loadFromFile(kImagePath_ + "border_right.png")) {
     exit(EXIT_FAILURE);
   }
   border_right_.resize(4);
@@ -217,7 +216,7 @@ void Level::initBorderGraphics() {
   border_right_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
   border_right_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
   /* top border */
-  if (!border_top_tx_.loadFromFile(kImagePath + "border_top.png")) {
+  if (!border_top_tx_.loadFromFile(kImagePath_ + "border_top.png")) {
     exit(EXIT_FAILURE);
   }
   border_top_.resize(4);
@@ -428,10 +427,48 @@ void Level::setNumber(int lvl_num) {
 
 ///
 void Level::spawnPowerUp(const sf::Vector2f &where) {
-  // pwrup_on_screen_ = true;
+  auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
+  std::uniform_int_distribution<unsigned int> distribution(0u , static_cast<unsigned int>(PowerUpTypes::count) - 1u);
+  auto type = static_cast<PowerUpTypes>(distribution(generator));
+  switch (type) {
+    case PowerUpTypes::Bounce:
+      power_up_.shape.setFillColor(sf::Color::Magenta);
+      break;
+    case PowerUpTypes::Catch:
+      power_up_.shape.setFillColor(sf::Color::Green);
+      break;
+    case PowerUpTypes::Duplicate:
+      power_up_.shape.setFillColor(sf::Color::Cyan);
+      break;
+    case PowerUpTypes::Enlarge:
+      power_up_.shape.setFillColor(sf::Color::Blue);
+      break;
+    case PowerUpTypes::Laser:
+      power_up_.shape.setFillColor(sf::Color::Red);
+      break;
+    case PowerUpTypes::Pitufo:
+      power_up_.shape.setFillColor(sf::Color::Yellow);
+      break;
+    case PowerUpTypes::SpeedDown:
+    default:
+      power_up_.shape.setFillColor(sf::Color::White);
+      break;
+  }
+  power_up_.type = type;
+  pwrup_on_screen_ = true;
   ++seq_it_;
   bricks_to_pwup_ = *seq_it_;
   power_up_.shape.setPosition(where);
   power_up_.active = true;
-  printf("POWER UP SPAWNED at %f, %f!\n", power_up_.shape.getPosition().x, power_up_.shape.getPosition().y);
+}
+
+void Level::updatePowerUp(float delta_time) {
+  float factor = kPowerUpSpeed_ * delta_time;
+  if (power_up_.shape.getPosition().y < kScreenHeight) {
+    power_up_.shape.move(0.f, factor);
+  } else {
+    power_up_.active = false;
+    pwrup_on_screen_ = false;
+  }
 }
