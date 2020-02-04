@@ -175,7 +175,7 @@ void Game::init() {
   current_level_ = NULL;
   Level::initProtoLevels(game_levels_);
   logger_.write("Successfully initialized protolevels.");
-  Level::initBorderGraphics();
+  Level::initGraphics();
   logger_.write("Successfully initialized levels' graphics.");
   initLevelsMenu();
   logger_.write("Successfully initialized levels menu.");

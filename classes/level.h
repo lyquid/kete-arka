@@ -2,6 +2,7 @@
 #define KETE_ARKA_CLASSES_LEVEL_H_
 
 #include <chrono>
+#include <iostream> // std::cout
 #include <random>
 #include <string>
 #include <vector>
@@ -13,8 +14,8 @@
 #include "player.h"
 
 enum class PowerUpTypes { 
-  Bounce, Catch, Duplicate, 
-  Enlarge, Laser, Pitufo, SpeedDown,
+  Break, Catch, Disruption, 
+  Enlarge, Laser, Player, Slow,
   count
 };
 
@@ -36,7 +37,9 @@ struct PowerUp {
 
 class Level {
  public:
-  Level() {}
+  Level(): 
+    bricks_remaining_(0),
+    completed_(false) {}
   ~Level() {}
   void complete();
   void decreaseResistance(sf::Vector2u brick);
@@ -44,9 +47,9 @@ class Level {
   Brick (*getBricks())[kLevelMaxColumns];
   std::string getName();
   int getNumber();
-  void init(Player* ptp);
-  static void initBorderGraphics();
-  static void initProtoLevels(Level* ptl);
+  void init(Player *ptp);
+  static void initGraphics();
+  static void initProtoLevels(Level *ptl);
   bool isCompleted();
   void setNumber(int lvl_num);
   void updatePowerUp(float delta_time);
@@ -61,7 +64,7 @@ class Level {
   BrickTypes layout_[kLevelMaxRows * kLevelMaxColumns];
   std::string name_;
   int number_;
-  Player* player_;
+  Player *player_;
   /* Level background and borders */
   Background background_;
   sf::VertexArray background_va_;
@@ -77,13 +80,25 @@ class Level {
   bool checkPowerUpSpawn();
   void generatePowerUpSequence(unsigned int surprise_bricks);
   void spawnPowerUp(const sf::Vector2f &where);
-  std::vector<unsigned int> pwrup_sequence_;
-  std::vector<unsigned int>::const_iterator seq_it_;
-  unsigned int bricks_to_pwup_;
-  bool pwrup_on_screen_;
-  PowerUp power_up_;
+  static PowerUp power_up_;
   static const sf::Vector2f kPowerUpSize_;
   static const float kPowerUpSpeed_;
+  static const float kPowerUpAnimSpeed_;
+  static const unsigned int kPowerUpFrames_;
+  static std::vector<sf::Texture> break_tx_;
+  static std::vector<sf::Texture> catch_tx_;
+  static std::vector<sf::Texture> disruption_tx_;
+  static std::vector<sf::Texture> enlarge_tx_;
+  static std::vector<sf::Texture> laser_tx_;
+  static std::vector<sf::Texture> player_tx_;
+  static std::vector<sf::Texture> slow_tx_;
+  static std::vector<sf::Texture>::iterator pwrup_tx_it_;
+  static std::vector<sf::Texture> *ptx_;
+  static sf::Clock pwrup_anim_clk_;
+  static unsigned int pwrup_anim_frame_;
+  std::vector<unsigned int> pwrup_sequence_;
+  std::vector<unsigned int>::const_iterator seq_it_;
+  unsigned int bricks_to_pwrup_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

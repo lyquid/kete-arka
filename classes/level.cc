@@ -3,21 +3,35 @@
 /* Image path */
 const std::string Level::kImagePath_ = "assets/img/";
 /* Borders VertexArrays and Textures */
-sf::VertexArray Level::border_left_;         
+sf::VertexArray Level::border_left_;
 sf::Texture Level::border_left_tx_;
 sf::VertexArray Level::border_right_;
 sf::Texture Level::border_right_tx_;
 sf::VertexArray Level::border_top_;
 sf::Texture Level::border_top_tx_;
-/* Power up constants */
-const sf::Vector2f Level::kPowerUpSize_ = sf::Vector2f(30.f, 15.f);
-const float Level::kPowerUpSpeed_ = 200.f;
+/* Power-ups stuff */
+const sf::Vector2f Level::kPowerUpSize_ = sf::Vector2f(50.f, 25.f);
+const float Level::kPowerUpSpeed_ = 150.f;
+const float Level::kPowerUpAnimSpeed_ = 0.15f;
+const unsigned int Level::kPowerUpFrames_ = 8u;
+PowerUp Level::power_up_;
+std::vector<sf::Texture> Level::break_tx_(kPowerUpFrames_);
+std::vector<sf::Texture> Level::catch_tx_(kPowerUpFrames_);
+std::vector<sf::Texture> Level::disruption_tx_(kPowerUpFrames_);
+std::vector<sf::Texture> Level::enlarge_tx_(kPowerUpFrames_);
+std::vector<sf::Texture> Level::laser_tx_(kPowerUpFrames_);
+std::vector<sf::Texture> Level::player_tx_(kPowerUpFrames_);
+std::vector<sf::Texture> Level::slow_tx_(kPowerUpFrames_);
+std::vector<sf::Texture>::iterator Level::pwrup_tx_it_;
+std::vector<sf::Texture> *Level::ptx_;
+sf::Clock Level::pwrup_anim_clk_;
+unsigned int Level::pwrup_anim_frame_;
 
 ///
 bool Level::checkPowerUpSpawn() {
-  if (!pwrup_on_screen_) {
-    --bricks_to_pwup_;
-    if (!bricks_to_pwup_) {
+  if (!power_up_.active) {
+    --bricks_to_pwrup_;
+    if (!bricks_to_pwrup_) {
       return true;
     }
   }
@@ -83,9 +97,7 @@ void Level::draw(sf::RenderWindow &window) {
       }
     }
   }
-  if (power_up_.active) {
-    window.draw(power_up_.shape);
-  }
+  if (power_up_.active) window.draw(power_up_.shape);
 }
 
 /////////////////////////////////////////////////
@@ -129,13 +141,13 @@ int Level::getNumber() {
 /// Sets the completed flag to false, the bricks remaining
 /// to 0 and initializes each brick.
 /////////////////////////////////////////////////
-void Level::init(Player* ptp) {
+void Level::init(Player *ptp) {
   player_ = ptp;
-  completed_ = false;
-  bricks_remaining_ = 0;
-  pwrup_on_screen_ = false;
+  /* statics */
+  pwrup_anim_frame_ = 0u;
   power_up_.active = false;
   power_up_.shape.setSize(kPowerUpSize_);
+  /* level background and brick layout */
   initBackground();
   initBricks();
 }
@@ -144,29 +156,29 @@ void Level::init(Player* ptp) {
 void Level::initBackground() {
   switch (background_) {
     case Background::Moai:
-      if (!background_tx_.loadFromFile(kImagePath_ + "bg_moai.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_moai.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::RedCircuit:
-      if (!background_tx_.loadFromFile(kImagePath_ + "bg_circuit_red.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_circuit_red.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::BlueCircuit:
-      if (!background_tx_.loadFromFile(kImagePath_ + "bg_circuit_blue.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_circuit_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Green:
-      if (!background_tx_.loadFromFile(kImagePath_ + "bg_green.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_green.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Blue:
       [[fallthrough]];
     default:
-      if (!background_tx_.loadFromFile(kImagePath_ + "bg_blue.png")) {
+      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
@@ -186,9 +198,9 @@ void Level::initBackground() {
 }
 
 ///
-void Level::initBorderGraphics() {
-  /* left border */
-  if (!border_left_tx_.loadFromFile(kImagePath_ + "border_left.png")) {
+void Level::initGraphics() {
+  /* Left border */
+  if (!border_left_tx_.loadFromFile(kImagePath_ + "borders/border_left.png")) {
     exit(EXIT_FAILURE);
   }
   border_left_.resize(4);
@@ -201,8 +213,8 @@ void Level::initBorderGraphics() {
   border_left_[1].texCoords = sf::Vector2f(kGUIBorderThickness,           0.f);
   border_left_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
   border_left_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
-  /* right border */
-  if (!border_right_tx_.loadFromFile(kImagePath_ + "border_right.png")) {
+  /* Right border */
+  if (!border_right_tx_.loadFromFile(kImagePath_ + "borders/border_right.png")) {
     exit(EXIT_FAILURE);
   }
   border_right_.resize(4);
@@ -215,8 +227,8 @@ void Level::initBorderGraphics() {
   border_right_[1].texCoords = sf::Vector2f(kGUIBorderThickness,           0.f);
   border_right_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
   border_right_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
-  /* top border */
-  if (!border_top_tx_.loadFromFile(kImagePath_ + "border_top.png")) {
+  /* Top border */
+  if (!border_top_tx_.loadFromFile(kImagePath_ + "borders/border_top.png")) {
     exit(EXIT_FAILURE);
   }
   border_top_.resize(4);
@@ -229,12 +241,38 @@ void Level::initBorderGraphics() {
   border_top_[1].texCoords = sf::Vector2f(kScreenWidth,                 0.f);
   border_top_[2].texCoords = sf::Vector2f(kScreenWidth, kGUIBorderThickness);
   border_top_[3].texCoords = sf::Vector2f(         0.f, kGUIBorderThickness);
+  /* Power Ups */
+  const auto pwr_path = kImagePath_ + "powerups/";
+  const auto ext = ".png";
+  for (unsigned int i = 0; i < kPowerUpFrames_; ++i) {
+    if (!break_tx_.at(i).loadFromFile(pwr_path + "break/" + std::to_string(i) + ext)) {
+      exit(EXIT_FAILURE);
+    }
+    if (!catch_tx_.at(i).loadFromFile(pwr_path + "catch/" + std::to_string(i) + ext)) {
+      exit(EXIT_FAILURE);
+    }
+    if (!disruption_tx_.at(i).loadFromFile(pwr_path + "disruption/" + std::to_string(i) + ext)) {
+      exit(EXIT_FAILURE);
+    }
+    if (!enlarge_tx_.at(i).loadFromFile(pwr_path + "enlarge/" + std::to_string(i) + ext)) {
+      exit(EXIT_FAILURE);
+    }
+    if (!laser_tx_.at(i).loadFromFile(pwr_path + "laser/" + std::to_string(i) + ext)) {
+      exit(EXIT_FAILURE);
+    }
+    if (!player_tx_.at(i).loadFromFile(pwr_path + "player/" + std::to_string(i) + ext)) {
+      exit(EXIT_FAILURE);
+    }
+    if (!slow_tx_.at(i).loadFromFile(pwr_path + "slow/" + std::to_string(i) + ext)) {
+      exit(EXIT_FAILURE);
+    }
+  }
 }
 
 /////////////////////////////////////////////////
 /// @brief Initializates the bricks of a level.
 ///
-/// Initializates the bricks of a level by reading a 
+/// Initializates the bricks of a level by reading a
 /// layout and positions them.
 /////////////////////////////////////////////////
 void Level::initBricks() {
@@ -353,7 +391,7 @@ void Level::initBricks() {
 ///
 /// Initializates the layouts and names of the levels.
 /////////////////////////////////////////////////
-void Level::initProtoLevels(Level* ptl) {
+void Level::initProtoLevels(Level *ptl) {
   for (unsigned int i = 0u; i < kMaxLevels; ++i) {
     ptl[i].name_ = kProtoLevels[i].name;
     ptl[i].background_ = kProtoLevels[i].background;
@@ -376,24 +414,19 @@ bool Level::isCompleted() {
 
 ///
 void Level::generatePowerUpSequence(unsigned int surprise_bricks) {
-  if (!surprise_bricks || surprise_bricks <= 0u) {
-    // seq_it_ = nullptr;
-    // bricks_to_pwup_ =  
-    /* we should do something with this */
-    return;
-  }
-  auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+  if (!surprise_bricks || surprise_bricks <= 0u) return;
+  const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::mt19937 generator(seed);
   std::uniform_int_distribution<unsigned int> distribution(1u, surprise_bricks / 7u);
   pwrup_sequence_.clear();
   pwrup_sequence_.resize(surprise_bricks);
-  printf("surprise_bricks = %d\n", surprise_bricks);
-  for (auto& x : pwrup_sequence_) {
+  for (auto &x : pwrup_sequence_) {
     x = distribution(generator);
-    printf("bricks to pwup = %d\n", x);
+    if (kExecutionMode != Normal) std::cout << "[" << x << "]";
   }
+  if (kExecutionMode != Normal) std::cout << "\n";
   seq_it_ = pwrup_sequence_.cbegin();
-  bricks_to_pwup_ = *seq_it_;
+  bricks_to_pwrup_ = *seq_it_;
 }
 
 ///
@@ -411,7 +444,7 @@ void Level::setBevel(sf::Vector2f position, sf::Vector2u brick) {
   new_bevel[3].position = sf::Vector2f(position.x + kBrickDefaultSize.x - kBrickDefaultBevel, position.y + kBrickDefaultSize.y - kBrickDefaultBevel);
   new_bevel[4].position = sf::Vector2f(position.x + kBrickDefaultSize.x, position.y + kBrickDefaultBevel);
   new_bevel[5].position = sf::Vector2f(position.x + kBrickDefaultSize.x - kBrickDefaultBevel, position.y + kBrickDefaultBevel);
-  bricks_[brick.x][brick.y].bevel = new_bevel; 
+  bricks_[brick.x][brick.y].bevel = new_bevel;
 }
 
 /////////////////////////////////////////////////
@@ -427,48 +460,79 @@ void Level::setNumber(int lvl_num) {
 
 ///
 void Level::spawnPowerUp(const sf::Vector2f &where) {
-  auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+  const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
   std::uniform_int_distribution<unsigned int> distribution(0u , static_cast<unsigned int>(PowerUpTypes::count) - 1u);
-  auto type = static_cast<PowerUpTypes>(distribution(generator));
+  const auto type = static_cast<PowerUpTypes>(distribution(generator));
   switch (type) {
-    case PowerUpTypes::Bounce:
-      power_up_.shape.setFillColor(sf::Color::Magenta);
+    case PowerUpTypes::Break:
+      power_up_.shape.setTexture(&break_tx_.front());
+      pwrup_tx_it_ = break_tx_.begin();
+      ptx_ = &break_tx_;
       break;
     case PowerUpTypes::Catch:
-      power_up_.shape.setFillColor(sf::Color::Green);
+      power_up_.shape.setTexture(&catch_tx_.front());
+      pwrup_tx_it_ = catch_tx_.begin();
+      ptx_ = &catch_tx_;
       break;
-    case PowerUpTypes::Duplicate:
-      power_up_.shape.setFillColor(sf::Color::Cyan);
+    case PowerUpTypes::Disruption:
+      power_up_.shape.setTexture(&disruption_tx_.front());
+      pwrup_tx_it_ = disruption_tx_.begin();
+      ptx_ = &disruption_tx_;
       break;
     case PowerUpTypes::Enlarge:
-      power_up_.shape.setFillColor(sf::Color::Blue);
+      power_up_.shape.setTexture(&enlarge_tx_.front());
+      pwrup_tx_it_ = enlarge_tx_.begin();
+      ptx_ = &enlarge_tx_;
       break;
     case PowerUpTypes::Laser:
-      power_up_.shape.setFillColor(sf::Color::Red);
+      power_up_.shape.setTexture(&laser_tx_.front());
+      pwrup_tx_it_ = laser_tx_.begin();
+      ptx_ = &laser_tx_;
       break;
-    case PowerUpTypes::Pitufo:
-      power_up_.shape.setFillColor(sf::Color::Yellow);
+    case PowerUpTypes::Player:
+      power_up_.shape.setTexture(&player_tx_.front());
+      pwrup_tx_it_ = player_tx_.begin();
+      ptx_ = &player_tx_;
       break;
-    case PowerUpTypes::SpeedDown:
+    case PowerUpTypes::Slow:
+      [[fallthrough]];
     default:
-      power_up_.shape.setFillColor(sf::Color::White);
+      power_up_.shape.setTexture(&slow_tx_.front());
+      pwrup_tx_it_ = slow_tx_.begin();
+      ptx_ = &slow_tx_;
       break;
   }
-  power_up_.type = type;
-  pwrup_on_screen_ = true;
-  ++seq_it_;
-  bricks_to_pwup_ = *seq_it_;
-  power_up_.shape.setPosition(where);
   power_up_.active = true;
+  power_up_.shape.setPosition(where);
+  power_up_.type = type;
+
+  ++pwrup_anim_frame_;
+  ++seq_it_;
+  bricks_to_pwrup_ = *seq_it_;
 }
 
+///
 void Level::updatePowerUp(float delta_time) {
-  float factor = kPowerUpSpeed_ * delta_time;
+  if (!power_up_.active) return;
+  const auto factor = kPowerUpSpeed_ * delta_time;
+  /* Update position */
   if (power_up_.shape.getPosition().y < kScreenHeight) {
     power_up_.shape.move(0.f, factor);
   } else {
     power_up_.active = false;
-    pwrup_on_screen_ = false;
+    pwrup_anim_frame_ = 0u;
+  }
+  /* Update animation */
+  if (pwrup_anim_clk_.getElapsedTime().asSeconds() >= kPowerUpAnimSpeed_) {
+    pwrup_anim_clk_.restart();
+    power_up_.shape.setTexture(pwrup_tx_it_.base());
+    if (pwrup_anim_frame_ != kPowerUpFrames_ - 1u) {
+      ++pwrup_anim_frame_;
+      ++pwrup_tx_it_;
+    } else {
+      pwrup_anim_frame_ = 0u;
+      pwrup_tx_it_ = ptx_->begin();
+    }
   }
 }
