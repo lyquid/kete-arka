@@ -4,16 +4,16 @@
 const std::string Level::kImagePath_ = "assets/img/";
 /* Borders VertexArrays and Textures */
 sf::VertexArray Level::border_left_;
-sf::Texture Level::border_left_tx_;
+sf::Texture     Level::border_left_tx_;
 sf::VertexArray Level::border_right_;
-sf::Texture Level::border_right_tx_;
+sf::Texture     Level::border_right_tx_;
 sf::VertexArray Level::border_top_;
-sf::Texture Level::border_top_tx_;
+sf::Texture     Level::border_top_tx_;
 /* Power-ups stuff */
-const sf::Vector2f Level::kPowerUpSize_ = sf::Vector2f(50.f, 25.f);
-const float Level::kPowerUpSpeed_ = 150.f;
-const float Level::kPowerUpAnimSpeed_ = 0.15f;
-const unsigned int Level::kPowerUpFrames_ = 8u;
+const sf::Vector2f Level::kPowerUpSize_      = sf::Vector2f(50.f, 25.f);
+const float        Level::kPowerUpSpeed_     = 150.f;
+const float        Level::kPowerUpAnimSpeed_ = 0.15f;
+const unsigned int Level::kPowerUpFrames_    = 8u;
 PowerUp Level::power_up_;
 std::vector<sf::Texture> Level::break_tx_(kPowerUpFrames_);
 std::vector<sf::Texture> Level::catch_tx_(kPowerUpFrames_);
@@ -31,20 +31,9 @@ unsigned int Level::pwrup_anim_frame_;
 bool Level::checkPowerUpSpawn() {
   if (!power_up_.active) {
     --bricks_to_pwrup_;
-    if (!bricks_to_pwrup_) {
-      return true;
-    }
+    if (!bricks_to_pwrup_) return true;
   }
   return false;
-}
-
-/////////////////////////////////////////////////
-/// @brief Completes the level.
-///
-/// Completes the level. Mainly used for cheating.
-/////////////////////////////////////////////////
-void Level::complete() {
-  completed_ = true;
 }
 
 /////////////////////////////////////////////////
@@ -55,22 +44,22 @@ void Level::complete() {
 /// Decreases the resistance of a brick and sets inactive if needed.
 /// Also updates the score  of the player accordingly.
 /////////////////////////////////////////////////
-void Level::decreaseResistance(sf::Vector2u brick) {
-  if (bricks_[brick.x][brick.y].type != A) {
-    if (bricks_[brick.x][brick.y].resistance - 1 <= 0) {
-      bricks_[brick.x][brick.y].resistance = 0u;
-      bricks_[brick.x][brick.y].active = false;
+void Level::decreaseResistance(sf::Vector2u pos) {
+  if (bricks_[pos.x][pos.y].type != A) {
+    if (bricks_[pos.x][pos.y].resistance - 1u <= 0u) {
+      bricks_[pos.x][pos.y].resistance = 0u;
+      bricks_[pos.x][pos.y].active = false;
       --bricks_remaining_;
-      player_->increaseScore(bricks_[brick.x][brick.y].points);
+      player_->increaseScore(bricks_[pos.x][pos.y].points);
       if (!bricks_remaining_)  {
         completed_ = true;
         return;
       }
-      if (bricks_[brick.x][brick.y].type != S && checkPowerUpSpawn()) {
-        spawnPowerUp(bricks_[brick.x][brick.y].shape.getPosition());
+      if (bricks_[pos.x][pos.y].type != S && checkPowerUpSpawn()) {
+        spawnPowerUp(bricks_[pos.x][pos.y].shape.getPosition());
       }
     } else {
-      --bricks_[brick.x][brick.y].resistance;
+      --bricks_[pos.x][pos.y].resistance;
     }
   }
 }
@@ -101,39 +90,6 @@ void Level::draw(sf::RenderWindow& window) {
 }
 
 /////////////////////////////////////////////////
-/// @brief Returns the level's bricks.
-///
-/// @return - A multidimensional array with the bricks of the level.
-///
-/// A multidimensional array with the bricks of the level.
-/////////////////////////////////////////////////
-Brick (*Level::getBricks())[kLevelMaxColumns] {
-  return bricks_;
-}
-
-/////////////////////////////////////////////////
-/// @brief Returns the level's name.
-///
-/// @return - A std::string representing the level's name.
-///
-/// A std::string representing the level's name.
-/////////////////////////////////////////////////
-std::string Level::getName() {
-  return name_;
-}
-
-/////////////////////////////////////////////////
-/// @brief Returns the level's number.
-///
-/// @return - An integer representing the level's number.
-///
-/// An integer representing the level's number.
-/////////////////////////////////////////////////
-int Level::getNumber() {
-  return number_;
-}
-
-/////////////////////////////////////////////////
 /// @brief Initializates a level object.
 ///
 /// @param ptp - A pointer to the player.
@@ -142,14 +98,15 @@ int Level::getNumber() {
 /// to 0 and initializes each brick.
 /////////////////////////////////////////////////
 void Level::init(Player* ptp) {
+  /* Basic */
   bricks_remaining_ = 0;
   completed_ = false;
   player_ = ptp;
-  /* statics */
+  /* Power-ups statics */
   pwrup_anim_frame_ = 0u;
   power_up_.active = false;
   power_up_.shape.setSize(kPowerUpSize_);
-  /* level background and brick layout */
+  /* Background and brick layout */
   initBackground();
   initBricks();
 }
@@ -290,7 +247,7 @@ void Level::initBricks() {
       bricks_[i][j].shape.setPosition(position);
       bricks_[i][j].active = true;
       bricks_[i][j].beveled = false;
-      switch(layout_[i * kLevelMaxColumns + j])  {
+      switch(layout_[i * kLevelMaxColumns + j]) {
         case W:
           bricks_[i][j].type = W;
           bricks_[i][j].shape.setFillColor(kBrickWhite);
@@ -403,17 +360,6 @@ void Level::initProtoLevels(Level* ptl) {
   }
 }
 
-/////////////////////////////////////////////////
-/// @brief Returns true if the level is completed.
-///
-/// @return - True if the level is completed.
-///
-/// True if the level is completed (no brick remains).
-/////////////////////////////////////////////////
-bool Level::isCompleted() {
-  return completed_;
-}
-
 ///
 void Level::generatePowerUpSequence(unsigned int surprise_bricks) {
   if (!surprise_bricks || surprise_bricks <= 0u) return;
@@ -422,7 +368,7 @@ void Level::generatePowerUpSequence(unsigned int surprise_bricks) {
   std::uniform_int_distribution<unsigned int> distribution(1u, surprise_bricks / 7u);
   pwrup_sequence_.clear();
   pwrup_sequence_.resize(surprise_bricks);
-  for (auto& x : pwrup_sequence_) {
+  for (auto& x: pwrup_sequence_) {
     x = distribution(generator);
     if (kExecutionMode != Normal) std::cout << "[" << x << "]";
   }
@@ -447,17 +393,6 @@ void Level::setBevel(sf::Vector2f position, sf::Vector2u brick) {
   new_bevel[4].position = sf::Vector2f(position.x + kBrickDefaultSize.x, position.y + kBrickDefaultBevel);
   new_bevel[5].position = sf::Vector2f(position.x + kBrickDefaultSize.x - kBrickDefaultBevel, position.y + kBrickDefaultBevel);
   bricks_[brick.x][brick.y].bevel = new_bevel;
-}
-
-/////////////////////////////////////////////////
-/// @brief Sets the level's number.
-///
-/// @param lvl_num - An integer to be set as the level number.
-///
-/// Sets the level's number.
-/////////////////////////////////////////////////
-void Level::setNumber(int lvl_num) {
-  number_ = lvl_num;
 }
 
 ///

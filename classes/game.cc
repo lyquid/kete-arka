@@ -197,7 +197,7 @@ void Game::initLevelsMenu() {
   }
 }
 
-bool Game::loadLevel(int lvl_num) {
+bool Game::loadLevel(unsigned int lvl_num) {
   bool found = false;
   for (unsigned int i = 0; i < kMaxLevels && !found; ++i) {
     if (game_levels_[i].getNumber() == lvl_num) {

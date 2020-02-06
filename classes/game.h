@@ -23,7 +23,7 @@ class Game {
   void handleKeyEvents(const sf::Event key_event);
   void initLevelsMenu();
   bool isPaused();
-  bool loadLevel(int lvl_num);
+  bool loadLevel(unsigned int lvl_num);
   Ball ball_;
   sf::Clock clock_;
   sf::Event event_;

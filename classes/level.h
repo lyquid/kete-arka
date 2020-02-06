@@ -2,7 +2,7 @@
 #define KETE_ARKA_CLASSES_LEVEL_H_
 
 #include <chrono>
-#include <iostream> // std::cout
+#include <iostream> // std::cout /// to be removed
 #include <random>
 #include <string>
 #include <vector>
@@ -37,35 +37,40 @@ struct PowerUp {
 
 class Level {
  public:
-  Level(): 
-    bricks_remaining_(0),
-    completed_(false) {}
+  Level():
+    completed_(false),
+    bricks_remaining_(0u) {}
   ~Level() {}
-  void complete();
-  void decreaseResistance(sf::Vector2u brick);
-  void draw(sf::RenderWindow& window);
-  Brick (*getBricks())[kLevelMaxColumns];
-  std::string getName();
-  int getNumber();
+  /* Setters & getters */
+  void complete() { completed_ = true; };
+  void setNumber(unsigned int lvl_num) { number_ = lvl_num; };
+  Brick (*getBricks())[kLevelMaxColumns] { return bricks_; };
+  std::string getName() { return name_; };
+  unsigned int getNumber() { return number_; };
+  bool isCompleted() { return completed_; };
+  /* Initializers */
   void init(Player* ptp);
   static void initGraphics();
   static void initProtoLevels(Level* ptl);
-  bool isCompleted();
-  void setNumber(int lvl_num);
+  /* Ohters */
+  void decreaseResistance(sf::Vector2u pos);
+  void draw(sf::RenderWindow& window);
   void updatePowerUp(float delta_time);
  
  private:
-  void initBackground();
+  /* Basic */
+  bool completed_;
+  std::string name_;
+  unsigned int number_;
+  Player* player_;
+  /* Bricks */
   void initBricks();
   void setBevel(sf::Vector2f position, sf::Vector2u brick);
   Brick bricks_[kLevelMaxRows][kLevelMaxColumns];
-  int bricks_remaining_;
-  bool completed_;
+  unsigned int bricks_remaining_;
   BrickTypes layout_[kLevelMaxRows * kLevelMaxColumns];
-  std::string name_;
-  int number_;
-  Player* player_;
-  /* Level background and borders */
+  /* Background and borders */
+  void initBackground();
   Background background_;
   sf::VertexArray background_va_;
   sf::Texture background_tx_;
@@ -76,7 +81,7 @@ class Level {
   static sf::VertexArray border_top_;
   static sf::Texture border_top_tx_;
   static const std::string kImagePath_;
-  /* Power-up stuff */
+  /* Power-ups stuff */
   bool checkPowerUpSpawn();
   void generatePowerUpSequence(unsigned int surprise_bricks);
   void spawnPowerUp(const sf::Vector2f& where);
