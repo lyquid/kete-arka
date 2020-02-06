@@ -7,7 +7,6 @@
 #include "level.h"
 #include "logger.h"
 #include "player.h"
-#include "ship.h"
 
 class Game {
  public:
@@ -31,10 +30,9 @@ class Game {
   sf::Font font_;
   GUI gui_;
   Level game_levels_[kMaxLevels];
-  Level *current_level_;
+  Level* current_level_;
   Logger logger_;
   Player player_;
-  Ship ship_;
   GameStates state_;
   sf::String title_;
   sf::RenderWindow window_;

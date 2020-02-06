@@ -56,39 +56,39 @@ bool Ball::checkBorderCollision() {
   // bottom "collision"
   } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
     player_->decreaseLives();
-    ship_->reset();
+    player_->resetVaus();
     reset();
   }
   return collision;
 }
 
-bool Ball::checkShipCollision(Ship ship) {
+bool Ball::checkVausCollision(const Vaus& vaus) {
   bool collision = false;
   float ball_x = shape_.getPosition().x;
   float ball_y = shape_.getPosition().y;
-  float ship_x = ship.getShape().getPosition().x;
-  float ship_x_size = ship.getSize().x;
-  float ship_y = ship.getShape().getPosition().y;
-  if (ship.getShape().getGlobalBounds().intersects(shape_.getGlobalBounds())) {
+  float vaus_x = vaus.shape.getPosition().x;
+  float vaus_x_size = vaus.shape.getSize().x;
+  float vaus_y = vaus.shape.getPosition().y;
+  if (vaus.shape.getGlobalBounds().intersects(shape_.getGlobalBounds())) {
     collision = true;
-    if (last_position_.x < ship_x) {
+    if (last_position_.x < vaus_x) {
       // left hit
       randomizeBounceAngle(LeftShip);
-      shape_.setPosition(ship_x - current_radius_ - 0.1f, ball_y);
-    } else if (last_position_.x > ship_x + ship_x_size) {
+      shape_.setPosition(vaus_x - current_radius_ - 0.1f, ball_y);
+    } else if (last_position_.x > vaus_x + vaus_x_size) {
       // right hit
       randomizeBounceAngle(RightShip);
-      shape_.setPosition(ship_x + ship_x_size + current_radius_ + 0.1f, ball_y);
+      shape_.setPosition(vaus_x + vaus_x_size + current_radius_ + 0.1f, ball_y);
     } else {
       // front/rear hit (rear hit should be imposible!)
       randomizeBounceAngle(TopShip);
-      shape_.setPosition(ball_x, ship_y - current_radius_ - 0.1f);
+      shape_.setPosition(ball_x, vaus_y - current_radius_ - 0.1f);
     }
   }
   return collision;
 }
 
-void Ball::draw(sf::RenderWindow &window, GameStates state) {
+void Ball::draw(sf::RenderWindow& window, GameStates state) {
   if (!moving_flag_) {
     if (state == Playing) {
       updateFlashFlag();
@@ -101,21 +101,20 @@ void Ball::draw(sf::RenderWindow &window, GameStates state) {
   }
 }
 
-void Ball::init(Player *ptp, Ship *pts) {
+void Ball::init(Player* ptp) {
   player_ = ptp;
-  ship_ = pts;
   reset();
 }
 
-void Ball::invertHorizontalDirection(const float variation) {
+void Ball::invertHorizontalDirection(float variation) {
   direction_.x = -direction_.x + variation;
 }
 
-void Ball::invertVerticalDirection(const float variation) {
+void Ball::invertVerticalDirection(float variation) {
   direction_.y = -direction_.y + variation;
 }
 
-void Ball::move(const float delta_time, Ship ship, Brick bricks[][kLevelMaxColumns]) {
+void Ball::move(float delta_time, const Vaus& vaus, Brick bricks[][kLevelMaxColumns]) {
   // bool collision = false;
   float factor = speed_ * delta_time;
   last_position_ = shape_.getPosition();
@@ -124,7 +123,7 @@ void Ball::move(const float delta_time, Ship ship, Brick bricks[][kLevelMaxColum
     /* This simple checking sometimes makes the ball to go through some bricks. Especially golden bricks. */
     checkBrickCollision(bricks);
     checkBorderCollision();
-    checkShipCollision(ship);
+    checkVausCollision(vaus);
 
     /* This "do while" method sometimes gets stuck infinitely. */
     /* do { } while (checkBrickCollision(bricks));
@@ -142,7 +141,7 @@ void Ball::move(const float delta_time, Ship ship, Brick bricks[][kLevelMaxColum
   }
 }
 
-void Ball::randomizeBounceAngle(const Collisions collision) {
+void Ball::randomizeBounceAngle(Collisions collision) {
   float displ = 0.f;
   std::string collision_with = "";
   float random_angle_variation = (std::rand() % 21 - 10) / 100.f;  // rnd -0.10 to 0.10
@@ -275,11 +274,11 @@ void Ball::reset() {
   moving_flag_ = false;
 }
 
-void Ball::setLevel(Level *ptl) {
+void Ball::setLevel(Level* ptl) {
   level_ = ptl;
 }
 
-float Ball::sumAbs(const float num1, const float num2) {
+float Ball::sumAbs(float num1, float num2) {
   return std::abs(num1) + std::abs(num2);
 }
 

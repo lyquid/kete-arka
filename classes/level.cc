@@ -23,7 +23,7 @@ std::vector<sf::Texture> Level::laser_tx_(kPowerUpFrames_);
 std::vector<sf::Texture> Level::player_tx_(kPowerUpFrames_);
 std::vector<sf::Texture> Level::slow_tx_(kPowerUpFrames_);
 std::vector<sf::Texture>::iterator Level::pwrup_tx_it_;
-std::vector<sf::Texture> *Level::ptx_;
+std::vector<sf::Texture>* Level::ptx_;
 sf::Clock Level::pwrup_anim_clk_;
 unsigned int Level::pwrup_anim_frame_;
 
@@ -82,7 +82,7 @@ void Level::decreaseResistance(sf::Vector2u brick) {
 ///
 /// Draws the level to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
-void Level::draw(sf::RenderWindow &window) {
+void Level::draw(sf::RenderWindow& window) {
   window.draw(background_va_, &background_tx_);
   window.draw(border_left_, &border_left_tx_);
   window.draw(border_right_, &border_right_tx_);
@@ -141,7 +141,9 @@ int Level::getNumber() {
 /// Sets the completed flag to false, the bricks remaining
 /// to 0 and initializes each brick.
 /////////////////////////////////////////////////
-void Level::init(Player *ptp) {
+void Level::init(Player* ptp) {
+  bricks_remaining_ = 0;
+  completed_ = false;
   player_ = ptp;
   /* statics */
   pwrup_anim_frame_ = 0u;
@@ -391,7 +393,7 @@ void Level::initBricks() {
 ///
 /// Initializates the layouts and names of the levels.
 /////////////////////////////////////////////////
-void Level::initProtoLevels(Level *ptl) {
+void Level::initProtoLevels(Level* ptl) {
   for (unsigned int i = 0u; i < kMaxLevels; ++i) {
     ptl[i].name_ = kProtoLevels[i].name;
     ptl[i].background_ = kProtoLevels[i].background;
@@ -420,7 +422,7 @@ void Level::generatePowerUpSequence(unsigned int surprise_bricks) {
   std::uniform_int_distribution<unsigned int> distribution(1u, surprise_bricks / 7u);
   pwrup_sequence_.clear();
   pwrup_sequence_.resize(surprise_bricks);
-  for (auto &x : pwrup_sequence_) {
+  for (auto& x : pwrup_sequence_) {
     x = distribution(generator);
     if (kExecutionMode != Normal) std::cout << "[" << x << "]";
   }
@@ -459,7 +461,7 @@ void Level::setNumber(int lvl_num) {
 }
 
 ///
-void Level::spawnPowerUp(const sf::Vector2f &where) {
+void Level::spawnPowerUp(const sf::Vector2f& where) {
   const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
   std::uniform_int_distribution<unsigned int> distribution(0u , static_cast<unsigned int>(PowerUpTypes::count) - 1u);

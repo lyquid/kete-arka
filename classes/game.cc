@@ -43,8 +43,8 @@ void Game::handleKeyEvents(const sf::Event key_event) {
         /* New game start */
         case sf::Keyboard::Num1:
           player_.reset();
+          player_.resetVaus();
           ball_.reset();
-          ship_.reset();
           gui_.reset();
           if (loadLevel(1)) {
             state_ = Playing;
@@ -76,8 +76,8 @@ void Game::handleKeyEvents(const sf::Event key_event) {
         case sf::Keyboard::Space:
           int lvl_num = gui_.getLevelSelectedNumber();
           player_.reset();
+          player_.resetVaus();
           ball_.reset();
-          ship_.reset();
           gui_.reset();
           if (loadLevel(lvl_num)) {
             state_ = Playing;
@@ -132,7 +132,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
             state_ = GameCompleted;
           } else  {
             ball_.reset();
-            ship_.reset();
+            player_.resetVaus();
             if (loadLevel(next_lvl)) {
               state_ = Playing;
               logger_.write("Successfully loaded level " + GUI::toString(next_lvl) + ".");
@@ -183,10 +183,10 @@ void Game::init() {
   gui_.init(font_);
   logger_.write("Successfully initialized GUI.");
   /* Ball */ 
-  ball_.init(&player_, &ship_);
+  ball_.init(&player_);
   logger_.write("Successfully initialized ball.");
   /* Player */
-  player_.init(&gui_);
+  player_.linkGUI(&gui_);
   logger_.write("Successfully initialized player.");
 }
 
@@ -232,13 +232,13 @@ void Game::render() {
       gui_.drawPauseScreen(window_);
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
-      ship_.draw(window_);
+      player_.drawVaus(window_);
       break;
     case Playing:
       current_level_->draw(window_);
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
-      ship_.draw(window_);
+      player_.drawVaus(window_);
       break;
     case LevelCompleted:
       current_level_->draw(window_);
@@ -269,15 +269,15 @@ void Game::update() {
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else {
-        ball_.move(delta_time, ship_, current_level_->getBricks());
+        ball_.move(delta_time, *player_.getVaus(), current_level_->getBricks());
         current_level_->updatePowerUp(delta_time);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
          || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-          ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0.f));
+          player_.moveVaus(sf::Vector2f(delta_time * -player_.getVausSpeed(), 0.f));
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
          || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-          ship_.move(sf::Vector2f(delta_time * kShipDefaultSpeed, 0.f));
+          player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
         }
       }
       break;

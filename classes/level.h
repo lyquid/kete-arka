@@ -43,13 +43,13 @@ class Level {
   ~Level() {}
   void complete();
   void decreaseResistance(sf::Vector2u brick);
-  void draw(sf::RenderWindow &window);
+  void draw(sf::RenderWindow& window);
   Brick (*getBricks())[kLevelMaxColumns];
   std::string getName();
   int getNumber();
-  void init(Player *ptp);
+  void init(Player* ptp);
   static void initGraphics();
-  static void initProtoLevels(Level *ptl);
+  static void initProtoLevels(Level* ptl);
   bool isCompleted();
   void setNumber(int lvl_num);
   void updatePowerUp(float delta_time);
@@ -64,7 +64,7 @@ class Level {
   BrickTypes layout_[kLevelMaxRows * kLevelMaxColumns];
   std::string name_;
   int number_;
-  Player *player_;
+  Player* player_;
   /* Level background and borders */
   Background background_;
   sf::VertexArray background_va_;
@@ -79,7 +79,7 @@ class Level {
   /* Power-up stuff */
   bool checkPowerUpSpawn();
   void generatePowerUpSequence(unsigned int surprise_bricks);
-  void spawnPowerUp(const sf::Vector2f &where);
+  void spawnPowerUp(const sf::Vector2f& where);
   static PowerUp power_up_;
   static const sf::Vector2f kPowerUpSize_;
   static const float kPowerUpSpeed_;
@@ -93,7 +93,7 @@ class Level {
   static std::vector<sf::Texture> player_tx_;
   static std::vector<sf::Texture> slow_tx_;
   static std::vector<sf::Texture>::iterator pwrup_tx_it_;
-  static std::vector<sf::Texture> *ptx_;
+  static std::vector<sf::Texture>* ptx_;
   static sf::Clock pwrup_anim_clk_;
   static unsigned int pwrup_anim_frame_;
   std::vector<unsigned int> pwrup_sequence_;
