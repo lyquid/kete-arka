@@ -26,8 +26,9 @@ class Player {
   void decreaseLives(unsigned int decrease_by = 1u);
   unsigned int getLives() { return lives_; };
   unsigned long long getScore() { return score_; };
+  void increaseLives(unsigned int increase_by = 1u);
   void increaseScore(unsigned long long increase_by);
-  void linkGUI(GUI* ptg);
+  void linkGUI(GUI* ptg) { gui_ = ptg; };
   bool isDead() { return dead_; };
   void reset();
   /* Vaus stuff */

@@ -21,6 +21,7 @@ class Game {
 
  private:
   void handleKeyEvents(const sf::Event key_event);
+  void handlePowerUps();
   void initLevelsMenu();
   bool isPaused();
   bool loadLevel(unsigned int lvl_num);

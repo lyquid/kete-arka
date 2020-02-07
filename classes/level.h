@@ -13,8 +13,8 @@
 #include "../levels.h"
 #include "player.h"
 
-enum class PowerUpTypes { 
-  Break, Catch, Disruption, 
+enum class PowerUpTypes {
+  Nil, Break, Catch, Disruption, 
   Enlarge, Laser, Player, Slow,
   count
 };
@@ -56,6 +56,10 @@ class Level {
   void decreaseResistance(sf::Vector2u pos);
   void draw(sf::RenderWindow& window);
   void updatePowerUp(float delta_time);
+  /* Power-ups stuff */
+  bool catchedPowerUp() { return new_pwrup_; };
+  PowerUpTypes getCatchedPowerUp() { return catched_pwrup_; };
+  void eraseCatchedPowerUp();
  
  private:
   /* Basic */
@@ -87,6 +91,8 @@ class Level {
   void generatePowerUpSequence(unsigned int surprise_bricks);
   void spawnPowerUp(const sf::Vector2f& where);
   static PowerUp power_up_;
+  static PowerUpTypes catched_pwrup_;
+  static bool new_pwrup_;
   static const sf::Vector2f kPowerUpSize_;
   static const float kPowerUpSpeed_;
   static const float kPowerUpAnimSpeed_;

@@ -156,6 +156,40 @@ void Game::handleKeyEvents(const sf::Event key_event) {
   }
 }
 
+void Game::handlePowerUps() {
+  const PowerUpTypes pwrup = current_level_->getCatchedPowerUp();
+  current_level_->eraseCatchedPowerUp();
+  switch (pwrup) {
+    case PowerUpTypes::Nil:
+      printf("This CAN'T be seen.\n");
+      return;
+    case PowerUpTypes::Break:
+      printf("To the NEXT level!\n");
+      break;
+    case PowerUpTypes::Catch:
+      printf("Catch the ball!\n");
+      break;
+    case PowerUpTypes::Disruption:
+      printf("Multiball disruption!\n");
+      break;
+    case PowerUpTypes::Enlarge:
+      printf("-----------ENLARGED!-----------\n");
+      break;
+    case PowerUpTypes::Laser:
+      printf("LAAASER >> - -- --\n");
+      break;
+    case PowerUpTypes::Player:
+      player_.increaseLives();
+      break;
+    case PowerUpTypes::Slow:
+      printf("sLOOOOOWwwww\n");
+      break;
+    default:
+      printf("This SHOULDN'T be seen.\n");
+      break;
+  }
+}
+
 void Game::init() {
   state_ = Title;
   title_ = kAppName + " v" + kAppVersion;
@@ -265,10 +299,11 @@ void Game::update() {
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else if (current_level_->isCompleted()) {
-        state_ =  LevelCompleted;
+        state_ = LevelCompleted;
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else {
+        if (current_level_->catchedPowerUp()) handlePowerUps();
         ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
         current_level_->updatePowerUp(delta_time);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 

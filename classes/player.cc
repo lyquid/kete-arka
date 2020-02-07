@@ -38,6 +38,12 @@ void Player::drawVaus(sf::RenderWindow& window) {
   window.draw(vaus_.shape);
 }
 
+///
+void Player::increaseLives(unsigned int increase_by) {
+  lives_ += increase_by;
+  gui_->setLivesText(lives_);
+}
+
 /////////////////////////////////////////////////
 /// @brief Increases the score of the player by the amount specified.
 ///
@@ -48,11 +54,6 @@ void Player::drawVaus(sf::RenderWindow& window) {
 void Player::increaseScore(unsigned long long increase_by) {
   score_ += increase_by;
   gui_->setScoreText(score_);
-}
-
-///
-void Player::linkGUI(GUI* ptg) { 
-  gui_ = ptg;
 }
 
 /////////////////////////////////////////////////

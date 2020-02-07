@@ -15,6 +15,8 @@ const float        Level::kPowerUpSpeed_     = 150.f;
 const float        Level::kPowerUpAnimSpeed_ = 0.15f;
 const unsigned int Level::kPowerUpFrames_    = 8u;
 PowerUp Level::power_up_;
+PowerUpTypes Level::catched_pwrup_ = PowerUpTypes::Nil;
+bool Level::new_pwrup_ = false;
 std::vector<sf::Texture> Level::break_tx_(kPowerUpFrames_);
 std::vector<sf::Texture> Level::catch_tx_(kPowerUpFrames_);
 std::vector<sf::Texture> Level::disruption_tx_(kPowerUpFrames_);
@@ -93,6 +95,12 @@ void Level::draw(sf::RenderWindow& window) {
     }
   }
   if (power_up_.active) window.draw(power_up_.shape);
+}
+
+///
+void Level::eraseCatchedPowerUp() { 
+  catched_pwrup_ = PowerUpTypes::Nil;
+  new_pwrup_ = false;
 }
 
 /////////////////////////////////////////////////
@@ -405,9 +413,11 @@ void Level::setBevel(sf::Vector2f position, sf::Vector2u brick) {
 void Level::spawnPowerUp(const sf::Vector2f& where) {
   const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
-  std::uniform_int_distribution<unsigned int> distribution(0u , static_cast<unsigned int>(PowerUpTypes::count) - 1u);
+  std::uniform_int_distribution<unsigned int> distribution(1u , static_cast<unsigned int>(PowerUpTypes::count) - 1u);
   const auto type = static_cast<PowerUpTypes>(distribution(generator));
   switch (type) {
+    case PowerUpTypes::Nil:
+      return;
     case PowerUpTypes::Break:
       power_up_.shape.setTexture(&break_tx_.front());
       pwrup_tx_it_ = break_tx_.begin();
@@ -439,12 +449,12 @@ void Level::spawnPowerUp(const sf::Vector2f& where) {
       ptx_ = &player_tx_;
       break;
     case PowerUpTypes::Slow:
-      [[fallthrough]];
-    default:
       power_up_.shape.setTexture(&slow_tx_.front());
       pwrup_tx_it_ = slow_tx_.begin();
       ptx_ = &slow_tx_;
       break;
+    default:
+      return;
   }
   power_up_.active = true;
   power_up_.shape.setPosition(where);
@@ -460,6 +470,8 @@ void Level::updatePowerUp(float delta_time) {
   if (!power_up_.active) return;
   /* Check player collision */
   if (player_->getVaus().shape.getGlobalBounds().intersects(power_up_.shape.getGlobalBounds())) {
+    new_pwrup_ = true;
+    catched_pwrup_ = power_up_.type;
     deactivatePowerUpFall();
     return;
   }
