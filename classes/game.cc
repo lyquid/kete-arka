@@ -5,10 +5,6 @@ void Game::clean() {
   logger_.write("Successfully closed display window.");
 }
 
-GameStates Game::getGameState() {
-  return state_;
-}
-
 void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
@@ -182,7 +178,9 @@ void Game::handlePowerUps() {
       player_.increaseLives();
       break;
     case PowerUpTypes::Slow:
-      printf("sLOOOOOWwwww\n");
+      if (ball_.isPowerUpActive() && ball_.getPowerUp() != PowerUpTypes::Slow) ball_.deactivatePowerUp();
+      ball_.setPowerUp(PowerUpTypes::Slow);
+      ball_.slowPowerUp();
       break;
     default:
       printf("This SHOULDN'T be seen.\n");
@@ -304,6 +302,7 @@ void Game::update() {
         gui_.setFinalScoreText(player_.getScore());
       } else {
         if (current_level_->catchedPowerUp()) handlePowerUps();
+        if (ball_.isPowerUpActive()) ball_.updatePowerUps();
         ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
         current_level_->updatePowerUp(delta_time);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 

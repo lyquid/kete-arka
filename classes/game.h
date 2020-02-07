@@ -13,7 +13,7 @@ class Game {
   Game() {}
   ~Game() {}
   void clean();
-  GameStates getGameState();
+  GameStates getGameState() { return state_; };
   void handleEvents();
   void init();
   void render();

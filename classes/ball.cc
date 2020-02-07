@@ -88,6 +88,30 @@ bool Ball::checkVausCollision(const Vaus& vaus) {
   return collision;
 }
 
+void Ball::deactivatePowerUp() {
+  switch (pwrup_type_) {
+    case PowerUpTypes::Catch:
+      printf("todoooooooooooooooooooooo\n");
+      break;
+    case PowerUpTypes::Disruption:
+      printf("todooooooooooo\n");
+      break;
+    case PowerUpTypes::Slow:
+      speed_ = kBallDefaultSpeed;
+      pwrup_type_ = PowerUpTypes::Nil;
+      pwrup_active_ = false;
+      break;
+    case PowerUpTypes::Nil:
+    case PowerUpTypes::Break:
+    case PowerUpTypes::Enlarge:
+    case PowerUpTypes::Laser:  
+    case PowerUpTypes::Player:
+    default:
+      // print something horrible to the logger
+      break;
+  }
+}
+
 void Ball::draw(sf::RenderWindow& window, GameStates state) {
   if (!moving_flag_) {
     if (state == Playing) {
@@ -116,14 +140,14 @@ void Ball::invertVerticalDirection(float variation) {
 
 void Ball::move(float delta_time, const Vaus& vaus, Brick bricks[][kLevelMaxColumns]) {
   // bool collision = false;
-  float factor = speed_ * delta_time;
+  const float factor = speed_ * delta_time;
   last_position_ = shape_.getPosition();
   current_radius_ = shape_.getRadius();
   if (moving_flag_) {
     /* This simple checking sometimes makes the ball to go through some bricks. Especially golden bricks. */
-    checkBrickCollision(bricks);
-    checkBorderCollision();
-    checkVausCollision(vaus);
+    if (checkBrickCollision(bricks) && pwrup_type_ == PowerUpTypes::Slow) speedUp();
+    if (checkBorderCollision() && pwrup_type_ == PowerUpTypes::Slow) speedUp();
+    if (checkVausCollision(vaus) && pwrup_type_ == PowerUpTypes::Slow) speedUp();
 
     /* This "do while" method sometimes gets stuck infinitely. */
     /* do { } while (checkBrickCollision(bricks));
@@ -249,33 +273,53 @@ void Ball::randomizeBounceAngle(Collisions collision) {
 }
 
 void Ball::reset() {
-  // Ball direction_ vector randomization
+  /* Ball direction_ vector randomization */
   float random_x_direction = 0.f;
-  do {  // Get a number between -10 and 10, not including 0.
+  do {  /* Get a number between -10 and 10, not including 0. */
     random_x_direction = std::rand() % 21 - 10;
   } while (random_x_direction == 0.f);
-  // Take the random number and divide it to make it between -0.10, -0.09, -0.08, ... to 0.10
+  /* Take the random number and divide it to make it between -0.10, -0.09, -0.08, ... to 0.10 */
   random_x_direction = random_x_direction / 100.f;
-  // We use this displacement to make sure speed is always the same regarding angle
+  /* We use this displacement to make sure speed is always the same regarding angle */
   direction_ = sf::Vector2f(random_x_direction, kBallDefaultDisplacement - std::abs(random_x_direction));
-  // Ball's speed_ initialization
+  /* Ball's speed_ initialization */
   speed_ = kBallDefaultSpeed;
-  // Ball "physical" properties
+  /* Ball "physical" properties */
   shape_.setRadius(kBallDefaultRadius);
   shape_.setFillColor(kBallDefaultColor);
   shape_.setOrigin(kBallDefaultRadius, kBallDefaultRadius);
   shape_.setPosition(kBallDefaultPosition);
   last_position_ = shape_.getPosition();
   current_radius_ = shape_.getRadius();
-  // Ball start and flash clocks
+  /* Ball start and flash clocks */
   start_clock_.restart();
   flash_clock_.restart();
   ball_flash_flag_ = true;
   moving_flag_ = false;
+  /* Power-ups */
+  pwrup_active_ = false;
+  pwrup_type_ = PowerUpTypes::Nil;
 }
 
-void Ball::setLevel(Level* ptl) {
-  level_ = ptl;
+void Ball::setPowerUp(PowerUpTypes type) {
+  pwrup_type_ = type;
+  pwrup_active_ = true; 
+}
+
+void Ball::slowPowerUp() {
+  const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
+  std::uniform_real_distribution<float> distribution(10.0f , 30.0f);
+  slow_timer_ = distribution(generator);
+  const float kDecrement = 2.f;
+  speed_ /= kDecrement;
+  slow_clk_.restart();
+}
+
+void Ball::speedUp() {
+  const float kIncrement = 10.f;
+  if (speed_ + kIncrement >= kBallDefaultSpeed) deactivatePowerUp();
+  else speed_ += kIncrement;
 }
 
 float Ball::sumAbs(float num1, float num2) {
@@ -286,5 +330,27 @@ void Ball::updateFlashFlag() {
   if (flash_clock_.getElapsedTime().asSeconds() > 0.15f) {
     ball_flash_flag_ = !ball_flash_flag_;
     flash_clock_.restart();
+  }
+}
+
+void Ball::updatePowerUps() {
+  switch (pwrup_type_) {
+    case PowerUpTypes::Catch:
+      printf("todoooooooooooooooooooooo\n");
+      break;
+    case PowerUpTypes::Disruption:
+      printf("todooooooooooo\n");
+      break;
+    case PowerUpTypes::Slow:
+      if (slow_clk_.getElapsedTime().asSeconds() >= slow_timer_) deactivatePowerUp();
+      break;
+    case PowerUpTypes::Nil:
+    case PowerUpTypes::Break:
+    case PowerUpTypes::Enlarge:
+    case PowerUpTypes::Laser:  
+    case PowerUpTypes::Player:
+    default:
+      // print something horrible to the logger
+      break;
   }
 }
