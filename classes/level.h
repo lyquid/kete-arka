@@ -83,6 +83,7 @@ class Level {
   static const std::string kImagePath_;
   /* Power-ups stuff */
   bool checkPowerUpSpawn();
+  void deactivatePowerUpFall();
   void generatePowerUpSequence(unsigned int surprise_bricks);
   void spawnPowerUp(const sf::Vector2f& where);
   static PowerUp power_up_;

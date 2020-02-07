@@ -269,7 +269,7 @@ void Game::update() {
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else {
-        ball_.move(delta_time, *player_.getVaus(), current_level_->getBricks());
+        ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
         current_level_->updatePowerUp(delta_time);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
          || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {

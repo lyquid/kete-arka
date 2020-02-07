@@ -36,6 +36,12 @@ bool Level::checkPowerUpSpawn() {
   return false;
 }
 
+///
+void Level::deactivatePowerUpFall() {
+  power_up_.active = false;
+  pwrup_anim_frame_ = 0u;
+}
+
 /////////////////////////////////////////////////
 /// @brief Decreases the resistance of a brick.
 ///
@@ -452,13 +458,18 @@ void Level::spawnPowerUp(const sf::Vector2f& where) {
 ///
 void Level::updatePowerUp(float delta_time) {
   if (!power_up_.active) return;
-  const auto factor = kPowerUpSpeed_ * delta_time;
+  /* Check player collision */
+  if (player_->getVaus().shape.getGlobalBounds().intersects(power_up_.shape.getGlobalBounds())) {
+    deactivatePowerUpFall();
+    return;
+  }
   /* Update position */
   if (power_up_.shape.getPosition().y < kScreenHeight) {
+    const auto factor = kPowerUpSpeed_ * delta_time;
     power_up_.shape.move(0.f, factor);
   } else {
-    power_up_.active = false;
-    pwrup_anim_frame_ = 0u;
+    deactivatePowerUpFall();
+    return;
   }
   /* Update animation */
   if (pwrup_anim_clk_.getElapsedTime().asSeconds() >= kPowerUpAnimSpeed_) {

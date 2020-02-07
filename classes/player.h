@@ -32,7 +32,7 @@ class Player {
   void reset();
   /* Vaus stuff */
   void drawVaus(sf::RenderWindow& window);
-  Vaus* getVaus() { return &vaus_; };
+  const Vaus& getVaus() { return vaus_; };
   sf::Vector2f getVausSize() { return vaus_.shape.getSize(); };
   sf::Vector2f getVausPosition() { return vaus_.shape.getPosition(); };
   float getVausSpeed() { return vaus_.speed; };
