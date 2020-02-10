@@ -155,6 +155,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
 void Game::handlePowerUps() {
   const PowerUpTypes pwrup = current_level_->getCatchedPowerUp();
   current_level_->eraseCatchedPowerUp();
+  // switch (PowerUpTypes::Enlarge) {
   switch (pwrup) {
     case PowerUpTypes::Nil:
       printf("This CAN'T be seen.\n");
@@ -169,18 +170,25 @@ void Game::handlePowerUps() {
       printf("Multiball disruption!\n");
       break;
     case PowerUpTypes::Enlarge:
-      printf("-----------ENLARGED!-----------\n");
+      // we should deactivate all other powerups
+      if (ball_.isPowerUpActive()) ball_.deactivatePowerUp();
+      if (player_.isPowerUpActive()) player_.deactivatePowerUp();
+      player_.setPowerUp(PowerUpTypes::Enlarge);
       break;
     case PowerUpTypes::Laser:
       printf("LAAASER >> - -- --\n");
       break;
     case PowerUpTypes::Player:
+      // we should deactivate all other powerups
+      if (ball_.isPowerUpActive()) ball_.deactivatePowerUp();
+      if (player_.isPowerUpActive()) player_.deactivatePowerUp();
       player_.increaseLives();
       break;
     case PowerUpTypes::Slow:
+      // we should deactivate all other powerups
       if (ball_.isPowerUpActive() && ball_.getPowerUp() != PowerUpTypes::Slow) ball_.deactivatePowerUp();
+      if (player_.isPowerUpActive()) player_.deactivatePowerUp();
       ball_.setPowerUp(PowerUpTypes::Slow);
-      ball_.slowPowerUp();
       break;
     default:
       printf("This SHOULDN'T be seen.\n");
@@ -303,6 +311,7 @@ void Game::update() {
       } else {
         if (current_level_->catchedPowerUp()) handlePowerUps();
         if (ball_.isPowerUpActive()) ball_.updatePowerUps();
+        // if (player_.isPowerUpActive()) player_.updatePowerUps();
         ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
         current_level_->updatePowerUp(delta_time);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 

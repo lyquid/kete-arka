@@ -12,12 +12,7 @@
 #include "../config.h"
 #include "../levels.h"
 #include "player.h"
-
-enum class PowerUpTypes {
-  Nil, Break, Catch, Disruption, 
-  Enlarge, Laser, Player, Slow,
-  count
-};
+#include "powerups.h"
 
 struct Brick {
   BrickTypes type;
@@ -27,12 +22,6 @@ struct Brick {
   sf::RectangleShape shape;
   bool beveled;
   sf::VertexArray bevel;
-};
-
-struct PowerUp {
-  bool active;
-  sf::RectangleShape shape;
-  PowerUpTypes type;
 };
 
 class Level {

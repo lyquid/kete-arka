@@ -5,6 +5,7 @@
 
 #include "../config.h"
 #include "gui.h"
+#include "powerups.h"
 
 struct Vaus {
   sf::RectangleShape shape;
@@ -39,6 +40,11 @@ class Player {
   float getVausSpeed() { return vaus_.speed; };
   bool moveVaus(const sf::Vector2f& offset);
   void resetVaus();
+  /* Power-ups stuff */
+  void deactivatePowerUp();
+  PowerUpTypes getPowerUp() { return pwrup_type_; };
+  bool isPowerUpActive() { return pwrup_active_; };
+  void setPowerUp(PowerUpTypes type);
   
  private:
   static const unsigned int kPlayerDefaultLives_;
@@ -51,6 +57,9 @@ class Player {
   unsigned int lives_;
   unsigned long long score_;
   Vaus vaus_;
+  /* Power-ups stuff */
+  bool pwrup_active_;
+  PowerUpTypes pwrup_type_;
 };
 
 #endif // KETE_ARKA_CLASSES_PLAYER_H_

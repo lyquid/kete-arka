@@ -7,6 +7,26 @@ const sf::Vector2f Player::kVausDefaultPosition_ = sf::Vector2f((kScreenWidth - 
 const float        Player::kVausDefaultSpeed_ = 500.f;
 const sf::Color    Player::kVausDefaultColor_ = sf::Color::White;
 
+void Player::deactivatePowerUp() {
+  switch (pwrup_type_) {
+    case PowerUpTypes::Enlarge:
+      vaus_.shape.setSize(kVausDefaultSize_);
+      pwrup_type_ = PowerUpTypes::Nil;
+      pwrup_active_ = false;
+      break;
+    case PowerUpTypes::Nil:
+    case PowerUpTypes::Break:
+    case PowerUpTypes::Catch:
+    case PowerUpTypes::Disruption:
+    case PowerUpTypes::Laser:
+    case PowerUpTypes::Player:
+    case PowerUpTypes::Slow:
+    default:
+      // print something horrible to the logger
+      break;
+  }
+}
+
 /////////////////////////////////////////////////
 /// @brief Decreases the lives of the player by the amount specified.
 ///
@@ -91,4 +111,25 @@ void Player::resetVaus() {
   vaus_.shape.setSize(kVausDefaultSize_);
   vaus_.shape.setPosition(kVausDefaultPosition_);
   vaus_.speed = kVausDefaultSpeed_;
+}
+
+void Player::setPowerUp(PowerUpTypes type) {
+  pwrup_type_ = type;
+  pwrup_active_ = true;
+  const auto enlargement = vaus_.shape.getSize().x * 1.66f;
+  switch (type) {
+    case PowerUpTypes::Enlarge:
+      vaus_.shape.setSize(sf::Vector2f(enlargement, vaus_.shape.getSize().y));
+      break;
+    case PowerUpTypes::Nil:
+    case PowerUpTypes::Break:
+    case PowerUpTypes::Catch:
+    case PowerUpTypes::Disruption:
+    case PowerUpTypes::Laser:
+    case PowerUpTypes::Player:
+    case PowerUpTypes::Slow:
+    default:
+      // print something horrible to the logger
+      break;
+  }
 }

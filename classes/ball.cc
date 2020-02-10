@@ -303,7 +303,26 @@ void Ball::reset() {
 
 void Ball::setPowerUp(PowerUpTypes type) {
   pwrup_type_ = type;
-  pwrup_active_ = true; 
+  pwrup_active_ = true;
+  switch (type) {
+    case PowerUpTypes::Catch:
+      printf("todoooooooooooooooooooooo\n");
+      break;
+    case PowerUpTypes::Disruption:
+      printf("todooooooooooo\n");
+      break;
+    case PowerUpTypes::Slow:
+      slowPowerUp();
+      break;
+    case PowerUpTypes::Nil:
+    case PowerUpTypes::Break:
+    case PowerUpTypes::Enlarge:
+    case PowerUpTypes::Laser:  
+    case PowerUpTypes::Player:
+    default:
+      // print something horrible to the logger
+      break;
+  }
 }
 
 void Ball::slowPowerUp() {
