@@ -95,15 +95,4 @@ const int kLevelMaxColumns  = 11;
 const int kLevelMaxRows     = 18;
 const int kMaxLevels        = 36;
 
-// player default setting
-const int kPlayerDefaultLives = 3;
-
-// ship default settings
-const float         kShipDefaultWidth     = 80.f;
-const float         kShipDefaultHeight    = 15.f;
-const sf::Vector2f  kShipDefaultSize      = sf::Vector2f(kShipDefaultWidth, kShipDefaultHeight);
-const sf::Vector2f  kShipDefaultPosition  = sf::Vector2f(((float) kScreenWidth - kShipDefaultSize.x) / 2.f, (float) kScreenHeight * 0.9f);
-const float         kShipDefaultSpeed     = 500.f;
-const sf::Color     kShipDefaultColor     = sf::Color::White;
-
 #endif  // KETE_ARKA_CONFIG_H_

@@ -7,14 +7,14 @@
 #include "level.h"
 #include "logger.h"
 #include "player.h"
-#include "ship.h"
+#include "powerups.h"
 
 class Game {
  public:
   Game() {}
   ~Game() {}
   void clean();
-  GameStates getGameState();
+  GameStates getGameState() { return state_; };
   void handleEvents();
   void init();
   void render();
@@ -22,19 +22,19 @@ class Game {
 
  private:
   void handleKeyEvents(const sf::Event key_event);
+  void handlePowerUps();
   void initLevelsMenu();
   bool isPaused();
-  bool loadLevel(int lvl_num);
+  bool loadLevel(unsigned int lvl_num);
   Ball ball_;
   sf::Clock clock_;
   sf::Event event_;
   sf::Font font_;
   GUI gui_;
   Level game_levels_[kMaxLevels];
-  Level *current_level_;
+  Level* current_level_;
   Logger logger_;
   Player player_;
-  Ship ship_;
   GameStates state_;
   sf::String title_;
   sf::RenderWindow window_;

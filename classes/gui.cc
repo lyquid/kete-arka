@@ -1,7 +1,7 @@
 #include "gui.h"
 
 ///
-void GUI::drawGameCompleted(sf::RenderWindow &window) {
+void GUI::drawGameCompleted(sf::RenderWindow& window) {
   window.draw(game_completed_);
   updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
@@ -16,7 +16,7 @@ void GUI::drawGameCompleted(sf::RenderWindow &window) {
 ///
 /// Draws the game over screen to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
-void GUI::drawGameOverScreen(sf::RenderWindow &window) {
+void GUI::drawGameOverScreen(sf::RenderWindow& window) {
   window.draw(game_over_text_);
   window.draw(total_score_text_);
   updateFlashingTextFlag();
@@ -32,14 +32,14 @@ void GUI::drawGameOverScreen(sf::RenderWindow &window) {
 ///
 /// Draws the GUI to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
-void GUI::drawInGameGUI(sf::RenderWindow &window) {
+void GUI::drawInGameGUI(sf::RenderWindow& window) {
   window.draw(gui_lives_text_);
   window.draw(gui_score_text_);
   window.draw(gui_level_text_);
 }
 
 ///
-void GUI::drawLevelCompletedScreen(sf::RenderWindow &window) {
+void GUI::drawLevelCompletedScreen(sf::RenderWindow& window) {
   window.draw(level_completed_title_);
   window.draw(level_completed_name_);
   window.draw(total_score_text_);
@@ -60,7 +60,7 @@ void GUI::drawLevelCompletedScreen(sf::RenderWindow &window) {
 ///
 /// Draws the level selection menu to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
-void GUI::drawLevelSelection(sf::RenderWindow &window) {
+void GUI::drawLevelSelection(sf::RenderWindow& window) {
   window.draw(level_select_title_text_);
   window.draw(level_selected_shape_);
   for (int i = 0; i < kMaxLevels; ++i) {
@@ -76,7 +76,7 @@ void GUI::drawLevelSelection(sf::RenderWindow &window) {
 ///
 /// Draws the menu to the specified sf::RenderWindow.
 /////////////////////////////////////////////////
-void GUI::drawMenu(sf::RenderWindow &window) {
+void GUI::drawMenu(sf::RenderWindow& window) {
   window.draw(title_text_);
   window.draw(menu_start_text_);
   window.draw(menu_level_text_);
@@ -90,7 +90,7 @@ void GUI::drawMenu(sf::RenderWindow &window) {
 ///
 /// Draws the pause text on the given RenderWindow.
 /////////////////////////////////////////////////
-void GUI::drawPauseScreen(sf::RenderWindow &window) {
+void GUI::drawPauseScreen(sf::RenderWindow& window) {
   updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
     window.draw(pause_text_);
@@ -106,7 +106,7 @@ void GUI::drawPauseScreen(sf::RenderWindow &window) {
 /// the game's main title and, if needed, the "press start"
 /// text on the given RenderWindow.
 /////////////////////////////////////////////////
-void GUI::drawTitleScreen(sf::RenderWindow &window) {
+void GUI::drawTitleScreen(sf::RenderWindow& window) {
   window.draw(title_text_);
   updateFlashingTextFlag();
   if (render_flashing_text_flag_) {
@@ -137,7 +137,7 @@ int GUI::getLevelSelectedNumber() {
 /// Sets everything that needs to be set calling the methods
 /// that need to be called.
 /////////////////////////////////////////////////
-void GUI::init(const sf::Font &font) {
+void GUI::init(const sf::Font& font) {
   const int halfScreenW = kScreenWidth / 2;
   // main title
   initText(title_text_, kGameTitle, font, kGUIGameTitleFontSize, kGUIDefaultFontColor, BothAxis);
@@ -164,7 +164,7 @@ void GUI::init(const sf::Font &font) {
   initText(menu_quit_text_, kMenuQuitText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor);
   menu_quit_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 4.f);
   // GUI - lives
-  initText(gui_lives_text_, kGUILivesText + toString(kPlayerDefaultLives), font, kGUITextFontSize, kGUIDefaultFontColor, TopLeft);
+  initText(gui_lives_text_, kGUILivesText + "", font, kGUITextFontSize, kGUIDefaultFontColor, TopLeft);
   gui_lives_text_.setPosition(kGUIDefaultMargin + kGUIBorderThickness, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
   // GUI - score
   initText(gui_score_text_, kGUIScoreText + toString(0), font, kGUITextFontSize, kGUIDefaultFontColor, Horizontal);
@@ -208,7 +208,7 @@ void GUI::init(const sf::Font &font) {
 ///
 /// @todo: Fix the bug with the position of the texts.
 /////////////////////////////////////////////////
-void GUI::initLevelsList(const sf::Font &font) {
+void GUI::initLevelsList(const sf::Font& font) {
   const int x = kScreenWidth / 2;
   int y = kGUIDefaultMargin + kGUILevelSelectFontSize / 2;
   initText(level_select_title_text_, kLevelSelectText, font, kGUILevelSelectFontSize, kGUIDefaultFontColor, BothAxis);
@@ -236,9 +236,9 @@ void GUI::initLevelsList(const sf::Font &font) {
 /// Sets the font, the size, the fill color and the string to be
 /// rendered for the text. Thereafter sets the origin of the text if needed.
 /////////////////////////////////////////////////
-void GUI::initText( sf::Text              &text, 
+void GUI::initText( sf::Text&             text, 
                     const sf::String      string_text, 
-                    const sf::Font        &font, 
+                    const sf::Font&       font, 
                     const int             size,
                     const sf::Color       color, 
                     const TextCenterModes mode ) {
@@ -257,7 +257,8 @@ void GUI::initText( sf::Text              &text,
 /// Resets the GUI elements to their initial states.
 /////////////////////////////////////////////////
 void GUI::reset() {
-  setLivesText(kPlayerDefaultLives);
+  // setLivesText(kPlayerDefaultLives);
+  // setLivesText(0);
   gui_score_text_.setCharacterSize(kGUITextFontSize);
   setScoreText(0);
   gui_score_text_.setPosition(kScreenWidth / 2.f, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
@@ -327,21 +328,6 @@ void GUI::setLevelInfo(int lvl_position, int lvl_num, sf::String lvl_name) {
 }
 
 /////////////////////////////////////////////////
-/// @brief Sets the level text.
-///
-/// @param level_num - The level (int) to be set.
-///
-/// Sets the level text with the level provided.
-/// Also re-centers the origin of the new level text.
-/////////////////////////////////////////////////
-/* void GUI::setLevelText(int level_num) {
-  level_num > 9 ?
-    gui_level_text_.setString(kGUILevelText + toString(level_num))
-    : gui_level_text_.setString(kGUILevelText + "0" + toString(level_num));
-  setOrigin(gui_level_text_, TopRight);
-} 
- */
-/////////////////////////////////////////////////
 /// @brief Sets the lives text.
 ///
 /// @param lives - The lives (int) to be set.
@@ -389,7 +375,7 @@ void GUI::setRenderFlashingTextFlag(const bool status) {
 /// Sets the origin of a sf::Text as requested. Options are:
 /// Horizontal, Vertical, BothAxis, TopRight, TopLeft, Default and Current.
 /////////////////////////////////////////////////
-template <typename T> void GUI::setOrigin(T &shape, const TextCenterModes mode) {
+template <typename T> void GUI::setOrigin(T& shape, const TextCenterModes mode) {
   sf::FloatRect shape_rect = shape.getLocalBounds();
   switch (mode) {
     case Horizontal:
@@ -423,7 +409,7 @@ template <typename T> void GUI::setOrigin(T &shape, const TextCenterModes mode) 
 ///
 /// Converts the parameter t into a std::string and returns it.
 /////////////////////////////////////////////////
-template <typename T> std::string GUI::toString(const T &t) { 
+template <typename T> std::string GUI::toString(const T& t) { 
   std::ostringstream oss;
   oss << t; 
   return oss.str();

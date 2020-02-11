@@ -5,10 +5,6 @@ void Game::clean() {
   logger_.write("Successfully closed display window.");
 }
 
-GameStates Game::getGameState() {
-  return state_;
-}
-
 void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
@@ -43,8 +39,8 @@ void Game::handleKeyEvents(const sf::Event key_event) {
         /* New game start */
         case sf::Keyboard::Num1:
           player_.reset();
+          player_.resetVaus();
           ball_.reset();
-          ship_.reset();
           gui_.reset();
           if (loadLevel(1)) {
             state_ = Playing;
@@ -76,8 +72,8 @@ void Game::handleKeyEvents(const sf::Event key_event) {
         case sf::Keyboard::Space:
           int lvl_num = gui_.getLevelSelectedNumber();
           player_.reset();
+          player_.resetVaus();
           ball_.reset();
-          ship_.reset();
           gui_.reset();
           if (loadLevel(lvl_num)) {
             state_ = Playing;
@@ -132,7 +128,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
             state_ = GameCompleted;
           } else  {
             ball_.reset();
-            ship_.reset();
+            player_.resetVaus();
             if (loadLevel(next_lvl)) {
               state_ = Playing;
               logger_.write("Successfully loaded level " + GUI::toString(next_lvl) + ".");
@@ -156,6 +152,45 @@ void Game::handleKeyEvents(const sf::Event key_event) {
   }
 }
 
+void Game::handlePowerUps() {
+  const PowerUpTypes pwrup = current_level_->getCatchedPowerUp();
+  current_level_->eraseCatchedPowerUp();
+  if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
+  if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
+  if (player_.isPowerUpActive()) player_.deactivatePowerUp();
+  // switch (PowerUpTypes::Break) { // QoL purposes
+  switch (pwrup) {
+    case PowerUpTypes::Nil:
+      printf("This CAN'T be seen.\n");
+      return;
+    case PowerUpTypes::Break:
+      current_level_->setPowerUp(PowerUpTypes::Break);
+      break;
+    case PowerUpTypes::Catch:
+      printf("Catch the ball!\n");
+      break;
+    case PowerUpTypes::Disruption:
+      printf("Multiball disruption!\n");
+      break;
+    case PowerUpTypes::Enlarge:
+      player_.setPowerUp(PowerUpTypes::Enlarge);
+      break;
+    case PowerUpTypes::Laser:
+      printf("LAAASER >> - -- --\n");
+      break;
+    case PowerUpTypes::Player:
+      player_.increaseLives();
+      break;
+    case PowerUpTypes::Slow:
+      if (ball_.isPowerUpActive() && ball_.getPowerUp() != PowerUpTypes::Slow) ball_.deactivatePowerUp();
+      ball_.setPowerUp(PowerUpTypes::Slow);
+      break;
+    default:
+      printf("This SHOULDN'T be seen.\n");
+      break;
+  }
+}
+
 void Game::init() {
   state_ = Title;
   title_ = kAppName + " v" + kAppVersion;
@@ -175,7 +210,7 @@ void Game::init() {
   current_level_ = NULL;
   Level::initProtoLevels(game_levels_);
   logger_.write("Successfully initialized protolevels.");
-  Level::initBorderGraphics();
+  Level::initGraphics();
   logger_.write("Successfully initialized levels' graphics.");
   initLevelsMenu();
   logger_.write("Successfully initialized levels menu.");
@@ -183,23 +218,23 @@ void Game::init() {
   gui_.init(font_);
   logger_.write("Successfully initialized GUI.");
   /* Ball */ 
-  ball_.init(&player_, &ship_);
+  ball_.init(&player_);
   logger_.write("Successfully initialized ball.");
   /* Player */
-  player_.init(&gui_);
+  player_.linkGUI(&gui_);
   logger_.write("Successfully initialized player.");
 }
 
 void Game::initLevelsMenu() {
-  for (unsigned int i = 0; i < kMaxLevels; ++i) {
+  for (unsigned int i = 0u; i < kMaxLevels; ++i) {
     game_levels_[i].setNumber(i + 1);
     gui_.setLevelInfo(i, game_levels_[i].getNumber(), game_levels_[i].getName());
   }
 }
 
-bool Game::loadLevel(int lvl_num) {
+bool Game::loadLevel(unsigned int lvl_num) {
   bool found = false;
-  for (unsigned int i = 0; i < kMaxLevels && !found; ++i) {
+  for (unsigned int i = 0u; i < kMaxLevels && !found; ++i) {
     if (game_levels_[i].getNumber() == lvl_num) {
       found = true;
       current_level_ = &game_levels_[i];
@@ -232,13 +267,13 @@ void Game::render() {
       gui_.drawPauseScreen(window_);
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
-      ship_.draw(window_);
+      player_.drawVaus(window_);
       break;
     case Playing:
       current_level_->draw(window_);
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
-      ship_.draw(window_);
+      player_.drawVaus(window_);
       break;
     case LevelCompleted:
       current_level_->draw(window_);
@@ -257,7 +292,7 @@ void Game::render() {
 }
 
 void Game::update() {
-  float delta_time = clock_.restart().asSeconds();
+  auto delta_time = clock_.restart().asSeconds();
   switch (state_) {
     case Playing:
       if (player_.isDead()) {
@@ -265,19 +300,24 @@ void Game::update() {
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else if (current_level_->isCompleted()) {
-        state_ =  LevelCompleted;
+        state_ = LevelCompleted;
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else {
-        ball_.move(delta_time, ship_, current_level_->getBricks());
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
          || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-          ship_.move(sf::Vector2f(delta_time * -kShipDefaultSpeed, 0.f));
+          player_.moveVaus(sf::Vector2f(delta_time * -player_.getVausSpeed(), 0.f));
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
          || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-          ship_.move(sf::Vector2f(delta_time * kShipDefaultSpeed, 0.f));
+          auto crash = !player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
+          if (crash && current_level_->isBreakActive()) current_level_->complete();
         }
+        if (current_level_->catchedPowerUp()) handlePowerUps();
+        if (ball_.isPowerUpActive()) ball_.updatePowerUps();
+        ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
+        current_level_->updatePowerUpFall(delta_time);
+        if (current_level_->isBreakActive()) current_level_->updateBreakAnim();
       }
       break;
   }

@@ -17,17 +17,17 @@ class GUI {
     render_flashing_text_flag_ = true;
   }
   ~GUI() {}
-  void drawGameCompleted(sf::RenderWindow &window);
-  void drawGameOverScreen(sf::RenderWindow &window);
-  void drawInGameGUI(sf::RenderWindow &window);
-  void drawLevelCompletedScreen(sf::RenderWindow &window);
-  void drawLevelSelection(sf::RenderWindow &window);
-  void drawMenu(sf::RenderWindow &window);
-  void drawPauseScreen(sf::RenderWindow &window);
-  void drawTitleScreen(sf::RenderWindow &window);
+  void drawGameCompleted(sf::RenderWindow& window);
+  void drawGameOverScreen(sf::RenderWindow& window);
+  void drawInGameGUI(sf::RenderWindow& window);
+  void drawLevelCompletedScreen(sf::RenderWindow& window);
+  void drawLevelSelection(sf::RenderWindow& window);
+  void drawMenu(sf::RenderWindow& window);
+  void drawPauseScreen(sf::RenderWindow& window);
+  void drawTitleScreen(sf::RenderWindow& window);
   int getLevelSelectedNumber();
-  void init(const sf::Font &font);
-  void initLevelsList(const sf::Font &font);
+  void init(const sf::Font& font);
+  void initLevelsList(const sf::Font& font);
   void reset();
   void selectNextLevel();
   void selectPreviousLevel();
@@ -36,14 +36,14 @@ class GUI {
   void setLivesText(const int lives);
   void setScoreText(const unsigned long long int score);
   void setRenderFlashingTextFlag(const bool status);
-  static void initText( sf::Text              &text, 
+  static void initText( sf::Text&             text, 
                         const sf::String      string_text, 
-                        const sf::Font        &font, 
+                        const sf::Font&       font, 
                         const int             size, 
                         const sf::Color       color, 
                         const TextCenterModes mode = Default);
-  template <typename T> static void setOrigin(T &shape, const TextCenterModes mode);
-  template <typename T> static std::string toString(const T &t);
+  template <typename T> static void setOrigin(T& shape, const TextCenterModes mode);
+  template <typename T> static std::string toString(const T& t);
   void update(unsigned int lvl_num, std::string lvl_name);
   void update(unsigned int lvl_num, std::string lvl_name, std::string next_lvl_name);
 

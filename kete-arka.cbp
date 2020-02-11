@@ -16,11 +16,11 @@
 				</Compiler>
 				<Linker>
 					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-graphics-d.a" />
-					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-window-d.a" /> 
-					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system-d.a" /> 
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-window-d.a" />
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system-d.a" />
 					<!-- <Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics-d.a" />
 					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-window-d.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system-d.a" />  -->
+					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system-d.a" /> -->
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -35,7 +35,7 @@
 					<Add option="-s" />
 					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-graphics.a" />
 					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-window.a" />
-					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system.a" />  
+					<Add library="C:/lib/SFML-2.5.1/lib/libsfml-system.a" />
 					<!-- <Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics.a" />
 					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-window.a" />
 					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system.a" /> -->
@@ -64,8 +64,7 @@
 		<Unit filename="classes/logger.h" />
 		<Unit filename="classes/player.cc" />
 		<Unit filename="classes/player.h" />
-		<Unit filename="classes/ship.cc" />
-		<Unit filename="classes/ship.h" />
+		<Unit filename="classes/powerups.h" />
 		<Unit filename="config.h" />
 		<Unit filename="levels.h" />
 		<Unit filename="main.cc" />
