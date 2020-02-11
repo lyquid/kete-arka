@@ -104,6 +104,8 @@ void Player::reset() {
   lives_ = kPlayerDefaultLives_;
   gui_->setLivesText(lives_);
   score_ = 0u;
+  pwrup_active_ = false;
+  pwrup_type_ = PowerUpTypes::Nil;
 }
 
 void Player::resetVaus() {
@@ -114,13 +116,14 @@ void Player::resetVaus() {
 }
 
 void Player::setPowerUp(PowerUpTypes type) {
-  pwrup_type_ = type;
-  pwrup_active_ = true;
-  const auto enlargement = vaus_.shape.getSize().x * 1.66f;
   switch (type) {
-    case PowerUpTypes::Enlarge:
+    case PowerUpTypes::Enlarge: {
+      pwrup_type_ = type;
+      pwrup_active_ = true;
+      const auto enlargement = vaus_.shape.getSize().x * 1.66f;
       vaus_.shape.setSize(sf::Vector2f(enlargement, vaus_.shape.getSize().y));
       break;
+    }
     case PowerUpTypes::Nil:
     case PowerUpTypes::Break:
     case PowerUpTypes::Catch:

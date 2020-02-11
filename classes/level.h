@@ -28,7 +28,10 @@ class Level {
  public:
   Level():
     completed_(false),
-    bricks_remaining_(0u) {}
+    bricks_remaining_(0u),
+    break_active_(false),
+    pwrup_active_(false),
+    pwrup_type_(PowerUpTypes::Nil) {}
   ~Level() {}
   /* Setters & getters */
   void complete() { completed_ = true; };
@@ -44,11 +47,18 @@ class Level {
   /* Ohters */
   void decreaseResistance(sf::Vector2u pos);
   void draw(sf::RenderWindow& window);
-  void updatePowerUp(float delta_time);
-  /* Power-ups stuff */
+  void updatePowerUpFall(float delta_time);
+  /* Power-up generation stuff */
   bool catchedPowerUp() { return new_pwrup_; };
   PowerUpTypes getCatchedPowerUp() { return catched_pwrup_; };
   void eraseCatchedPowerUp();
+  /* Power-up effects */
+  void deactivatePowerUp();
+  PowerUpTypes getPowerUp() { return pwrup_type_; };
+  bool isBreakActive() { return break_active_; };
+  bool isPowerUpActive() { return pwrup_active_; };
+  void setPowerUp(PowerUpTypes type);
+  void updateBreakAnim();
  
  private:
   /* Basic */
@@ -74,7 +84,7 @@ class Level {
   static sf::VertexArray border_top_;
   static sf::Texture border_top_tx_;
   static const std::string kImagePath_;
-  /* Power-ups stuff */
+  /* Power-up generation stuff */
   bool checkPowerUpSpawn();
   void deactivatePowerUpFall();
   void generatePowerUpSequence(unsigned int surprise_bricks);
@@ -100,6 +110,19 @@ class Level {
   std::vector<unsigned int> pwrup_sequence_;
   std::vector<unsigned int>::const_iterator seq_it_;
   unsigned int bricks_to_pwrup_;
+  /* Power-up effects */
+  void loadBreakTx();
+  bool break_active_;
+  bool pwrup_active_; /* This is useless until we have more level controlled pwrups */
+  PowerUpTypes pwrup_type_;
+  static const sf::Vector2f kBreakSize_;
+  static const sf::Vector2f kBreakPosition_;
+  static const unsigned int kBreakAnimFrames_;
+  static const float kBreakAnimSpeed_;
+  static sf::RectangleShape break_shape_;
+  static std::vector<sf::Texture> break_effect_tx_;
+  static sf::Clock break_anim_clk_;
+  static unsigned int break_anim_frame_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

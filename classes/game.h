@@ -7,6 +7,7 @@
 #include "level.h"
 #include "logger.h"
 #include "player.h"
+#include "powerups.h"
 
 class Game {
  public:

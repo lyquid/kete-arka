@@ -57,6 +57,9 @@ bool Ball::checkBorderCollision() {
   } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
     player_->decreaseLives();
     player_->resetVaus();
+    if (player_->isPowerUpActive()) player_->deactivatePowerUp();
+    if (level_->isPowerUpActive()) level_->deactivatePowerUp();
+    if (isPowerUpActive()) deactivatePowerUp();
     reset();
   }
   return collision;

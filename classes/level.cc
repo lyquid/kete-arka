@@ -9,7 +9,7 @@ sf::VertexArray Level::border_right_;
 sf::Texture     Level::border_right_tx_;
 sf::VertexArray Level::border_top_;
 sf::Texture     Level::border_top_tx_;
-/* Power-ups stuff */
+/* Power-up generation stuff */
 const sf::Vector2f Level::kPowerUpSize_      = sf::Vector2f(50.f, 25.f);
 const float        Level::kPowerUpSpeed_     = 150.f;
 const float        Level::kPowerUpAnimSpeed_ = 0.15f;
@@ -28,6 +28,15 @@ std::vector<sf::Texture>::iterator Level::pwrup_tx_it_;
 std::vector<sf::Texture>* Level::ptx_;
 sf::Clock Level::pwrup_anim_clk_;
 unsigned int Level::pwrup_anim_frame_;
+/* Power-up effects stuff */
+const sf::Vector2f Level::kBreakSize_       = sf::Vector2f(28.f, 56.f);
+const sf::Vector2f Level::kBreakPosition_   = sf::Vector2f(kScreenWidth - kBreakSize_.x, kScreenHeight * 0.9f);
+const unsigned int Level::kBreakAnimFrames_ = 8u;
+const float        Level::kBreakAnimSpeed_  = 0.04f;
+sf::RectangleShape Level::break_shape_;
+std::vector<sf::Texture> Level::break_effect_tx_(kBreakAnimFrames_);
+sf::Clock Level::break_anim_clk_;
+unsigned int Level::break_anim_frame_;
 
 ///
 bool Level::checkPowerUpSpawn() {
@@ -36,6 +45,27 @@ bool Level::checkPowerUpSpawn() {
     if (!bricks_to_pwrup_) return true;
   }
   return false;
+}
+
+void Level::deactivatePowerUp() {
+  switch (pwrup_type_) {
+    case PowerUpTypes::Break:
+      // do things
+      break_active_ = false;
+      pwrup_active_ = false;
+      pwrup_type_ = PowerUpTypes::Nil;
+      break;
+    case PowerUpTypes::Nil:
+    case PowerUpTypes::Catch:
+    case PowerUpTypes::Disruption:
+    case PowerUpTypes::Enlarge:
+    case PowerUpTypes::Laser:
+    case PowerUpTypes::Player:
+    case PowerUpTypes::Slow:
+    default:
+      // print something horrible to the logger
+      break;
+  }
 }
 
 ///
@@ -95,6 +125,7 @@ void Level::draw(sf::RenderWindow& window) {
     }
   }
   if (power_up_.active) window.draw(power_up_.shape);
+  if (break_active_) window.draw(break_shape_);
 }
 
 ///
@@ -120,6 +151,12 @@ void Level::init(Player* ptp) {
   pwrup_anim_frame_ = 0u;
   power_up_.active = false;
   power_up_.shape.setSize(kPowerUpSize_);
+  /* Power-up effects */
+  break_active_ = false;
+  pwrup_active_ = false;
+  pwrup_type_ = PowerUpTypes::Nil;
+  break_anim_frame_ = 0u;
+  loadBreakTx();
   /* Background and brick layout */
   initBackground();
   initBricks();
@@ -391,6 +428,20 @@ void Level::generatePowerUpSequence(unsigned int surprise_bricks) {
   bricks_to_pwrup_ = *seq_it_;
 }
 
+void Level::loadBreakTx() {
+  break_shape_.setSize(kBreakSize_);
+  break_shape_.setOrigin(0.f, break_shape_.getSize().y / 2.f);
+  break_shape_.setPosition(kBreakPosition_);
+  auto path = kImagePath_ + "effects/break/";
+  auto ext = ".png";
+  for (auto i = 0u; i < kBreakAnimFrames_; ++i) {
+    if (!break_effect_tx_.at(i).loadFromFile(path + std::to_string(i) + ext)) {
+      exit(EXIT_FAILURE);
+    }
+  }
+  break_shape_.setTexture(&break_effect_tx_.front());
+}
+
 ///
 void Level::setBevel(sf::Vector2f position, sf::Vector2u brick) {
   sf::VertexArray new_bevel(sf::TriangleStrip, 6);
@@ -407,6 +458,28 @@ void Level::setBevel(sf::Vector2f position, sf::Vector2u brick) {
   new_bevel[4].position = sf::Vector2f(position.x + kBrickDefaultSize.x, position.y + kBrickDefaultBevel);
   new_bevel[5].position = sf::Vector2f(position.x + kBrickDefaultSize.x - kBrickDefaultBevel, position.y + kBrickDefaultBevel);
   bricks_[brick.x][brick.y].bevel = new_bevel;
+}
+
+void Level::setPowerUp(PowerUpTypes type) {
+  switch (type) {
+    case PowerUpTypes::Break:
+      break_active_ = true;
+      break_anim_frame_ = 0u;
+      break_anim_clk_.restart();
+      pwrup_active_ = true;
+      pwrup_type_ = type;
+      break;
+    case PowerUpTypes::Nil:
+    case PowerUpTypes::Catch:
+    case PowerUpTypes::Disruption:
+    case PowerUpTypes::Enlarge:
+    case PowerUpTypes::Laser:
+    case PowerUpTypes::Player:
+    case PowerUpTypes::Slow:
+    default:
+      // print something horrible to the logger
+      break;
+  }
 }
 
 ///
@@ -465,8 +538,17 @@ void Level::spawnPowerUp(const sf::Vector2f& where) {
   bricks_to_pwrup_ = *seq_it_;
 }
 
+void Level::updateBreakAnim() {
+  if (break_anim_clk_.getElapsedTime().asSeconds() >= kBreakAnimSpeed_) {
+    break_anim_clk_.restart();
+    if (break_anim_frame_ >= kBreakAnimFrames_) break_anim_frame_ = 0u;
+    break_shape_.setTexture(&break_effect_tx_.at(break_anim_frame_));
+    ++break_anim_frame_;
+  }
+}
+
 ///
-void Level::updatePowerUp(float delta_time) {
+void Level::updatePowerUpFall(float delta_time) {
   if (!power_up_.active) return;
   /* Check player collision */
   if (player_->getVaus().shape.getGlobalBounds().intersects(power_up_.shape.getGlobalBounds())) {

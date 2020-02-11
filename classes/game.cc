@@ -155,13 +155,16 @@ void Game::handleKeyEvents(const sf::Event key_event) {
 void Game::handlePowerUps() {
   const PowerUpTypes pwrup = current_level_->getCatchedPowerUp();
   current_level_->eraseCatchedPowerUp();
-  // switch (PowerUpTypes::Enlarge) {
+  if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
+  if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
+  if (player_.isPowerUpActive()) player_.deactivatePowerUp();
+  // switch (PowerUpTypes::Break) { // QoL purposes
   switch (pwrup) {
     case PowerUpTypes::Nil:
       printf("This CAN'T be seen.\n");
       return;
     case PowerUpTypes::Break:
-      printf("To the NEXT level!\n");
+      current_level_->setPowerUp(PowerUpTypes::Break);
       break;
     case PowerUpTypes::Catch:
       printf("Catch the ball!\n");
@@ -170,24 +173,16 @@ void Game::handlePowerUps() {
       printf("Multiball disruption!\n");
       break;
     case PowerUpTypes::Enlarge:
-      // we should deactivate all other powerups
-      if (ball_.isPowerUpActive()) ball_.deactivatePowerUp();
-      if (player_.isPowerUpActive()) player_.deactivatePowerUp();
       player_.setPowerUp(PowerUpTypes::Enlarge);
       break;
     case PowerUpTypes::Laser:
       printf("LAAASER >> - -- --\n");
       break;
     case PowerUpTypes::Player:
-      // we should deactivate all other powerups
-      if (ball_.isPowerUpActive()) ball_.deactivatePowerUp();
-      if (player_.isPowerUpActive()) player_.deactivatePowerUp();
       player_.increaseLives();
       break;
     case PowerUpTypes::Slow:
-      // we should deactivate all other powerups
       if (ball_.isPowerUpActive() && ball_.getPowerUp() != PowerUpTypes::Slow) ball_.deactivatePowerUp();
-      if (player_.isPowerUpActive()) player_.deactivatePowerUp();
       ball_.setPowerUp(PowerUpTypes::Slow);
       break;
     default:
@@ -231,7 +226,7 @@ void Game::init() {
 }
 
 void Game::initLevelsMenu() {
-  for (unsigned int i = 0; i < kMaxLevels; ++i) {
+  for (unsigned int i = 0u; i < kMaxLevels; ++i) {
     game_levels_[i].setNumber(i + 1);
     gui_.setLevelInfo(i, game_levels_[i].getNumber(), game_levels_[i].getName());
   }
@@ -239,7 +234,7 @@ void Game::initLevelsMenu() {
 
 bool Game::loadLevel(unsigned int lvl_num) {
   bool found = false;
-  for (unsigned int i = 0; i < kMaxLevels && !found; ++i) {
+  for (unsigned int i = 0u; i < kMaxLevels && !found; ++i) {
     if (game_levels_[i].getNumber() == lvl_num) {
       found = true;
       current_level_ = &game_levels_[i];
@@ -297,7 +292,7 @@ void Game::render() {
 }
 
 void Game::update() {
-  float delta_time = clock_.restart().asSeconds();
+  auto delta_time = clock_.restart().asSeconds();
   switch (state_) {
     case Playing:
       if (player_.isDead()) {
@@ -309,19 +304,20 @@ void Game::update() {
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else {
-        if (current_level_->catchedPowerUp()) handlePowerUps();
-        if (ball_.isPowerUpActive()) ball_.updatePowerUps();
-        // if (player_.isPowerUpActive()) player_.updatePowerUps();
-        ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
-        current_level_->updatePowerUp(delta_time);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
          || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
           player_.moveVaus(sf::Vector2f(delta_time * -player_.getVausSpeed(), 0.f));
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
          || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-          player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
+          auto crash = !player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
+          if (crash && current_level_->isBreakActive()) current_level_->complete();
         }
+        if (current_level_->catchedPowerUp()) handlePowerUps();
+        if (ball_.isPowerUpActive()) ball_.updatePowerUps();
+        ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
+        current_level_->updatePowerUpFall(delta_time);
+        if (current_level_->isBreakActive()) current_level_->updateBreakAnim();
       }
       break;
   }

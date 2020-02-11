@@ -17,7 +17,9 @@ class Player {
   Player():
     dead_(false),
     lives_(kPlayerDefaultLives_),
-    score_(0u) {
+    score_(0u),
+    pwrup_active_(false),
+    pwrup_type_(PowerUpTypes::Nil) {
       vaus_.shape.setFillColor(kVausDefaultColor_);
       vaus_.shape.setSize(kVausDefaultSize_);
       vaus_.shape.setPosition(kVausDefaultPosition_);
