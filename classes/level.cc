@@ -50,7 +50,6 @@ bool Level::checkPowerUpSpawn() {
 void Level::deactivatePowerUp() {
   switch (pwrup_type_) {
     case PowerUpTypes::Break:
-      // do things
       break_active_ = false;
       pwrup_active_ = false;
       pwrup_type_ = PowerUpTypes::Nil;
@@ -94,7 +93,10 @@ void Level::decreaseResistance(sf::Vector2u pos) {
         return;
       }
       if (bricks_[pos.x][pos.y].type != S && checkPowerUpSpawn()) {
-        spawnPowerUp(bricks_[pos.x][pos.y].shape.getPosition());
+        spawnPowerUp(sf::Vector2f(
+          bricks_[pos.x][pos.y].shape.getPosition().x + (kBrickDefaultSize.x / 2.f) + 1.5f,
+          bricks_[pos.x][pos.y].shape.getPosition().y
+        ));
       }
     } else {
       --bricks_[pos.x][pos.y].resistance;
@@ -114,8 +116,8 @@ void Level::draw(sf::RenderWindow& window) {
   window.draw(border_left_, &border_left_tx_);
   window.draw(border_right_, &border_right_tx_);
   window.draw(border_top_, &border_top_tx_);
-  for (unsigned int i = 0; i < kLevelMaxRows; ++i) {
-    for (unsigned int j = 0; j < kLevelMaxColumns; ++j) {
+  for (auto i = 0u; i < kLevelMaxRows; ++i) {
+    for (auto j = 0u; j < kLevelMaxColumns; ++j) {
       if (bricks_[i][j].active) {
         window.draw(bricks_[i][j].shape);
         if (bricks_[i][j].beveled) {
@@ -144,13 +146,14 @@ void Level::eraseCatchedPowerUp() {
 /////////////////////////////////////////////////
 void Level::init(Player* ptp) {
   /* Basic */
-  bricks_remaining_ = 0;
+  bricks_remaining_ = 0u;
   completed_ = false;
   player_ = ptp;
   /* Power-ups statics */
   pwrup_anim_frame_ = 0u;
   power_up_.active = false;
   power_up_.shape.setSize(kPowerUpSize_);
+  power_up_.shape.setOrigin(kPowerUpSize_.x / 2.f, kPowerUpSize_.y / 2.f);
   /* Power-up effects */
   break_active_ = false;
   pwrup_active_ = false;
@@ -288,7 +291,7 @@ void Level::initGraphics() {
 void Level::initBricks() {
   unsigned int i, j, surprise_bricks = 0u;
   sf::Vector2f position;
-  float start_y = kBrickDefaultStart + kGUIBorderThickness;
+  auto start_y = kBrickDefaultStart + kGUIBorderThickness;
   for (i = 0u; i < kLevelMaxRows; ++i) {
     for (j = 0u; j < kLevelMaxColumns; ++j) {
       bricks_[i][j].shape.setSize(kBrickDefaultSize);
@@ -402,10 +405,10 @@ void Level::initBricks() {
 /// Initializates the layouts and names of the levels.
 /////////////////////////////////////////////////
 void Level::initProtoLevels(Level* ptl) {
-  for (unsigned int i = 0u; i < kMaxLevels; ++i) {
+  for (auto i = 0u; i < kMaxLevels; ++i) {
     ptl[i].name_ = kProtoLevels[i].name;
     ptl[i].background_ = kProtoLevels[i].background;
-    for (unsigned int j = 0u; j < kLevelMaxRows * kLevelMaxColumns; ++j) {
+    for (auto j = 0u; j < kLevelMaxRows * kLevelMaxColumns; ++j) {
       ptl[i].layout_[j] = kProtoLevels[i].layout[j];
     }
   }
