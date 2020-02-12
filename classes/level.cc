@@ -153,7 +153,7 @@ void Level::init(Player* ptp) {
   pwrup_anim_frame_ = 0u;
   power_up_.active = false;
   power_up_.shape.setSize(kPowerUpSize_);
-  power_up_.shape.setOrigin(kPowerUpSize_.x / 2.f, kPowerUpSize_.y / 2.f);
+  power_up_.shape.setOrigin(kPowerUpSize_.x / 2.f, 0.f);
   /* Power-up effects */
   break_active_ = false;
   pwrup_active_ = false;

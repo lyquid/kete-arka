@@ -1,16 +1,19 @@
 #include "player.h"
 
 const unsigned int Player::kPlayerDefaultLives_ = 3u;
-/* Vaus consts */
-const sf::Vector2f Player::kVausDefaultSize_ = sf::Vector2f(80.f, 15.f);
+/* Vaus stuff */
+Vaus Player::vaus_;
+const sf::Vector2f Player::kVausDefaultSize_     = sf::Vector2f(80.f, 15.f);
 const sf::Vector2f Player::kVausDefaultPosition_ = sf::Vector2f((kScreenWidth - kVausDefaultSize_.x) / 2.f, kScreenHeight * 0.9f);
-const float        Player::kVausDefaultSpeed_ = 500.f;
-const sf::Color    Player::kVausDefaultColor_ = sf::Color::White;
+const float        Player::kVausDefaultSpeed_    = 500.f;
+const float        Player::kVausMaxLength_       = kVausDefaultSize_.x * 1.66f;
+const float        Player::kVausGrowth_          = 0.5f;
+const sf::Color    Player::kVausDefaultColor_    = sf::Color::White;
 
 void Player::deactivatePowerUp() {
   switch (pwrup_type_) {
     case PowerUpTypes::Enlarge:
-      vaus_.shape.setSize(kVausDefaultSize_);
+      growth_ = -kVausGrowth_;
       pwrup_type_ = PowerUpTypes::Nil;
       pwrup_active_ = false;
       break;
@@ -58,6 +61,18 @@ void Player::drawVaus(sf::RenderWindow& window) {
   window.draw(vaus_.shape);
 }
 
+void Player::enlargeVaus() {
+  if (vaus_.shape.getSize().x < kVausMaxLength_) {
+    vaus_.shape.move(-growth_ / 2.f, 0.f);
+    vaus_.shape.setSize(sf::Vector2f(
+      vaus_.shape.getSize().x + growth_,
+      vaus_.shape.getSize().y
+    ));
+  } else {
+    growth_ = 0.f;
+  }
+}
+
 ///
 void Player::increaseLives(unsigned int increase_by) {
   lives_ += increase_by;
@@ -76,6 +91,11 @@ void Player::increaseScore(unsigned long long increase_by) {
   gui_->setScoreText(score_);
 }
 
+bool Player::isVausResizing() {
+  if (growth_ != 0.f) return true;
+  return false;
+}
+
 /////////////////////////////////////////////////
 /// @brief Moves the ship in a valid way.
 ///
@@ -85,17 +105,16 @@ void Player::increaseScore(unsigned long long increase_by) {
 /// keeps the ship within the screen boundaries.
 /////////////////////////////////////////////////
 bool Player::moveVaus(const sf::Vector2f& offset) {
-  bool success = false;
   if (offset.x < 0 && vaus_.shape.getPosition().x + offset.x >= kGUIBorderThickness) {
-    // wants to go left
+    /* wants to go left */
     vaus_.shape.move(offset);
-    success = true;
+    return true;
   } else if (offset.x > 0 && vaus_.shape.getPosition().x + vaus_.shape.getSize().x + offset.x <= kScreenWidth - kGUIBorderThickness) {
-    // wants to go right
+    /* wants to go right */
     vaus_.shape.move(offset);
-    success = true;
+    return true;
   }
-  return success;
+  return false;
 }
 
 ////////////////////////////////////////////////
@@ -115,13 +134,17 @@ void Player::resetVaus() {
   vaus_.speed = kVausDefaultSpeed_;
 }
 
+void Player::resizeVaus() {
+  if (growth_ > 0.f) enlargeVaus();
+  else shortenVaus();
+}
+
 void Player::setPowerUp(PowerUpTypes type) {
   switch (type) {
     case PowerUpTypes::Enlarge: {
+      growth_ = kVausGrowth_;
       pwrup_type_ = type;
       pwrup_active_ = true;
-      const auto enlargement = vaus_.shape.getSize().x * 1.66f;
-      vaus_.shape.setSize(sf::Vector2f(enlargement, vaus_.shape.getSize().y));
       break;
     }
     case PowerUpTypes::Nil:
@@ -134,5 +157,17 @@ void Player::setPowerUp(PowerUpTypes type) {
     default:
       // print something horrible to the logger
       break;
+  }
+}
+
+void Player::shortenVaus() {
+  if (vaus_.shape.getSize().x > kVausDefaultSize_.x) {
+    vaus_.shape.move(-growth_ / 2.f, 0.f);
+    vaus_.shape.setSize(sf::Vector2f(
+      vaus_.shape.getSize().x + growth_,
+      vaus_.shape.getSize().y
+    ));
+  } else {
+    growth_ = 0.f;
   }
 }
