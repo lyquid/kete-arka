@@ -7,12 +7,20 @@
 #include <cmath>    // std::abs
 #include <iostream> // std::cout
 #include <random>
+#include <vector>
 
 #include "../config.h"
 #include "level.h"
 #include "logger.h"
 #include "player.h"
 #include "powerups.h"
+
+struct BallShape {
+  bool            active;
+  sf::Vector2f    direction;
+  sf::Vector2f    last_position;
+  sf::CircleShape shape;
+};
 
 class Ball {
  public:
@@ -24,7 +32,6 @@ class Ball {
   void move(float delta_time, const Vaus& vaus, Brick bricks[][kLevelMaxColumns]);
   void reset();
   void setLevel(Level* ptl) { level_ = ptl; };
-  void slowPowerUp();
   /* Power-ups stuff */
   void deactivatePowerUp();
   PowerUpTypes getPowerUp() { return pwrup_type_; };
@@ -33,31 +40,34 @@ class Ball {
   void updatePowerUps();
 
  private:
-  bool checkBrickCollision(Brick bricks[][kLevelMaxColumns]);
-  bool checkBorderCollision();
-  bool checkVausCollision(const Vaus& vaus);
-  void invertHorizontalDirection(float variation);
-  void invertVerticalDirection(float variation);
-  void randomizeBounceAngle(Collisions collision);
+  bool checkBrickCollision(BallShape& ball, Brick bricks[][kLevelMaxColumns]);
+  bool checkBorderCollision(BallShape& ball);
+  bool checkVausCollision(BallShape& ball, const Vaus& vaus);
+  void invertHorizontalDirection(BallShape& ball, float variation);
+  void invertVerticalDirection(BallShape& ball, float variation);
+  void randomizeBounceAngle(BallShape& ball, Collisions collision);
   void updateFlashFlag();
   static float sumAbs(float num1, float num2);
   bool ball_flash_flag_;
-  float current_radius_;
-  sf::Vector2f direction_;
   sf::Clock flash_clock_;
-  sf::Vector2f last_position_;
   Level* level_;
   bool moving_flag_;
   Player* player_;
   sf::Clock start_clock_;
-  sf::CircleShape shape_;
   float speed_;
   /* Power-ups stuff */
-  void speedUp();
   bool pwrup_active_;
   PowerUpTypes pwrup_type_;
+  /* Slow power-up */
+  void slowPowerUp();
+  void speedUp();
   sf::Clock slow_clk_;
   float slow_timer_;
+  /* Disruption power-up */
+  void activateDisruption();
+  static const unsigned int kDisruptionMaxBalls_;
+  static std::vector<BallShape> balls_;
+  static unsigned int active_balls_;
 };
 
 #endif  // KETE_ARKA_CLASSES_BALL_H_

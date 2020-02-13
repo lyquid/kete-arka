@@ -31,7 +31,8 @@ class Level {
     bricks_remaining_(0u),
     break_active_(false),
     pwrup_active_(false),
-    pwrup_type_(PowerUpTypes::Nil) {}
+    pwrup_type_(PowerUpTypes::Nil),
+    disruption_in_effect_(false) {}
   ~Level() {}
   /* Setters & getters */
   void complete() { completed_ = true; };
@@ -44,7 +45,7 @@ class Level {
   void init(Player* ptp);
   static void initGraphics();
   static void initProtoLevels(Level* ptl);
-  /* Ohters */
+  /* Others */
   void decreaseResistance(sf::Vector2u pos);
   void draw(sf::RenderWindow& window);
   void updatePowerUpFall(float delta_time);
@@ -59,7 +60,9 @@ class Level {
   bool isPowerUpActive() { return pwrup_active_; };
   void setPowerUp(PowerUpTypes type);
   void updateBreakAnim();
- 
+  /* Disruption related */
+  void setDisruptionStatus(bool status) {disruption_in_effect_ = status; };
+
  private:
   /* Basic */
   bool completed_;
@@ -123,6 +126,8 @@ class Level {
   static std::vector<sf::Texture> break_effect_tx_;
   static sf::Clock break_anim_clk_;
   static unsigned int break_anim_frame_;
+  /* Disruption related */
+  bool disruption_in_effect_;
 };
 
 #endif // KETE_ARKA_CLASSES_LEVEL_H_

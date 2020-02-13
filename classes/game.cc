@@ -158,7 +158,7 @@ void Game::handlePowerUps() {
   if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
   if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
   if (player_.isPowerUpActive()) player_.deactivatePowerUp();
-  // switch (PowerUpTypes::Enlarge) { // QoL purposes
+  // switch (PowerUpTypes::Disruption) { // QoL purposes
   switch (pwrup) {
     case PowerUpTypes::Nil:
       printf("This CAN'T be seen.\n");
@@ -170,7 +170,7 @@ void Game::handlePowerUps() {
       printf("Catch the ball!\n");
       break;
     case PowerUpTypes::Disruption:
-      printf("Multiball disruption!\n");
+      ball_.setPowerUp(PowerUpTypes::Disruption);
       break;
     case PowerUpTypes::Enlarge:
       player_.setPowerUp(PowerUpTypes::Enlarge);

@@ -40,7 +40,7 @@ unsigned int Level::break_anim_frame_;
 
 ///
 bool Level::checkPowerUpSpawn() {
-  if (!power_up_.active) {
+  if (!power_up_.active && !disruption_in_effect_) {
     --bricks_to_pwrup_;
     if (!bricks_to_pwrup_) return true;
   }
@@ -160,6 +160,7 @@ void Level::init(Player* ptp) {
   pwrup_type_ = PowerUpTypes::Nil;
   break_anim_frame_ = 0u;
   loadBreakTx();
+  disruption_in_effect_ = false;
   /* Background and brick layout */
   initBackground();
   initBricks();

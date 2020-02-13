@@ -50,7 +50,7 @@ class Player {
   void setPowerUp(PowerUpTypes type);
   void resizeVaus();
   bool isVausResizing();
-  
+
  private:
   static const unsigned int kPlayerDefaultLives_;
   bool dead_;
