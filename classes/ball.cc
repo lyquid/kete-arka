@@ -1,34 +1,66 @@
 #include "ball.h"
 
-bool Ball::checkBrickCollision(Brick bricks[][kLevelMaxColumns]) {
+/* Disruption power-up */
+const unsigned int     Ball::kDisruptionMaxBalls_ = 3u;
+std::vector<BallShape> Ball::balls_(kDisruptionMaxBalls_);
+unsigned int           Ball::active_balls_;
+/* Catch power-up */
+const float Ball::kCatchMinTime_ = 1.50f;
+const float Ball::kCatchMaxTime_ = 3.00f;
+sf::Clock   Ball::catch_clk_;
+float       Ball::time_to_release_;
+bool        Ball::catched_;
+float       Ball::offset_;
+
+void Ball::activateDisruption() {
+  unsigned int current_ball;
+  for (auto i = 0u; i < kDisruptionMaxBalls_; ++i) {
+    if (balls_[i].active) {
+      current_ball = i;
+    } else {
+      ++active_balls_;
+      balls_[i].active = true;
+      randomizeBounceAngle(balls_[i], TopShip);
+    }
+  }
+  for (auto i = 0u; i < kDisruptionMaxBalls_; ++i) {
+    if (i != current_ball) {
+      balls_[i].last_position = balls_[current_ball].shape.getPosition();
+      balls_[i].shape.setPosition(balls_[current_ball].shape.getPosition());
+    }
+  }
+}
+
+bool Ball::checkBrickCollision(BallShape& ball, Brick bricks[][kLevelMaxColumns]) {
   bool collision = false;
-  for (unsigned int i = 0; i < kLevelMaxRows; ++i) {
-    for (unsigned int j = 0; j < kLevelMaxColumns; ++j) {
-      if (bricks[i][j].active && bricks[i][j].shape.getGlobalBounds().intersects(shape_.getGlobalBounds())) {
-        float ball_x = shape_.getPosition().x;
-        float ball_y = shape_.getPosition().y;
-        float brick_x = bricks[i][j].shape.getPosition().x;
-        float brick_x_size = bricks[i][j].shape.getSize().x;
-        float brick_y = bricks[i][j].shape.getPosition().y;
-        float brick_y_size = bricks[i][j].shape.getSize().y;
+  for (auto i = 0u; i < kLevelMaxRows; ++i) {
+    for (auto j = 0u; j < kLevelMaxColumns; ++j) {
+      if (bricks[i][j].active && bricks[i][j].shape.getGlobalBounds().intersects(ball.shape.getGlobalBounds())) {
+        const auto current_radius = ball.shape.getRadius();
+        const auto ball_x = ball.shape.getPosition().x;
+        const auto ball_y = ball.shape.getPosition().y;
+        const auto brick_x = bricks[i][j].shape.getPosition().x;
+        const auto brick_y = bricks[i][j].shape.getPosition().y;
+        const auto brick_x_size = bricks[i][j].shape.getSize().x;
+        const auto brick_y_size = bricks[i][j].shape.getSize().y;
         collision = true;
         level_->decreaseResistance({i, j});
-        if (last_position_.x < brick_x) {
+        if (ball.last_position.x < brick_x) {
           // left hit
-          randomizeBounceAngle(LeftBrick);
-          shape_.setPosition(brick_x - current_radius_ - 1.f, ball_y);
-        } else if (last_position_.x > brick_x + brick_x_size) {
+          randomizeBounceAngle(ball, LeftBrick);
+          ball.shape.setPosition(brick_x - current_radius - 1.f, ball_y);
+        } else if (ball.last_position.x > brick_x + brick_x_size) {
           // right hit
-          randomizeBounceAngle(RightBrick);
-          shape_.setPosition(brick_x + brick_x_size + current_radius_ + 1.f, ball_y);
-        } else if (last_position_.y < brick_y) {
+          randomizeBounceAngle(ball, RightBrick);
+          ball.shape.setPosition(brick_x + brick_x_size + current_radius + 1.f, ball_y);
+        } else if (ball.last_position.y < brick_y) {
           // top hit
-          randomizeBounceAngle(TopBrick);
-          shape_.setPosition(ball_x, brick_y - current_radius_ - 1.f);
+          randomizeBounceAngle(ball, TopBrick);
+          ball.shape.setPosition(ball_x, brick_y - current_radius - 1.f);
         } else {
           // bottom hit
-          randomizeBounceAngle(BottomBrick);
-          shape_.setPosition(ball_x, brick_y + brick_y_size + current_radius_ + 1.f);
+          randomizeBounceAngle(ball, BottomBrick);
+          ball.shape.setPosition(ball_x, brick_y + brick_y_size + current_radius + 1.f);
         }
       }
     }
@@ -36,56 +68,68 @@ bool Ball::checkBrickCollision(Brick bricks[][kLevelMaxColumns]) {
   return collision;
 }
 
-bool Ball::checkBorderCollision() {
+bool Ball::checkBorderCollision(BallShape& ball) {
+  const auto current_radius = ball.shape.getRadius();
   bool collision = false;
   // left collision
-  if (shape_.getPosition().x - current_radius_ <= kGUIBorderThickness) {
-    randomizeBounceAngle(Left);
-    shape_.setPosition(kGUIBorderThickness + current_radius_ + 0.1f, shape_.getPosition().y); 
+  if (ball.shape.getPosition().x - current_radius <= kGUIBorderThickness) {
+    randomizeBounceAngle(ball, Left);
+    ball.shape.setPosition(kGUIBorderThickness + current_radius + 0.1f, ball.shape.getPosition().y);
     collision = true;
   // right collision
-  } else if (shape_.getPosition().x + current_radius_ >= kScreenWidth - kGUIBorderThickness) {
-    randomizeBounceAngle(Right);
-    shape_.setPosition(kScreenWidth - kGUIBorderThickness - current_radius_ - 0.1f, shape_.getPosition().y); 
+  } else if (ball.shape.getPosition().x + current_radius >= kScreenWidth - kGUIBorderThickness) {
+    randomizeBounceAngle(ball, Right);
+    ball.shape.setPosition(kScreenWidth - kGUIBorderThickness - current_radius - 0.1f, ball.shape.getPosition().y); 
     collision = true;
   // top collision
-  } else if (shape_.getPosition().y - current_radius_ <= kGUIBorderThickness) {
-    randomizeBounceAngle(Top);
-    shape_.setPosition(shape_.getPosition().x, current_radius_ + kGUIBorderThickness + 0.1f);
+  } else if (ball.shape.getPosition().y - current_radius <= kGUIBorderThickness) {
+    randomizeBounceAngle(ball, Top);
+    ball.shape.setPosition(ball.shape.getPosition().x, current_radius + kGUIBorderThickness + 0.1f);
     collision = true;
   // bottom "collision"
-  } else if (shape_.getPosition().y + current_radius_ >= kScreenHeight) {
-    player_->decreaseLives();
-    player_->resetVaus();
-    if (player_->isPowerUpActive()) player_->deactivatePowerUp();
-    if (level_->isPowerUpActive()) level_->deactivatePowerUp();
-    if (isPowerUpActive()) deactivatePowerUp();
-    reset();
+  } else if (ball.shape.getPosition().y + current_radius >= kScreenHeight) {
+    ball.active = false;
+    --active_balls_;
+    if (!active_balls_ ) {
+      player_->decreaseLives();
+      player_->resetVaus();
+      if (player_->isPowerUpActive()) player_->deactivatePowerUp();
+      if (level_->isPowerUpActive()) level_->deactivatePowerUp();
+      if (isPowerUpActive()) deactivatePowerUp();
+      reset();
+    }
   }
   return collision;
 }
 
-bool Ball::checkVausCollision(const Vaus& vaus) {
+bool Ball::checkVausCollision(BallShape& ball, const Vaus& vaus) {
   bool collision = false;
-  float ball_x = shape_.getPosition().x;
-  float ball_y = shape_.getPosition().y;
-  float vaus_x = vaus.shape.getPosition().x;
-  float vaus_x_size = vaus.shape.getSize().x;
-  float vaus_y = vaus.shape.getPosition().y;
-  if (vaus.shape.getGlobalBounds().intersects(shape_.getGlobalBounds())) {
+  if (vaus.shape.getGlobalBounds().intersects(ball.shape.getGlobalBounds())) {
+    const auto current_radius = ball.shape.getRadius();
+    const auto ball_x = ball.shape.getPosition().x;
+    const auto ball_y = ball.shape.getPosition().y;
+    const auto vaus_x = vaus.shape.getPosition().x;
+    const auto vaus_y = vaus.shape.getPosition().y;
+    const auto vaus_x_size = vaus.shape.getSize().x;
     collision = true;
-    if (last_position_.x < vaus_x) {
-      // left hit
-      randomizeBounceAngle(LeftShip);
-      shape_.setPosition(vaus_x - current_radius_ - 0.1f, ball_y);
-    } else if (last_position_.x > vaus_x + vaus_x_size) {
-      // right hit
-      randomizeBounceAngle(RightShip);
-      shape_.setPosition(vaus_x + vaus_x_size + current_radius_ + 0.1f, ball_y);
+    if (ball.last_position.x < vaus_x) {
+      /* left hit */
+      randomizeBounceAngle(ball, LeftShip);
+      ball.shape.setPosition(vaus_x - current_radius - 0.1f, ball_y);
+    } else if (ball.last_position.x > vaus_x + vaus_x_size) {
+      /* right hit */
+      randomizeBounceAngle(ball, RightShip);
+      ball.shape.setPosition(vaus_x + vaus_x_size + current_radius + 0.1f, ball_y);
     } else {
-      // front/rear hit (rear hit should be imposible!)
-      randomizeBounceAngle(TopShip);
-      shape_.setPosition(ball_x, vaus_y - current_radius_ - 0.1f);
+      /* front/rear hit (rear hit should be imposible!) */
+      randomizeBounceAngle(ball, TopShip);
+      if (pwrup_type_ == PowerUpTypes::Catch) {
+        catched_ = true;
+        time_to_release_ = generateRandomTime(kCatchMinTime_, kCatchMaxTime_);
+        offset_ = ball_x - vaus_x;
+        catch_clk_.restart();
+      }
+      ball.shape.setPosition(ball_x, vaus_y - current_radius - 0.1f);
     }
   }
   return collision;
@@ -94,15 +138,13 @@ bool Ball::checkVausCollision(const Vaus& vaus) {
 void Ball::deactivatePowerUp() {
   switch (pwrup_type_) {
     case PowerUpTypes::Catch:
-      printf("todoooooooooooooooooooooo\n");
+      catched_ = false;
       break;
     case PowerUpTypes::Disruption:
-      printf("todooooooooooo\n");
+      level_->setDisruptionStatus(false);
       break;
     case PowerUpTypes::Slow:
       speed_ = kBallDefaultSpeed;
-      pwrup_type_ = PowerUpTypes::Nil;
-      pwrup_active_ = false;
       break;
     case PowerUpTypes::Nil:
     case PowerUpTypes::Break:
@@ -113,6 +155,8 @@ void Ball::deactivatePowerUp() {
       // print something horrible to the logger
       break;
   }
+  pwrup_type_ = PowerUpTypes::Nil;
+  pwrup_active_ = false;
 }
 
 void Ball::draw(sf::RenderWindow& window, GameStates state) {
@@ -121,11 +165,29 @@ void Ball::draw(sf::RenderWindow& window, GameStates state) {
       updateFlashFlag();
     }
     if (ball_flash_flag_) {
-      window.draw(shape_);
+      window.draw(balls_.front().shape);
     }
   } else {
-    window.draw(shape_);
+    for (const auto& ball: balls_) {
+      if (ball.active) window.draw(ball.shape); 
+    }
   }
+}
+
+void Ball::followVaus(const Vaus& vaus) {
+  for (auto& ball: balls_) {
+    if (ball.active) {
+      ball.shape.setPosition(vaus.shape.getPosition().x + offset_ , ball.shape.getPosition().y);
+      return;
+    }
+  }
+}
+
+float Ball::generateRandomTime(float min, float max) {
+  const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
+  std::uniform_real_distribution<float> distribution(min, max);
+  return distribution(generator);
 }
 
 void Ball::init(Player* ptp) {
@@ -133,42 +195,44 @@ void Ball::init(Player* ptp) {
   reset();
 }
 
-void Ball::invertHorizontalDirection(float variation) {
-  direction_.x = -direction_.x + variation;
+void Ball::invertHorizontalDirection(BallShape& ball, float variation) {
+  ball.direction.x = -ball.direction.x + variation;
 }
 
-void Ball::invertVerticalDirection(float variation) {
-  direction_.y = -direction_.y + variation;
+void Ball::invertVerticalDirection(BallShape& ball, float variation) {
+  ball.direction.y = -ball.direction.y + variation;
 }
 
 void Ball::move(float delta_time, const Vaus& vaus, Brick bricks[][kLevelMaxColumns]) {
   // bool collision = false;
-  const float factor = speed_ * delta_time;
-  last_position_ = shape_.getPosition();
-  current_radius_ = shape_.getRadius();
   if (moving_flag_) {
-    /* This simple checking sometimes makes the ball to go through some bricks. Especially golden bricks. */
-    if (checkBrickCollision(bricks) && pwrup_type_ == PowerUpTypes::Slow) speedUp();
-    if (checkBorderCollision() && pwrup_type_ == PowerUpTypes::Slow) speedUp();
-    if (checkVausCollision(vaus) && pwrup_type_ == PowerUpTypes::Slow) speedUp();
+    for (auto& ball: balls_) {
+      if (ball.active) {
+        const auto factor = speed_ * delta_time;
+        ball.last_position = ball.shape.getPosition();
+        /* This simple checking sometimes makes the ball to go through some bricks. Especially golden bricks. */
+        if (checkBrickCollision(ball, bricks) && pwrup_type_ == PowerUpTypes::Slow) speedUp();
+        if (checkBorderCollision(ball) && pwrup_type_ == PowerUpTypes::Slow) speedUp();
+        if (checkVausCollision(ball, vaus) && pwrup_type_ == PowerUpTypes::Slow) speedUp();
 
-    /* This "do while" method sometimes gets stuck infinitely. */
-    /* do { } while (checkBrickCollision(bricks));
-    do { } while (checkBorderCollision());
-    do { } while (checkShipCollision(ship)); */
+        /* This "do while" method sometimes gets stuck infinitely. */
+        /* do { } while (checkBrickCollision(bricks));
+        do { } while (checkBorderCollision());
+        do { } while (checkShipCollision(ship)); */
 
-    /* This also gets stuck to infinity. */
-    /* do {
-      collision = checkBrickCollision(bricks) || checkBorderCollision() || checkShipCollision(ship);
-    } while (collision == true); */
-
-    shape_.move(direction_.x * factor, direction_.y * factor);
+        /* This also gets stuck to infinity. */
+        /* do {
+          collision = checkBrickCollision(bricks) || checkBorderCollision() || checkShipCollision(ship);
+        } while (collision == true); */
+        if (!catched_) ball.shape.move(ball.direction.x * factor, ball.direction.y * factor);
+      }
+    }
   } else if (start_clock_.getElapsedTime().asSeconds() > 1.5f) {
     moving_flag_ = true;
   }
 }
 
-void Ball::randomizeBounceAngle(Collisions collision) {
+void Ball::randomizeBounceAngle(BallShape& ball, Collisions collision) {
   float displ = 0.f;
   std::string collision_with = "";
   float random_angle_variation = (std::rand() % 21 - 10) / 100.f;  // rnd -0.10 to 0.10
@@ -181,15 +245,15 @@ void Ball::randomizeBounceAngle(Collisions collision) {
       [[fallthrough]];
     case Top:
       if (collision_with == "") { collision_with = "T"; }
-      invertVerticalDirection(random_angle_variation);
-      if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
-        direction_.y = kBallDefaultDisplacement - std::abs(direction_.x);
+      invertVerticalDirection(ball, random_angle_variation);
+      if (sumAbs(ball.direction.x, ball.direction.y) > kBallDefaultDisplacement) {
+        ball.direction.y = kBallDefaultDisplacement - std::abs(ball.direction.x);
         random_angle_variation = 0.f;
       }
-      if (direction_.x < 0.f) {
-        direction_.x = direction_.x + random_angle_variation;
+      if (ball.direction.x < 0.f) {
+        ball.direction.x = ball.direction.x + random_angle_variation;
       } else {
-        direction_.x = direction_.x - random_angle_variation;
+        ball.direction.x = ball.direction.x - random_angle_variation;
       }
       break;
     case TopBrick:
@@ -200,15 +264,15 @@ void Ball::randomizeBounceAngle(Collisions collision) {
       [[fallthrough]];
     case Bottom:
       if (collision_with == "") { collision_with = "B"; }
-      invertVerticalDirection(random_angle_variation);
-      if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
-        direction_.y = -kBallDefaultDisplacement + std::abs(direction_.x);
+      invertVerticalDirection(ball, random_angle_variation);
+      if (sumAbs(ball.direction.x, ball.direction.y) > kBallDefaultDisplacement) {
+        ball.direction.y = -kBallDefaultDisplacement + std::abs(ball.direction.x);
         random_angle_variation = 0.f;
       }
-      if (direction_.x < 0.f) {
-        direction_.x = direction_.x - random_angle_variation;
+      if (ball.direction.x < 0.f) {
+        ball.direction.x = ball.direction.x - random_angle_variation;
       } else {
-        direction_.x = direction_.x + random_angle_variation;
+        ball.direction.x = ball.direction.x + random_angle_variation;
       }
       break;
     case RightBrick:
@@ -219,15 +283,15 @@ void Ball::randomizeBounceAngle(Collisions collision) {
       [[fallthrough]];
     case Left:
       if (collision_with == "") { collision_with ="L"; }
-      invertHorizontalDirection(random_angle_variation);
-      if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
-        direction_.x = kBallDefaultDisplacement - std::abs(direction_.y);
+      invertHorizontalDirection(ball, random_angle_variation);
+      if (sumAbs(ball.direction.x, ball.direction.y) > kBallDefaultDisplacement) {
+        ball.direction.x = kBallDefaultDisplacement - std::abs(ball.direction.y);
         random_angle_variation = 0.f;
       }
-      if (direction_.y < 0.f) {
-        direction_.y = direction_.y + random_angle_variation;
+      if (ball.direction.y < 0.f) {
+        ball.direction.y = ball.direction.y + random_angle_variation;
       } else {
-        direction_.y = direction_.y - random_angle_variation;
+        ball.direction.y = ball.direction.y - random_angle_variation;
       }
       break;
     case LeftBrick:
@@ -238,19 +302,19 @@ void Ball::randomizeBounceAngle(Collisions collision) {
       [[fallthrough]];
     case Right:
       if (collision_with == "") { collision_with = "R"; }
-      invertHorizontalDirection(random_angle_variation);
-      if (sumAbs(direction_.x, direction_.y) > kBallDefaultDisplacement) {
-        direction_.x = -kBallDefaultDisplacement + std::abs(direction_.y);
+      invertHorizontalDirection(ball, random_angle_variation);
+      if (sumAbs(ball.direction.x, ball.direction.y) > kBallDefaultDisplacement) {
+        ball.direction.x = -kBallDefaultDisplacement + std::abs(ball.direction.y);
         random_angle_variation = 0.f;
       }
-      if (direction_.y < 0.f) {
-        direction_.y = direction_.y - random_angle_variation;
+      if (ball.direction.y < 0.f) {
+        ball.direction.y = ball.direction.y - random_angle_variation;
       } else {
-        direction_.y = direction_.y + random_angle_variation;
+        ball.direction.y = ball.direction.y + random_angle_variation;
       }
       break;
   }
-  displ = sumAbs(direction_.x, direction_.y);
+  displ = sumAbs(ball.direction.x, ball.direction.y);
   switch (kExecutionMode) {
     case Normal:
       // do nothing
@@ -258,8 +322,8 @@ void Ball::randomizeBounceAngle(Collisions collision) {
     case LogFile:
       // logs to the log file and then fallthrough to Debug case
       Logger::write("(" + collision_with + ")"
-                  + "\tx = " + GUI::toString(direction_.x)
-                  + "\ty = " + GUI::toString(direction_.y)
+                  + "\tx = " + GUI::toString(ball.direction.x)
+                  + "\ty = " + GUI::toString(ball.direction.y)
                   + "\trnd = " + GUI::toString(random_angle_variation)
                   + "\tdsp = " + GUI::toString(displ)); 
       [[fallthrough]];
@@ -267,8 +331,8 @@ void Ball::randomizeBounceAngle(Collisions collision) {
       // logs to console
       std::cout.precision(3);
       std::cout << "(" << collision_with << ")";
-      std::cout << "\tx = " << std::fixed << direction_.x;
-      std::cout << "\ty = " << std::fixed << direction_.y;
+      std::cout << "\tx = " << std::fixed << ball.direction.x;
+      std::cout << "\ty = " << std::fixed << ball.direction.y;
       std::cout << "\trnd = " << std::fixed << random_angle_variation;
       std::cout << "\tdsp = " << std::fixed << displ << std::endl;
       break;
@@ -276,6 +340,7 @@ void Ball::randomizeBounceAngle(Collisions collision) {
 }
 
 void Ball::reset() {
+  active_balls_ = 1u;
   /* Ball direction_ vector randomization */
   float random_x_direction = 0.f;
   do {  /* Get a number between -10 and 10, not including 0. */
@@ -283,17 +348,20 @@ void Ball::reset() {
   } while (random_x_direction == 0.f);
   /* Take the random number and divide it to make it between -0.10, -0.09, -0.08, ... to 0.10 */
   random_x_direction = random_x_direction / 100.f;
-  /* We use this displacement to make sure speed is always the same regarding angle */
-  direction_ = sf::Vector2f(random_x_direction, kBallDefaultDisplacement - std::abs(random_x_direction));
+  /* Ball's vector full initialization */
+  for (auto& ball: balls_) {
+    ball.active = false;
+    ball.shape.setRadius(kBallDefaultRadius);
+    ball.shape.setFillColor(kBallDefaultColor);
+    ball.shape.setOrigin(kBallDefaultRadius, kBallDefaultRadius);
+    ball.shape.setPosition(kBallDefaultPosition);
+    /* We use this displacement to make sure speed is always the same regarding angle */
+    ball.direction = sf::Vector2f(random_x_direction, kBallDefaultDisplacement - std::abs(random_x_direction));
+    ball.last_position = ball.shape.getPosition();
+  }
+  balls_.front().active = true;
   /* Ball's speed_ initialization */
   speed_ = kBallDefaultSpeed;
-  /* Ball "physical" properties */
-  shape_.setRadius(kBallDefaultRadius);
-  shape_.setFillColor(kBallDefaultColor);
-  shape_.setOrigin(kBallDefaultRadius, kBallDefaultRadius);
-  shape_.setPosition(kBallDefaultPosition);
-  last_position_ = shape_.getPosition();
-  current_radius_ = shape_.getRadius();
   /* Ball start and flash clocks */
   start_clock_.restart();
   flash_clock_.restart();
@@ -302,6 +370,8 @@ void Ball::reset() {
   /* Power-ups */
   pwrup_active_ = false;
   pwrup_type_ = PowerUpTypes::Nil;
+  /* Catch power-up */
+  catched_ = false;
 }
 
 void Ball::setPowerUp(PowerUpTypes type) {
@@ -309,10 +379,10 @@ void Ball::setPowerUp(PowerUpTypes type) {
   pwrup_active_ = true;
   switch (type) {
     case PowerUpTypes::Catch:
-      printf("todoooooooooooooooooooooo\n");
       break;
     case PowerUpTypes::Disruption:
-      printf("todooooooooooo\n");
+      level_->setDisruptionStatus(true);
+      activateDisruption();
       break;
     case PowerUpTypes::Slow:
       slowPowerUp();
@@ -331,7 +401,7 @@ void Ball::setPowerUp(PowerUpTypes type) {
 void Ball::slowPowerUp() {
   const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
-  std::uniform_real_distribution<float> distribution(10.0f , 30.0f);
+  std::uniform_real_distribution<float> distribution(10.0f, 30.0f);
   slow_timer_ = distribution(generator);
   const float kDecrement = 2.f;
   speed_ /= kDecrement;
@@ -358,10 +428,10 @@ void Ball::updateFlashFlag() {
 void Ball::updatePowerUps() {
   switch (pwrup_type_) {
     case PowerUpTypes::Catch:
-      printf("todoooooooooooooooooooooo\n");
+      if (catch_clk_.getElapsedTime().asSeconds() >= time_to_release_) catched_ = false;
       break;
     case PowerUpTypes::Disruption:
-      printf("todooooooooooo\n");
+      if (active_balls_ == 1u) deactivatePowerUp();
       break;
     case PowerUpTypes::Slow:
       if (slow_clk_.getElapsedTime().asSeconds() >= slow_timer_) deactivatePowerUp();

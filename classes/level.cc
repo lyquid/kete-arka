@@ -28,7 +28,7 @@ std::vector<sf::Texture>::iterator Level::pwrup_tx_it_;
 std::vector<sf::Texture>* Level::ptx_;
 sf::Clock Level::pwrup_anim_clk_;
 unsigned int Level::pwrup_anim_frame_;
-/* Power-up effects stuff */
+/* Break power-up */
 const sf::Vector2f Level::kBreakSize_       = sf::Vector2f(28.f, 56.f);
 const sf::Vector2f Level::kBreakPosition_   = sf::Vector2f(kScreenWidth - kBreakSize_.x, kScreenHeight * 0.9f);
 const unsigned int Level::kBreakAnimFrames_ = 8u;
@@ -37,10 +37,33 @@ sf::RectangleShape Level::break_shape_;
 std::vector<sf::Texture> Level::break_effect_tx_(kBreakAnimFrames_);
 sf::Clock Level::break_anim_clk_;
 unsigned int Level::break_anim_frame_;
+/* Laser power-up */
+const sf::Vector2f Level::kLaserSize_         = sf::Vector2f(4.f, 18.f);
+const float        Level::kLaserDuration_     = 5.f;
+const float        Level::kLaserSpeed_        = 700.f;
+const float        Level::kLaserFireRate_     = 0.1f;
+const unsigned int Level::kMaxLasersOnScreen_ = 500u;
+sf::Texture        Level::laser_effect_tx_;
+std::vector<Laser> Level::lasers_(kMaxLasersOnScreen_);
+sf::Clock          Level::laser_fire_clk_;
+bool               Level::laser_flip_;
+
+bool Level::checkLaserCollisions(const Laser& laser) {
+  for (auto i = 0u; i < kLevelMaxRows; ++i) {
+    for (auto j = 0u; j < kLevelMaxColumns; ++j) {
+      if (bricks_[i][j].active 
+      && laser.shape.getGlobalBounds().intersects(bricks_[i][j].shape.getGlobalBounds())) {
+        decreaseResistance({i, j});
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 ///
 bool Level::checkPowerUpSpawn() {
-  if (!power_up_.active) {
+  if (!power_up_.active && !disruption_in_effect_) {
     --bricks_to_pwrup_;
     if (!bricks_to_pwrup_) return true;
   }
@@ -50,8 +73,11 @@ bool Level::checkPowerUpSpawn() {
 void Level::deactivatePowerUp() {
   switch (pwrup_type_) {
     case PowerUpTypes::Break:
-      // do things
       break_active_ = false;
+      pwrup_active_ = false;
+      pwrup_type_ = PowerUpTypes::Nil;
+      break;
+    case PowerUpTypes::Laser:
       pwrup_active_ = false;
       pwrup_type_ = PowerUpTypes::Nil;
       break;
@@ -59,7 +85,6 @@ void Level::deactivatePowerUp() {
     case PowerUpTypes::Catch:
     case PowerUpTypes::Disruption:
     case PowerUpTypes::Enlarge:
-    case PowerUpTypes::Laser:
     case PowerUpTypes::Player:
     case PowerUpTypes::Slow:
     default:
@@ -77,7 +102,7 @@ void Level::deactivatePowerUpFall() {
 /////////////////////////////////////////////////
 /// @brief Decreases the resistance of a brick.
 ///
-/// @param brick - The brick  to be decreased.
+/// @param pos - The position of the brick to be decreased.
 ///
 /// Decreases the resistance of a brick and sets inactive if needed.
 /// Also updates the score  of the player accordingly.
@@ -94,7 +119,10 @@ void Level::decreaseResistance(sf::Vector2u pos) {
         return;
       }
       if (bricks_[pos.x][pos.y].type != S && checkPowerUpSpawn()) {
-        spawnPowerUp(bricks_[pos.x][pos.y].shape.getPosition());
+        spawnPowerUp(sf::Vector2f(
+          bricks_[pos.x][pos.y].shape.getPosition().x + (kBrickDefaultSize.x / 2.f) + 1.5f,
+          bricks_[pos.x][pos.y].shape.getPosition().y
+        ));
       }
     } else {
       --bricks_[pos.x][pos.y].resistance;
@@ -114,8 +142,8 @@ void Level::draw(sf::RenderWindow& window) {
   window.draw(border_left_, &border_left_tx_);
   window.draw(border_right_, &border_right_tx_);
   window.draw(border_top_, &border_top_tx_);
-  for (unsigned int i = 0; i < kLevelMaxRows; ++i) {
-    for (unsigned int j = 0; j < kLevelMaxColumns; ++j) {
+  for (auto i = 0u; i < kLevelMaxRows; ++i) {
+    for (auto j = 0u; j < kLevelMaxColumns; ++j) {
       if (bricks_[i][j].active) {
         window.draw(bricks_[i][j].shape);
         if (bricks_[i][j].beveled) {
@@ -126,12 +154,40 @@ void Level::draw(sf::RenderWindow& window) {
   }
   if (power_up_.active) window.draw(power_up_.shape);
   if (break_active_) window.draw(break_shape_);
+  for (const auto& laser: lasers_) {
+    if (laser.active) window.draw(laser.shape);
+  }
 }
 
 ///
 void Level::eraseCatchedPowerUp() { 
   catched_pwrup_ = PowerUpTypes::Nil;
   new_pwrup_ = false;
+}
+
+bool Level::fireLaser() {
+  if (laser_fire_clk_.getElapsedTime().asSeconds() >= kLaserFireRate_
+  && lasers_on_screen_ < kMaxLasersOnScreen_) {
+    for (auto& laser: lasers_) {
+      if (!laser.active) {
+        const float offset = 10.f;
+        sf::Vector2f pos;
+        pos.y = player_->getVausPosition().y;
+        if (laser_flip_) {
+          pos.x = player_->getVausPosition().x + offset;
+        } else {
+          pos.x = player_->getVausPosition().x + player_->getVausSize().x - kLaserSize_.x - offset;
+        }
+        laser.shape.setPosition(pos);
+        laser.active = true;
+        ++lasers_on_screen_;
+        laser_fire_clk_.restart();
+        laser_flip_ = !laser_flip_;
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /////////////////////////////////////////////////
@@ -144,19 +200,27 @@ void Level::eraseCatchedPowerUp() {
 /////////////////////////////////////////////////
 void Level::init(Player* ptp) {
   /* Basic */
-  bricks_remaining_ = 0;
+  bricks_remaining_ = 0u;
   completed_ = false;
   player_ = ptp;
   /* Power-ups statics */
   pwrup_anim_frame_ = 0u;
   power_up_.active = false;
   power_up_.shape.setSize(kPowerUpSize_);
+  power_up_.shape.setOrigin(kPowerUpSize_.x / 2.f, 0.f);
   /* Power-up effects */
-  break_active_ = false;
   pwrup_active_ = false;
   pwrup_type_ = PowerUpTypes::Nil;
+  /* Break power-up */
+  break_active_ = false;
   break_anim_frame_ = 0u;
   loadBreakTx();
+  /* Laser power-up */
+  lasers_on_screen_ = 0u;
+  laser_flip_ = true;
+  loadLaserTx();
+  /* Disruption related */
+  disruption_in_effect_ = false;
   /* Background and brick layout */
   initBackground();
   initBricks();
@@ -277,6 +341,7 @@ void Level::initGraphics() {
       exit(EXIT_FAILURE);
     }
   }
+  /* Laser power-up */
 }
 
 /////////////////////////////////////////////////
@@ -288,7 +353,7 @@ void Level::initGraphics() {
 void Level::initBricks() {
   unsigned int i, j, surprise_bricks = 0u;
   sf::Vector2f position;
-  float start_y = kBrickDefaultStart + kGUIBorderThickness;
+  auto start_y = kBrickDefaultStart + kGUIBorderThickness;
   for (i = 0u; i < kLevelMaxRows; ++i) {
     for (j = 0u; j < kLevelMaxColumns; ++j) {
       bricks_[i][j].shape.setSize(kBrickDefaultSize);
@@ -402,13 +467,18 @@ void Level::initBricks() {
 /// Initializates the layouts and names of the levels.
 /////////////////////////////////////////////////
 void Level::initProtoLevels(Level* ptl) {
-  for (unsigned int i = 0u; i < kMaxLevels; ++i) {
+  for (auto i = 0u; i < kMaxLevels; ++i) {
     ptl[i].name_ = kProtoLevels[i].name;
     ptl[i].background_ = kProtoLevels[i].background;
-    for (unsigned int j = 0u; j < kLevelMaxRows * kLevelMaxColumns; ++j) {
+    for (auto j = 0u; j < kLevelMaxRows * kLevelMaxColumns; ++j) {
       ptl[i].layout_[j] = kProtoLevels[i].layout[j];
     }
   }
+}
+
+bool Level::isLaserActive() {
+  if (pwrup_type_ == PowerUpTypes::Laser) return true;
+  return false;
 }
 
 ///
@@ -432,14 +502,26 @@ void Level::loadBreakTx() {
   break_shape_.setSize(kBreakSize_);
   break_shape_.setOrigin(0.f, break_shape_.getSize().y / 2.f);
   break_shape_.setPosition(kBreakPosition_);
-  auto path = kImagePath_ + "effects/break/";
-  auto ext = ".png";
+  const auto path = kImagePath_ + "effects/break/";
+  const auto ext = ".png";
   for (auto i = 0u; i < kBreakAnimFrames_; ++i) {
     if (!break_effect_tx_.at(i).loadFromFile(path + std::to_string(i) + ext)) {
       exit(EXIT_FAILURE);
     }
   }
   break_shape_.setTexture(&break_effect_tx_.front());
+}
+
+void Level::loadLaserTx() {
+  const auto path = kImagePath_ + "effects/laser/laser.png";
+  if (!laser_effect_tx_.loadFromFile(path)) {
+    exit(EXIT_FAILURE);
+  }
+  for (auto& laser: lasers_) {
+    laser.active = false;
+    laser.shape.setSize(kLaserSize_);
+    laser.shape.setTexture(&laser_effect_tx_);
+  }
 }
 
 ///
@@ -469,11 +551,14 @@ void Level::setPowerUp(PowerUpTypes type) {
       pwrup_active_ = true;
       pwrup_type_ = type;
       break;
+    case PowerUpTypes::Laser:
+      pwrup_active_ = true;
+      pwrup_type_ = type;
+      break;
     case PowerUpTypes::Nil:
     case PowerUpTypes::Catch:
     case PowerUpTypes::Disruption:
     case PowerUpTypes::Enlarge:
-    case PowerUpTypes::Laser:
     case PowerUpTypes::Player:
     case PowerUpTypes::Slow:
     default:
@@ -538,6 +623,12 @@ void Level::spawnPowerUp(const sf::Vector2f& where) {
   bricks_to_pwrup_ = *seq_it_;
 }
 
+void Level::update(float delta_time) {
+  if (power_up_.active) updatePowerUpFall(delta_time);
+  if (isBreakActive()) updateBreakAnim();
+  if (lasers_on_screen_) updateLasers(delta_time);
+}
+
 void Level::updateBreakAnim() {
   if (break_anim_clk_.getElapsedTime().asSeconds() >= kBreakAnimSpeed_) {
     break_anim_clk_.restart();
@@ -547,9 +638,23 @@ void Level::updateBreakAnim() {
   }
 }
 
+void Level::updateLasers(float delta_time) {
+  const auto factor = kLaserSpeed_ * delta_time;
+  for (auto& laser: lasers_) {
+    if (laser.active) {
+      if (laser.shape.getPosition().y <= kGUIBorderThickness 
+      || checkLaserCollisions(laser)) {
+        laser.active = false;
+        --lasers_on_screen_;
+      } else {
+        laser.shape.move(0.f, -factor);
+      }
+    }
+  }
+}
+
 ///
 void Level::updatePowerUpFall(float delta_time) {
-  if (!power_up_.active) return;
   /* Check player collision */
   if (player_->getVaus().shape.getGlobalBounds().intersects(power_up_.shape.getGlobalBounds())) {
     new_pwrup_ = true;

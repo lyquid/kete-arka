@@ -42,7 +42,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           player_.resetVaus();
           ball_.reset();
           gui_.reset();
-          if (loadLevel(1)) {
+          if (loadLevel(1u)) {
             state_ = Playing;
             logger_.write("Successfully loaded level 1.");
           } else {
@@ -70,7 +70,7 @@ void Game::handleKeyEvents(const sf::Event key_event) {
         /* Level selection start */
         case sf::Keyboard::Enter:
         case sf::Keyboard::Space:
-          int lvl_num = gui_.getLevelSelectedNumber();
+          const auto lvl_num = gui_.getLevelSelectedNumber();
           player_.reset();
           player_.resetVaus();
           ball_.reset();
@@ -92,11 +92,8 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           }
           break;
         case sf::Keyboard::Escape:
-          state_ = Menu;
-          break;
         case sf::Keyboard::P:
         case sf::Keyboard::Pause:
-        case sf::Keyboard::Space:
           state_ = Paused;
           gui_.setRenderFlashingTextFlag(true);
           break;
@@ -104,13 +101,10 @@ void Game::handleKeyEvents(const sf::Event key_event) {
       break;
     case Paused:
       switch (key_event.key.code) {
-        case sf::Keyboard::Escape:
-        case sf::Keyboard::Q:
+        case sf::Keyboard::Q: /// @todo: press Q to exit
           state_ = Menu;
           break;
-        case sf::Keyboard::P:
-        case sf::Keyboard::Pause:
-        case sf::Keyboard::Space:
+        default:
           state_ = Playing;
           break;
       }
@@ -118,12 +112,11 @@ void Game::handleKeyEvents(const sf::Event key_event) {
     case LevelCompleted: {
       switch (key_event.key.code) {
         case sf::Keyboard::Escape:
-        case sf::Keyboard::Q:
           state_ = Menu;
           break;
         /* Next level */
         case sf::Keyboard::Space:
-          int next_lvl = current_level_->getNumber() + 1;
+          const auto next_lvl = current_level_->getNumber() + 1u;
           if (next_lvl > kMaxLevels) {
             state_ = GameCompleted;
           } else  {
@@ -158,25 +151,22 @@ void Game::handlePowerUps() {
   if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
   if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
   if (player_.isPowerUpActive()) player_.deactivatePowerUp();
-  // switch (PowerUpTypes::Break) { // QoL purposes
+  // switch (PowerUpTypes::Catch) { /* QoL purposes */
   switch (pwrup) {
-    case PowerUpTypes::Nil:
-      printf("This CAN'T be seen.\n");
-      return;
     case PowerUpTypes::Break:
       current_level_->setPowerUp(PowerUpTypes::Break);
       break;
     case PowerUpTypes::Catch:
-      printf("Catch the ball!\n");
+      ball_.setPowerUp(PowerUpTypes::Catch);
       break;
     case PowerUpTypes::Disruption:
-      printf("Multiball disruption!\n");
+      ball_.setPowerUp(PowerUpTypes::Disruption);
       break;
     case PowerUpTypes::Enlarge:
       player_.setPowerUp(PowerUpTypes::Enlarge);
       break;
     case PowerUpTypes::Laser:
-      printf("LAAASER >> - -- --\n");
+      current_level_->setPowerUp(PowerUpTypes::Laser);
       break;
     case PowerUpTypes::Player:
       player_.increaseLives();
@@ -185,12 +175,13 @@ void Game::handlePowerUps() {
       if (ball_.isPowerUpActive() && ball_.getPowerUp() != PowerUpTypes::Slow) ball_.deactivatePowerUp();
       ball_.setPowerUp(PowerUpTypes::Slow);
       break;
+    case PowerUpTypes::Nil:
     default:
       printf("This SHOULDN'T be seen.\n");
       break;
   }
 }
-
+ 
 void Game::init() {
   state_ = Title;
   title_ = kAppName + " v" + kAppVersion;
@@ -226,15 +217,15 @@ void Game::init() {
 }
 
 void Game::initLevelsMenu() {
-  for (unsigned int i = 0u; i < kMaxLevels; ++i) {
-    game_levels_[i].setNumber(i + 1);
+  for (auto i = 0u; i < kMaxLevels; ++i) {
+    game_levels_[i].setNumber(i + 1u);
     gui_.setLevelInfo(i, game_levels_[i].getNumber(), game_levels_[i].getName());
   }
 }
 
 bool Game::loadLevel(unsigned int lvl_num) {
   bool found = false;
-  for (unsigned int i = 0u; i < kMaxLevels && !found; ++i) {
+  for (auto i = 0u; i < kMaxLevels && !found; ++i) {
     if (game_levels_[i].getNumber() == lvl_num) {
       found = true;
       current_level_ = &game_levels_[i];
@@ -243,7 +234,7 @@ bool Game::loadLevel(unsigned int lvl_num) {
       if (current_level_->getNumber() >= kMaxLevels) {
         gui_.update(current_level_->getNumber(), current_level_->getName());
       } else {
-        gui_.update(current_level_->getNumber(), current_level_->getName(), game_levels_[i + 1].getName());
+        gui_.update(current_level_->getNumber(), current_level_->getName(), game_levels_[i + 1u].getName());
       }
     }
   }
@@ -292,7 +283,7 @@ void Game::render() {
 }
 
 void Game::update() {
-  auto delta_time = clock_.restart().asSeconds();
+  const float delta_time = clock_.restart().asSeconds();
   switch (state_) {
     case Playing:
       if (player_.isDead()) {
@@ -304,20 +295,33 @@ void Game::update() {
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else {
+        if (player_.isVausResizing()) player_.resizeVaus();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
          || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
           player_.moveVaus(sf::Vector2f(delta_time * -player_.getVausSpeed(), 0.f));
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
          || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-          auto crash = !player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
+          const bool crash = !player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
           if (crash && current_level_->isBreakActive()) current_level_->complete();
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+          /* Laser firing */
+          if (current_level_->isLaserActive()) current_level_->fireLaser();
+          /* Release the ball from the Vaus */
+          if (ball_.isCatched()) ball_.release();
+        }
+        /* Catch new power-ups */
         if (current_level_->catchedPowerUp()) handlePowerUps();
+        /* Ball stuff */
         if (ball_.isPowerUpActive()) ball_.updatePowerUps();
-        ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
-        current_level_->updatePowerUpFall(delta_time);
-        if (current_level_->isBreakActive()) current_level_->updateBreakAnim();
+        if (ball_.isCatched()) {
+          ball_.followVaus(player_.getVaus());
+        } else {
+          ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
+        }
+        /* Level */
+        current_level_->update(delta_time);
       }
       break;
   }

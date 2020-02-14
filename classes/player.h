@@ -19,6 +19,7 @@ class Player {
     lives_(kPlayerDefaultLives_),
     score_(0u),
     pwrup_active_(false),
+    growth_(0.f),
     pwrup_type_(PowerUpTypes::Nil) {
       vaus_.shape.setFillColor(kVausDefaultColor_);
       vaus_.shape.setSize(kVausDefaultSize_);
@@ -47,20 +48,28 @@ class Player {
   PowerUpTypes getPowerUp() { return pwrup_type_; };
   bool isPowerUpActive() { return pwrup_active_; };
   void setPowerUp(PowerUpTypes type);
-  
+  void resizeVaus();
+  bool isVausResizing();
+
  private:
   static const unsigned int kPlayerDefaultLives_;
-  static const sf::Vector2f kVausDefaultSize_;
-  static const sf::Vector2f kVausDefaultPosition_;
-  static const float kVausDefaultSpeed_;
-  static const sf::Color kVausDefaultColor_; // to delete some day
   bool dead_;
   GUI* gui_;
   unsigned int lives_;
   unsigned long long score_;
-  Vaus vaus_;
+  /* Vaus stuff */
+  static Vaus vaus_;
+  static const sf::Vector2f kVausDefaultSize_;
+  static const sf::Vector2f kVausDefaultPosition_;
+  static const float kVausDefaultSpeed_;
+  static const float kVausMaxLength_;
+  static const float kVausGrowth_;
+  static const sf::Color kVausDefaultColor_; // to delete some day
   /* Power-ups stuff */
+  void enlargeVaus();
+  void shortenVaus();
   bool pwrup_active_;
+  float growth_;
   PowerUpTypes pwrup_type_;
 };
 
