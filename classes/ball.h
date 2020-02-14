@@ -38,6 +38,10 @@ class Ball {
   bool isPowerUpActive() { return pwrup_active_; };
   void setPowerUp(PowerUpTypes type);
   void updatePowerUps();
+  /* Catch power-up */
+  void followVaus(const Vaus& vaus);
+  bool isCatched() { return catched_; };
+  void release() { catched_ = false; };
 
  private:
   bool checkBrickCollision(BallShape& ball, Brick bricks[][kLevelMaxColumns]);
@@ -48,6 +52,7 @@ class Ball {
   void randomizeBounceAngle(BallShape& ball, Collisions collision);
   void updateFlashFlag();
   static float sumAbs(float num1, float num2);
+  static std::vector<BallShape> balls_;
   bool ball_flash_flag_;
   sf::Clock flash_clock_;
   Level* level_;
@@ -66,8 +71,15 @@ class Ball {
   /* Disruption power-up */
   void activateDisruption();
   static const unsigned int kDisruptionMaxBalls_;
-  static std::vector<BallShape> balls_;
   static unsigned int active_balls_;
+  /* Catch power-up */
+  float generateRandomTime(float min, float max);
+  static const float kCatchMaxTime_;
+  static const float kCatchMinTime_;
+  static sf::Clock catch_clk_;
+  static float time_to_release_;
+  static bool catched_;
+  static float offset_;
 };
 
 #endif  // KETE_ARKA_CLASSES_BALL_H_

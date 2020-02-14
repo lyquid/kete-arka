@@ -151,16 +151,13 @@ void Game::handlePowerUps() {
   if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
   if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
   if (player_.isPowerUpActive()) player_.deactivatePowerUp();
-  // switch (PowerUpTypes::Laser) { /* QoL purposes */
+  // switch (PowerUpTypes::Catch) { /* QoL purposes */
   switch (pwrup) {
-    case PowerUpTypes::Nil:
-      printf("This CAN'T be seen.\n");
-      return;
     case PowerUpTypes::Break:
       current_level_->setPowerUp(PowerUpTypes::Break);
       break;
     case PowerUpTypes::Catch:
-      printf("Catch the ball!\n");
+      ball_.setPowerUp(PowerUpTypes::Catch);
       break;
     case PowerUpTypes::Disruption:
       ball_.setPowerUp(PowerUpTypes::Disruption);
@@ -178,6 +175,7 @@ void Game::handlePowerUps() {
       if (ball_.isPowerUpActive() && ball_.getPowerUp() != PowerUpTypes::Slow) ball_.deactivatePowerUp();
       ball_.setPowerUp(PowerUpTypes::Slow);
       break;
+    case PowerUpTypes::Nil:
     default:
       printf("This SHOULDN'T be seen.\n");
       break;
@@ -307,15 +305,22 @@ void Game::update() {
           const bool crash = !player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
           if (crash && current_level_->isBreakActive()) current_level_->complete();
         }
-        /* Laser firing */
-        if (current_level_->isLaserActive() && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-          current_level_->fireLaser();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+          /* Laser firing */
+          if (current_level_->isLaserActive()) current_level_->fireLaser();
+          /* Release the ball from the Vaus */
+          if (ball_.isCatched()) ball_.release();
         }
         /* Catch new power-ups */
         if (current_level_->catchedPowerUp()) handlePowerUps();
-        /* */
+        /* Ball stuff */
         if (ball_.isPowerUpActive()) ball_.updatePowerUps();
-        ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
+        if (ball_.isCatched()) {
+          ball_.followVaus(player_.getVaus());
+        } else {
+          ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
+        }
+        /* Level */
         current_level_->update(delta_time);
       }
       break;

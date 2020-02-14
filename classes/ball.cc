@@ -1,8 +1,16 @@
 #include "ball.h"
 
-const unsigned int Ball::kDisruptionMaxBalls_ = 3u;
+/* Disruption power-up */
+const unsigned int     Ball::kDisruptionMaxBalls_ = 3u;
 std::vector<BallShape> Ball::balls_(kDisruptionMaxBalls_);
-unsigned int Ball::active_balls_;
+unsigned int           Ball::active_balls_;
+/* Catch power-up */
+const float Ball::kCatchMinTime_ = 1.50f;
+const float Ball::kCatchMaxTime_ = 3.00f;
+sf::Clock   Ball::catch_clk_;
+float       Ball::time_to_release_;
+bool        Ball::catched_;
+float       Ball::offset_;
 
 void Ball::activateDisruption() {
   unsigned int current_ball;
@@ -105,16 +113,22 @@ bool Ball::checkVausCollision(BallShape& ball, const Vaus& vaus) {
     const auto vaus_x_size = vaus.shape.getSize().x;
     collision = true;
     if (ball.last_position.x < vaus_x) {
-      // left hit
+      /* left hit */
       randomizeBounceAngle(ball, LeftShip);
       ball.shape.setPosition(vaus_x - current_radius - 0.1f, ball_y);
     } else if (ball.last_position.x > vaus_x + vaus_x_size) {
-      // right hit
+      /* right hit */
       randomizeBounceAngle(ball, RightShip);
       ball.shape.setPosition(vaus_x + vaus_x_size + current_radius + 0.1f, ball_y);
     } else {
-      // front/rear hit (rear hit should be imposible!)
+      /* front/rear hit (rear hit should be imposible!) */
       randomizeBounceAngle(ball, TopShip);
+      if (pwrup_type_ == PowerUpTypes::Catch) {
+        catched_ = true;
+        time_to_release_ = generateRandomTime(kCatchMinTime_, kCatchMaxTime_);
+        offset_ = ball_x - vaus_x;
+        catch_clk_.restart();
+      }
       ball.shape.setPosition(ball_x, vaus_y - current_radius - 0.1f);
     }
   }
@@ -124,17 +138,13 @@ bool Ball::checkVausCollision(BallShape& ball, const Vaus& vaus) {
 void Ball::deactivatePowerUp() {
   switch (pwrup_type_) {
     case PowerUpTypes::Catch:
-      printf("todoooooooooooooooooooooo\n");
+      catched_ = false;
       break;
     case PowerUpTypes::Disruption:
-      pwrup_type_ = PowerUpTypes::Nil;
-      pwrup_active_ = false;
       level_->setDisruptionStatus(false);
       break;
     case PowerUpTypes::Slow:
       speed_ = kBallDefaultSpeed;
-      pwrup_type_ = PowerUpTypes::Nil;
-      pwrup_active_ = false;
       break;
     case PowerUpTypes::Nil:
     case PowerUpTypes::Break:
@@ -145,6 +155,8 @@ void Ball::deactivatePowerUp() {
       // print something horrible to the logger
       break;
   }
+  pwrup_type_ = PowerUpTypes::Nil;
+  pwrup_active_ = false;
 }
 
 void Ball::draw(sf::RenderWindow& window, GameStates state) {
@@ -160,6 +172,22 @@ void Ball::draw(sf::RenderWindow& window, GameStates state) {
       if (ball.active) window.draw(ball.shape); 
     }
   }
+}
+
+void Ball::followVaus(const Vaus& vaus) {
+  for (auto& ball: balls_) {
+    if (ball.active) {
+      ball.shape.setPosition(vaus.shape.getPosition().x + offset_ , ball.shape.getPosition().y);
+      return;
+    }
+  }
+}
+
+float Ball::generateRandomTime(float min, float max) {
+  const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
+  std::uniform_real_distribution<float> distribution(min, max);
+  return distribution(generator);
 }
 
 void Ball::init(Player* ptp) {
@@ -196,8 +224,7 @@ void Ball::move(float delta_time, const Vaus& vaus, Brick bricks[][kLevelMaxColu
         /* do {
           collision = checkBrickCollision(bricks) || checkBorderCollision() || checkShipCollision(ship);
         } while (collision == true); */
-
-        ball.shape.move(ball.direction.x * factor, ball.direction.y * factor);
+        if (!catched_) ball.shape.move(ball.direction.x * factor, ball.direction.y * factor);
       }
     }
   } else if (start_clock_.getElapsedTime().asSeconds() > 1.5f) {
@@ -343,6 +370,8 @@ void Ball::reset() {
   /* Power-ups */
   pwrup_active_ = false;
   pwrup_type_ = PowerUpTypes::Nil;
+  /* Catch power-up */
+  catched_ = false;
 }
 
 void Ball::setPowerUp(PowerUpTypes type) {
@@ -350,7 +379,6 @@ void Ball::setPowerUp(PowerUpTypes type) {
   pwrup_active_ = true;
   switch (type) {
     case PowerUpTypes::Catch:
-      printf("todoooooooooooooooooooooo\n");
       break;
     case PowerUpTypes::Disruption:
       level_->setDisruptionStatus(true);
@@ -373,7 +401,7 @@ void Ball::setPowerUp(PowerUpTypes type) {
 void Ball::slowPowerUp() {
   const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
-  std::uniform_real_distribution<float> distribution(10.0f , 30.0f);
+  std::uniform_real_distribution<float> distribution(10.0f, 30.0f);
   slow_timer_ = distribution(generator);
   const float kDecrement = 2.f;
   speed_ /= kDecrement;
@@ -400,7 +428,7 @@ void Ball::updateFlashFlag() {
 void Ball::updatePowerUps() {
   switch (pwrup_type_) {
     case PowerUpTypes::Catch:
-      printf("todoooooooooooooooooooooo\n");
+      if (catch_clk_.getElapsedTime().asSeconds() >= time_to_release_) catched_ = false;
       break;
     case PowerUpTypes::Disruption:
       if (active_balls_ == 1u) deactivatePowerUp();
