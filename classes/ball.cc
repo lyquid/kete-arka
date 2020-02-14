@@ -180,7 +180,6 @@ void Ball::move(float delta_time, const Vaus& vaus, Brick bricks[][kLevelMaxColu
   if (moving_flag_) {
     for (auto& ball: balls_) {
       if (ball.active) {
-        const auto current_radius = ball.shape.getRadius();
         const auto factor = speed_ * delta_time;
         ball.last_position = ball.shape.getPosition();
         /* This simple checking sometimes makes the ball to go through some bricks. Especially golden bricks. */

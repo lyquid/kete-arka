@@ -24,14 +24,20 @@ struct Brick {
   sf::VertexArray bevel;
 };
 
+struct Laser {
+  bool active;
+  sf::RectangleShape shape;
+};
+
 class Level {
  public:
   Level():
     completed_(false),
     bricks_remaining_(0u),
-    break_active_(false),
     pwrup_active_(false),
     pwrup_type_(PowerUpTypes::Nil),
+    break_active_(false),
+    lasers_on_screen_(0u),
     disruption_in_effect_(false) {}
   ~Level() {}
   /* Setters & getters */
@@ -48,7 +54,7 @@ class Level {
   /* Others */
   void decreaseResistance(sf::Vector2u pos);
   void draw(sf::RenderWindow& window);
-  void updatePowerUpFall(float delta_time);
+  void update(float delta_time);
   /* Power-up generation stuff */
   bool catchedPowerUp() { return new_pwrup_; };
   PowerUpTypes getCatchedPowerUp() { return catched_pwrup_; };
@@ -56,10 +62,13 @@ class Level {
   /* Power-up effects */
   void deactivatePowerUp();
   PowerUpTypes getPowerUp() { return pwrup_type_; };
-  bool isBreakActive() { return break_active_; };
   bool isPowerUpActive() { return pwrup_active_; };
   void setPowerUp(PowerUpTypes type);
-  void updateBreakAnim();
+  /* Break power-up */
+  bool isBreakActive() { return break_active_; };
+  /* Laser power-up */
+  bool fireLaser();
+  bool isLaserActive();
   /* Disruption related */
   void setDisruptionStatus(bool status) {disruption_in_effect_ = status; };
 
@@ -92,6 +101,7 @@ class Level {
   void deactivatePowerUpFall();
   void generatePowerUpSequence(unsigned int surprise_bricks);
   void spawnPowerUp(const sf::Vector2f& where);
+  void updatePowerUpFall(float delta_time);
   static PowerUp power_up_;
   static PowerUpTypes catched_pwrup_;
   static bool new_pwrup_;
@@ -114,10 +124,12 @@ class Level {
   std::vector<unsigned int>::const_iterator seq_it_;
   unsigned int bricks_to_pwrup_;
   /* Power-up effects */
-  void loadBreakTx();
-  bool break_active_;
-  bool pwrup_active_; /* This is useless until we have more level controlled pwrups */
+  bool pwrup_active_;
   PowerUpTypes pwrup_type_;
+  /* Break power-up */
+  void loadBreakTx();
+  void updateBreakAnim();
+  bool break_active_;
   static const sf::Vector2f kBreakSize_;
   static const sf::Vector2f kBreakPosition_;
   static const unsigned int kBreakAnimFrames_;
@@ -126,6 +138,20 @@ class Level {
   static std::vector<sf::Texture> break_effect_tx_;
   static sf::Clock break_anim_clk_;
   static unsigned int break_anim_frame_;
+  /* Laser power-up */
+  bool checkLaserCollisions(const Laser& laser);
+  void loadLaserTx();
+  void updateLasers(float delta_time);
+  static const sf::Vector2f kLaserSize_;
+  static const float kLaserDuration_;
+  static const float kLaserSpeed_;
+  static const float kLaserFireRate_;
+  static const unsigned int kMaxLasersOnScreen_;
+  static sf::Texture laser_effect_tx_;
+  static std::vector<Laser> lasers_;
+  static sf::Clock laser_fire_clk_;
+  static bool laser_flip_;
+  unsigned int lasers_on_screen_;
   /* Disruption related */
   bool disruption_in_effect_;
 };

@@ -92,11 +92,8 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           }
           break;
         case sf::Keyboard::Escape:
-          state_ = Menu;
-          break;
         case sf::Keyboard::P:
         case sf::Keyboard::Pause:
-        case sf::Keyboard::Space:
           state_ = Paused;
           gui_.setRenderFlashingTextFlag(true);
           break;
@@ -104,13 +101,10 @@ void Game::handleKeyEvents(const sf::Event key_event) {
       break;
     case Paused:
       switch (key_event.key.code) {
-        case sf::Keyboard::Escape:
-        case sf::Keyboard::Q:
+        case sf::Keyboard::Q: /// @todo: press Q to exit
           state_ = Menu;
           break;
-        case sf::Keyboard::P:
-        case sf::Keyboard::Pause:
-        case sf::Keyboard::Space:
+        default:
           state_ = Playing;
           break;
       }
@@ -118,12 +112,11 @@ void Game::handleKeyEvents(const sf::Event key_event) {
     case LevelCompleted: {
       switch (key_event.key.code) {
         case sf::Keyboard::Escape:
-        case sf::Keyboard::Q:
           state_ = Menu;
           break;
         /* Next level */
         case sf::Keyboard::Space:
-          const auto next_lvl = current_level_->getNumber() + 1;
+          const auto next_lvl = current_level_->getNumber() + 1u;
           if (next_lvl > kMaxLevels) {
             state_ = GameCompleted;
           } else  {
@@ -158,7 +151,7 @@ void Game::handlePowerUps() {
   if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
   if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
   if (player_.isPowerUpActive()) player_.deactivatePowerUp();
-  // switch (PowerUpTypes::Disruption) { // QoL purposes
+  // switch (PowerUpTypes::Laser) { /* QoL purposes */
   switch (pwrup) {
     case PowerUpTypes::Nil:
       printf("This CAN'T be seen.\n");
@@ -176,7 +169,7 @@ void Game::handlePowerUps() {
       player_.setPowerUp(PowerUpTypes::Enlarge);
       break;
     case PowerUpTypes::Laser:
-      printf("LAAASER >> - -- --\n");
+      current_level_->setPowerUp(PowerUpTypes::Laser);
       break;
     case PowerUpTypes::Player:
       player_.increaseLives();
@@ -314,11 +307,16 @@ void Game::update() {
           const bool crash = !player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
           if (crash && current_level_->isBreakActive()) current_level_->complete();
         }
+        /* Laser firing */
+        if (current_level_->isLaserActive() && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+          current_level_->fireLaser();
+        }
+        /* Catch new power-ups */
         if (current_level_->catchedPowerUp()) handlePowerUps();
+        /* */
         if (ball_.isPowerUpActive()) ball_.updatePowerUps();
         ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
-        current_level_->updatePowerUpFall(delta_time);
-        if (current_level_->isBreakActive()) current_level_->updateBreakAnim();
+        current_level_->update(delta_time);
       }
       break;
   }
