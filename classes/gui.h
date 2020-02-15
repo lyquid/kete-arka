@@ -2,6 +2,9 @@
 #define KETE_ARKA_CLASSES_GUI_H_
 
 #include <sstream> // std::ostringstream
+#include <string>
+
+#include <SFML/Graphics.hpp>
 
 #include "../config.h"
 
@@ -11,11 +14,15 @@ struct LevelInfo {
   std::string select_text;
 };
 
+enum TextCenterModes { 
+  Horizontal, Vertical, BothAxis, 
+  TopLeft, TopRight, Default 
+};
+
 class GUI {
  public:
-  GUI() {
-    render_flashing_text_flag_ = true;
-  }
+  GUI():
+   render_flashing_text_flag_(true) {}
   ~GUI() {}
   void drawGameCompleted(sf::RenderWindow& window);
   void drawGameOverScreen(sf::RenderWindow& window);
@@ -25,31 +32,31 @@ class GUI {
   void drawMenu(sf::RenderWindow& window);
   void drawPauseScreen(sf::RenderWindow& window);
   void drawTitleScreen(sf::RenderWindow& window);
-  int getLevelSelectedNumber();
+  int getLevelSelectedNumber() { return level_selected_ + 1u; };
   void init(const sf::Font& font);
   void initLevelsList(const sf::Font& font);
   void reset();
   void selectNextLevel();
   void selectPreviousLevel();
   void setFinalScoreText(unsigned long long int score);
-  void setLevelInfo(int lvl_position, int lvl_num, sf::String lvl_name);
-  void setLivesText(const int lives);
-  void setScoreText(const unsigned long long int score);
-  void setRenderFlashingTextFlag(const bool status);
+  void setLevelInfo(unsigned int lvl_position, unsigned int lvl_num, const sf::String& lvl_name);
+  void setLivesText(unsigned int lives);
+  void setScoreText(unsigned long long score);
+  void setRenderFlashingTextFlag(bool status);
   static void initText( sf::Text&             text, 
-                        const sf::String      string_text, 
+                        const sf::String&     string_text, 
                         const sf::Font&       font, 
-                        const int             size, 
-                        const sf::Color       color, 
-                        const TextCenterModes mode = Default);
-  template <typename T> static void setOrigin(T& shape, const TextCenterModes mode);
+                        unsigned int          size, 
+                        const sf::Color&      color, 
+                        TextCenterModes       mode = Default);
+  template <typename T> static void setOrigin(T& shape, TextCenterModes mode);
   template <typename T> static std::string toString(const T& t);
-  void update(unsigned int lvl_num, std::string lvl_name);
-  void update(unsigned int lvl_num, std::string lvl_name, std::string next_lvl_name);
+  void update(unsigned int lvl_num, const std::string& lvl_name);
+  void update(unsigned int lvl_num, const std::string& lvl_name, const std::string& next_lvl_name);
 
  private:
   void updateFlashingTextFlag();
-  void updateLevelSelectionShape(int previous_level = 0);
+  void updateLevelSelectionShape(unsigned int previous_level = 0u);
   unsigned int current_level_;
   bool render_flashing_text_flag_;
   sf::Clock flashing_text_clock_;

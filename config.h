@@ -13,7 +13,7 @@ enum Collisions {
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
 enum GameStates { Title, Menu, LevelSelection, Playing, Paused, LevelCompleted, GameCompleted, GameOver, Quit };
-enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default };
+// enum TextCenterModes { Horizontal, Vertical, BothAxis, TopLeft, TopRight, Default };
 
 // app default settings
 const ExecutionModes  kExecutionMode  = Debug;
