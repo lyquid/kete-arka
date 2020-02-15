@@ -351,6 +351,7 @@ void Level::initGraphics() {
 /// layout and positions them.
 /////////////////////////////////////////////////
 void Level::initBricks() {
+  const unsigned int silver_hits = 2u + number_ / 8u;
   unsigned int i, j, surprise_bricks = 0u;
   sf::Vector2f position;
   auto start_y = kBrickDefaultStart + kGUIBorderThickness;
@@ -431,7 +432,7 @@ void Level::initBricks() {
         case S:
           bricks_[i][j].type = S;
           bricks_[i][j].shape.setFillColor(kBrickSilver);
-          bricks_[i][j].resistance = 2u;
+          bricks_[i][j].resistance = silver_hits;
           bricks_[i][j].points = 50u * number_;
           ++bricks_remaining_;
           bricks_[i][j].beveled = true;
