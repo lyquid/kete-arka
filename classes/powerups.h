@@ -9,6 +9,11 @@ enum class PowerUpTypes {
   count
 };
 
+struct Laser {
+  bool active;
+  sf::RectangleShape shape;
+};
+
 struct PowerUp {
   bool active;
   sf::RectangleShape shape;

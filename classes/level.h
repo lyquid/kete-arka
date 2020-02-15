@@ -24,11 +24,6 @@ struct Brick {
   sf::VertexArray bevel;
 };
 
-struct Laser {
-  bool active;
-  sf::RectangleShape shape;
-};
-
 class Level {
  public:
   Level():
