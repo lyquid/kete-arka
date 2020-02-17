@@ -105,16 +105,18 @@ bool Player::isVausResizing() {
 /// keeps the ship within the screen boundaries.
 /////////////////////////////////////////////////
 bool Player::moveVaus(const sf::Vector2f& offset) {
-  if (offset.x < 0 && vaus_.shape.getPosition().x + offset.x >= kGUIBorderThickness) {
-    /* wants to go left */
-    vaus_.shape.move(offset);
-    return true;
-  } else if (offset.x > 0 && vaus_.shape.getPosition().x + vaus_.shape.getSize().x + offset.x <= kScreenWidth - kGUIBorderThickness) {
-    /* wants to go right */
-    vaus_.shape.move(offset);
-    return true;
+  bool lateral_hit = false;
+  vaus_.shape.move(offset);
+  /* Left hit */
+  if (vaus_.shape.getPosition().x < kGUIBorderThickness) {
+    vaus_.shape.setPosition(kGUIBorderThickness, vaus_.shape.getPosition().y);
+    lateral_hit = true;
+  /* Right hit */
+  } else if (vaus_.shape.getPosition().x + vaus_.shape.getSize().x > kScreenWidth - kGUIBorderThickness) {
+    vaus_.shape.setPosition(kScreenWidth - kGUIBorderThickness - vaus_.shape.getSize().x, vaus_.shape.getPosition().y);
+    lateral_hit = true;
   }
-  return false;
+  return lateral_hit;
 }
 
 ////////////////////////////////////////////////
