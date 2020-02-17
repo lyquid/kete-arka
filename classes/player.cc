@@ -62,14 +62,24 @@ void Player::drawVaus(sf::RenderWindow& window) {
 }
 
 void Player::enlargeVaus() {
-  if (vaus_.shape.getSize().x < kVausMaxLength_) {
-    vaus_.shape.move(-growth_ / 2.f, 0.f);
+  const auto vaus_sizex = vaus_.shape.getSize().x;
+  if (vaus_sizex >= kVausMaxLength_) {
+    growth_ = 0.f;
+    return;
+  } else {
+    const auto displ = growth_ / 2.f;
+    auto new_x = displ;
+    if (vaus_.shape.getPosition().x - displ < kGUIBorderThickness) {
+      new_x = 0.f;
+    }
+    if (vaus_.shape.getPosition().x + vaus_sizex - displ > kScreenWidth - kGUIBorderThickness) {
+      new_x = growth_;
+    }
+    vaus_.shape.move(-new_x, 0.f);
     vaus_.shape.setSize(sf::Vector2f(
-      vaus_.shape.getSize().x + growth_,
+      vaus_sizex + growth_,
       vaus_.shape.getSize().y
     ));
-  } else {
-    growth_ = 0.f;
   }
 }
 

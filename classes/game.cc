@@ -151,7 +151,7 @@ void Game::handlePowerUps() {
   if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
   if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
   if (player_.isPowerUpActive()) player_.deactivatePowerUp();
-  // switch (PowerUpTypes::Catch) { /* QoL purposes */
+  // switch (PowerUpTypes::Enlarge) { /* QoL purposes */
   switch (pwrup) {
     case PowerUpTypes::Break:
       current_level_->setPowerUp(PowerUpTypes::Break);
