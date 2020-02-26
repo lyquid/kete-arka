@@ -49,6 +49,7 @@ class Level {
   /* Others */
   void decreaseResistance(sf::Vector2u pos);
   void draw(sf::RenderWindow& window);
+  void drawBorders(sf::RenderWindow& window);
   void update(float delta_time);
   /* Power-up generation stuff */
   bool catchedPowerUp() { return new_pwrup_; };
@@ -90,7 +91,6 @@ class Level {
   static sf::Texture border_right_tx_;
   static sf::VertexArray border_top_;
   static sf::Texture border_top_tx_;
-  static const std::string kImagePath_;
   /* Power-up generation stuff */
   bool checkPowerUpSpawn();
   void deactivatePowerUpFall();

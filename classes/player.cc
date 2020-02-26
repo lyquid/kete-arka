@@ -3,12 +3,17 @@
 const unsigned int Player::kPlayerDefaultLives_ = 3u;
 /* Vaus stuff */
 Vaus Player::vaus_;
-const sf::Vector2f Player::kVausDefaultSize_     = sf::Vector2f(80.f, 15.f);
-const sf::Vector2f Player::kVausDefaultPosition_ = sf::Vector2f((kScreenWidth - kVausDefaultSize_.x) / 2.f, kScreenHeight * 0.9f);
-const float        Player::kVausDefaultSpeed_    = 500.f;
-const float        Player::kVausMaxLength_       = kVausDefaultSize_.x * 1.66f;
-const float        Player::kVausGrowth_          = 0.5f;
-const sf::Color    Player::kVausDefaultColor_    = sf::Color::White;
+const sf::Vector2f Player::kVausDefaultSize_          = sf::Vector2f(95.f, 28.f);
+const sf::Vector2f Player::kVausDefaultCollisionRect_ = sf::Vector2f(kVausDefaultSize_.x - 10.f, kVausDefaultSize_.y);
+const sf::Vector2f Player::kVausDefaultPosition_      = sf::Vector2f((kScreenWidth - kVausDefaultCollisionRect_.x) / 2.f, kScreenHeight * 0.9f);
+const float        Player::kVausDefaultSpeed_         = 500.f;
+const float        Player::kVausMaxLength_            = kVausDefaultSize_.x * 1.66f;
+const float        Player::kVausGrowth_               = 0.5f;
+const unsigned int Player::kVausAnimFrames_           = 6u;
+const float        Player::kVausAnimSpeed_            = 0.10f;
+unsigned int       Player::vaus_anim_frame_;
+sf::Clock          Player::vaus_anim_clk_;
+bool               Player::show_collision_rect_;
 
 void Player::deactivatePowerUp() {
   switch (pwrup_type_) {
@@ -59,25 +64,33 @@ void Player::decreaseLives(unsigned int decrease_by) {
 /////////////////////////////////////////////////
 void Player::drawVaus(sf::RenderWindow& window) {
   window.draw(vaus_.shape);
+  if (show_collision_rect_) window.draw(vaus_.collision_rect);
 }
 
 void Player::enlargeVaus() {
-  const auto vaus_sizex = vaus_.shape.getSize().x;
-  if (vaus_sizex >= kVausMaxLength_) {
+  const auto vaus_shapx = vaus_.shape.getSize().x;
+  const auto vaus_colx = vaus_.collision_rect.getSize().x;
+  if (vaus_colx >= kVausMaxLength_) {
     growth_ = 0.f;
     return;
   } else {
     const auto displ = growth_ / 2.f;
     auto new_x = displ;
-    if (vaus_.shape.getPosition().x - displ < kGUIBorderThickness) {
+    if (vaus_.collision_rect.getPosition().x - displ < kGUIBorderThickness) {
       new_x = 0.f;
     }
-    if (vaus_.shape.getPosition().x + vaus_sizex - displ > kScreenWidth - kGUIBorderThickness) {
+    if (vaus_.collision_rect.getPosition().x + vaus_colx - displ > kScreenWidth - kGUIBorderThickness) {
       new_x = growth_;
     }
+    vaus_.collision_rect.move(-new_x, 0.f);
     vaus_.shape.move(-new_x, 0.f);
+
+    vaus_.collision_rect.setSize(sf::Vector2f(
+      vaus_colx + growth_,
+      vaus_.collision_rect.getSize().y
+    ));
     vaus_.shape.setSize(sf::Vector2f(
-      vaus_sizex + growth_,
+      vaus_shapx + growth_,
       vaus_.shape.getSize().y
     ));
   }
@@ -116,18 +129,41 @@ bool Player::isVausResizing() {
 /////////////////////////////////////////////////
 bool Player::moveVaus(const sf::Vector2f& offset) {
   bool lateral_hit = false;
-  vaus_.shape.move(offset);
+  vaus_.collision_rect.move(offset);
   /* Left hit */
-  if (vaus_.shape.getPosition().x < kGUIBorderThickness) {
-    vaus_.shape.setPosition(kGUIBorderThickness, vaus_.shape.getPosition().y);
+  if (vaus_.collision_rect.getPosition().x < kGUIBorderThickness) {
+    vaus_.collision_rect.setPosition(kGUIBorderThickness, vaus_.collision_rect.getPosition().y);
     lateral_hit = true;
   /* Right hit */
-  } else if (vaus_.shape.getPosition().x + vaus_.shape.getSize().x > kScreenWidth - kGUIBorderThickness) {
-    vaus_.shape.setPosition(kScreenWidth - kGUIBorderThickness - vaus_.shape.getSize().x, vaus_.shape.getPosition().y);
+  } else if (vaus_.collision_rect.getPosition().x + vaus_.collision_rect.getSize().x > kScreenWidth - kGUIBorderThickness) {
+    vaus_.collision_rect.setPosition(kScreenWidth - kGUIBorderThickness - vaus_.collision_rect.getSize().x, vaus_.collision_rect.getPosition().y);
     lateral_hit = true;
   }
+  vaus_.shape.setPosition(vaus_.collision_rect.getPosition());
   return lateral_hit;
 }
+
+Player::Player():
+  dead_(false),
+  lives_(kPlayerDefaultLives_),
+  score_(0u),
+  pwrup_active_(false),
+  growth_(0.f),
+  pwrup_type_(PowerUpTypes::Nil) {
+    vaus_.textures.resize(kVausAnimFrames_);
+    const auto path = k::kImagePath + "vaus/";
+    for (auto i = 0u; i < kVausAnimFrames_; ++i) {
+      if (!vaus_.textures.at(i).loadFromFile(path + std::to_string(i) + k::kImageExt)) {
+        exit(EXIT_FAILURE);
+      }
+    }
+    show_collision_rect_ = false;
+    vaus_.shape.setTexture(&vaus_.textures.front());
+    vaus_.collision_rect.setFillColor(sf::Color::Transparent);
+    vaus_.collision_rect.setOutlineColor(sf::Color::Green);
+    vaus_.collision_rect.setOutlineThickness(-1.f);
+    resetVaus();
+  }
 
 ////////////////////////////////////////////////
 void Player::reset() {
@@ -140,10 +176,12 @@ void Player::reset() {
 }
 
 void Player::resetVaus() {
-  vaus_.shape.setFillColor(kVausDefaultColor_);
   vaus_.shape.setSize(kVausDefaultSize_);
   vaus_.shape.setPosition(kVausDefaultPosition_);
   vaus_.speed = kVausDefaultSpeed_;
+  vaus_.collision_rect.setSize(kVausDefaultCollisionRect_);
+  vaus_.collision_rect.setPosition(kVausDefaultPosition_);
+  vaus_anim_frame_ = 0.f;
 }
 
 void Player::resizeVaus() {
@@ -173,13 +211,26 @@ void Player::setPowerUp(PowerUpTypes type) {
 }
 
 void Player::shortenVaus() {
-  if (vaus_.shape.getSize().x > kVausDefaultSize_.x) {
+  if (vaus_.collision_rect.getSize().x > kVausDefaultCollisionRect_.x) {
+    vaus_.collision_rect.move(-growth_ / 2.f, 0.f);
     vaus_.shape.move(-growth_ / 2.f, 0.f);
+    vaus_.collision_rect.setSize(sf::Vector2f(
+      vaus_.collision_rect.getSize().x + growth_,
+      vaus_.collision_rect.getSize().y
+    ));
     vaus_.shape.setSize(sf::Vector2f(
       vaus_.shape.getSize().x + growth_,
       vaus_.shape.getSize().y
     ));
   } else {
     growth_ = 0.f;
+  }
+}
+
+void Player::updateVausAnim() {
+  if (vaus_anim_clk_.getElapsedTime().asSeconds() >= kVausAnimSpeed_) {
+    vaus_anim_clk_.restart();
+    vaus_anim_frame_ < kVausAnimFrames_ - 1u ? ++vaus_anim_frame_ : vaus_anim_frame_ = 0u;
+    vaus_.shape.setTexture(&vaus_.textures.at(vaus_anim_frame_));
   }
 }

@@ -1,7 +1,5 @@
 #include "level.h"
 
-/* Image path */
-const std::string Level::kImagePath_ = "assets/img/";
 /* Borders VertexArrays and Textures */
 sf::VertexArray Level::border_left_;
 sf::Texture     Level::border_left_tx_;
@@ -139,9 +137,6 @@ void Level::decreaseResistance(sf::Vector2u pos) {
 /////////////////////////////////////////////////
 void Level::draw(sf::RenderWindow& window) {
   window.draw(background_va_, &background_tx_);
-  window.draw(border_left_, &border_left_tx_);
-  window.draw(border_right_, &border_right_tx_);
-  window.draw(border_top_, &border_top_tx_);
   for (auto i = 0u; i < kLevelMaxRows; ++i) {
     for (auto j = 0u; j < kLevelMaxColumns; ++j) {
       if (bricks_[i][j].active) {
@@ -153,10 +148,16 @@ void Level::draw(sf::RenderWindow& window) {
     }
   }
   if (power_up_.active) window.draw(power_up_.shape);
-  if (break_active_) window.draw(break_shape_);
   for (const auto& laser: lasers_) {
     if (laser.active) window.draw(laser.shape);
   }
+}
+
+void Level::drawBorders(sf::RenderWindow& window) {
+  window.draw(border_left_, &border_left_tx_);
+  window.draw(border_right_, &border_right_tx_);
+  window.draw(border_top_, &border_top_tx_);
+  if (break_active_) window.draw(break_shape_);
 }
 
 ///
@@ -230,29 +231,29 @@ void Level::init(Player* ptp) {
 void Level::initBackground() {
   switch (background_) {
     case Background::Moai:
-      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_moai.png")) {
+      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_moai.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::RedCircuit:
-      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_circuit_red.png")) {
+      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_circuit_red.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::BlueCircuit:
-      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_circuit_blue.png")) {
+      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_circuit_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Green:
-      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_green.png")) {
+      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_green.png")) {
         exit(EXIT_FAILURE);
       }
       break;
     case Background::Blue:
       [[fallthrough]];
     default:
-      if (!background_tx_.loadFromFile(kImagePath_ + "backgrounds/bg_blue.png")) {
+      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_blue.png")) {
         exit(EXIT_FAILURE);
       }
       break;
@@ -274,7 +275,7 @@ void Level::initBackground() {
 ///
 void Level::initGraphics() {
   /* Left border */
-  if (!border_left_tx_.loadFromFile(kImagePath_ + "borders/border_left.png")) {
+  if (!border_left_tx_.loadFromFile(k::kImagePath + "borders/border_left.png")) {
     exit(EXIT_FAILURE);
   }
   border_left_.resize(4);
@@ -288,7 +289,7 @@ void Level::initGraphics() {
   border_left_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
   border_left_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
   /* Right border */
-  if (!border_right_tx_.loadFromFile(kImagePath_ + "borders/border_right.png")) {
+  if (!border_right_tx_.loadFromFile(k::kImagePath + "borders/border_right.png")) {
     exit(EXIT_FAILURE);
   }
   border_right_.resize(4);
@@ -302,7 +303,7 @@ void Level::initGraphics() {
   border_right_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
   border_right_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
   /* Top border */
-  if (!border_top_tx_.loadFromFile(kImagePath_ + "borders/border_top.png")) {
+  if (!border_top_tx_.loadFromFile(k::kImagePath + "borders/border_top.png")) {
     exit(EXIT_FAILURE);
   }
   border_top_.resize(4);
@@ -316,28 +317,27 @@ void Level::initGraphics() {
   border_top_[2].texCoords = sf::Vector2f(kScreenWidth, kGUIBorderThickness);
   border_top_[3].texCoords = sf::Vector2f(         0.f, kGUIBorderThickness);
   /* Power Ups */
-  const auto pwr_path = kImagePath_ + "powerups/";
-  const auto ext = ".png";
+  const auto pwr_path = k::kImagePath + "powerups/";
   for (unsigned int i = 0; i < kPowerUpFrames_; ++i) {
-    if (!break_tx_.at(i).loadFromFile(pwr_path + "break/" + std::to_string(i) + ext)) {
+    if (!break_tx_.at(i).loadFromFile(pwr_path + "break/" + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
     }
-    if (!catch_tx_.at(i).loadFromFile(pwr_path + "catch/" + std::to_string(i) + ext)) {
+    if (!catch_tx_.at(i).loadFromFile(pwr_path + "catch/" + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
     }
-    if (!disruption_tx_.at(i).loadFromFile(pwr_path + "disruption/" + std::to_string(i) + ext)) {
+    if (!disruption_tx_.at(i).loadFromFile(pwr_path + "disruption/" + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
     }
-    if (!enlarge_tx_.at(i).loadFromFile(pwr_path + "enlarge/" + std::to_string(i) + ext)) {
+    if (!enlarge_tx_.at(i).loadFromFile(pwr_path + "enlarge/" + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
     }
-    if (!laser_tx_.at(i).loadFromFile(pwr_path + "laser/" + std::to_string(i) + ext)) {
+    if (!laser_tx_.at(i).loadFromFile(pwr_path + "laser/" + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
     }
-    if (!player_tx_.at(i).loadFromFile(pwr_path + "player/" + std::to_string(i) + ext)) {
+    if (!player_tx_.at(i).loadFromFile(pwr_path + "player/" + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
     }
-    if (!slow_tx_.at(i).loadFromFile(pwr_path + "slow/" + std::to_string(i) + ext)) {
+    if (!slow_tx_.at(i).loadFromFile(pwr_path + "slow/" + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
     }
   }
@@ -503,10 +503,9 @@ void Level::loadBreakTx() {
   break_shape_.setSize(kBreakSize_);
   break_shape_.setOrigin(0.f, break_shape_.getSize().y / 2.f);
   break_shape_.setPosition(kBreakPosition_);
-  const auto path = kImagePath_ + "effects/break/";
-  const auto ext = ".png";
+  const auto path = k::kImagePath + "effects/break/";
   for (auto i = 0u; i < kBreakAnimFrames_; ++i) {
-    if (!break_effect_tx_.at(i).loadFromFile(path + std::to_string(i) + ext)) {
+    if (!break_effect_tx_.at(i).loadFromFile(path + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
     }
   }
@@ -514,7 +513,7 @@ void Level::loadBreakTx() {
 }
 
 void Level::loadLaserTx() {
-  const auto path = kImagePath_ + "effects/laser/laser.png";
+  const auto path = k::kImagePath + "effects/laser/laser.png";
   if (!laser_effect_tx_.loadFromFile(path)) {
     exit(EXIT_FAILURE);
   }

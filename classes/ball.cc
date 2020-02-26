@@ -104,13 +104,13 @@ bool Ball::checkBorderCollision(BallShape& ball) {
 
 bool Ball::checkVausCollision(BallShape& ball, const Vaus& vaus) {
   bool collision = false;
-  if (vaus.shape.getGlobalBounds().intersects(ball.shape.getGlobalBounds())) {
+  if (vaus.collision_rect.getGlobalBounds().intersects(ball.shape.getGlobalBounds())) {
     const auto current_radius = ball.shape.getRadius();
     const auto ball_x = ball.shape.getPosition().x;
     const auto ball_y = ball.shape.getPosition().y;
-    const auto vaus_x = vaus.shape.getPosition().x;
-    const auto vaus_y = vaus.shape.getPosition().y;
-    const auto vaus_x_size = vaus.shape.getSize().x;
+    const auto vaus_x = vaus.collision_rect.getPosition().x;
+    const auto vaus_y = vaus.collision_rect.getPosition().y;
+    const auto vaus_x_size = vaus.collision_rect.getSize().x;
     collision = true;
     if (ball.last_position.x < vaus_x) {
       /* left hit */

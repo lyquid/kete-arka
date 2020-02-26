@@ -1,7 +1,7 @@
 #ifndef KETE_ARKA_CONFIG_H_
 #define KETE_ARKA_CONFIG_H_
 
-#include <string> // std::string
+#include <string>
 #include <SFML/Graphics.hpp>
 
 // app utils
@@ -13,6 +13,12 @@ enum Collisions {
   TopBrick, BottomBrick, LeftBrick, RightBrick };
 enum ExecutionModes { Normal, Debug, LogFile };
 enum GameStates { Title, Menu, LevelSelection, Playing, Paused, LevelCompleted, GameCompleted, GameOver, Quit };
+
+namespace k {
+  /* Image stuff */
+  constexpr auto kImageExt = ".png";
+  const std::string kImagePath = "assets/img/";
+}
 
 // app default settings
 const ExecutionModes  kExecutionMode  = Debug;

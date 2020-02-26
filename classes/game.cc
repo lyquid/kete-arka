@@ -91,6 +91,11 @@ void Game::handleKeyEvents(const sf::Event key_event) {
             current_level_->complete(); // cheat!
           }
           break;
+        case sf::Keyboard::V:
+          if (kExecutionMode != Normal) {
+            player_.toggleCollisionRect();
+          }
+          break;
         case sf::Keyboard::Escape:
         case sf::Keyboard::P:
         case sf::Keyboard::Pause:
@@ -259,15 +264,18 @@ void Game::render() {
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
       player_.drawVaus(window_);
+      current_level_->drawBorders(window_);
       break;
     case Playing:
       current_level_->draw(window_);
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
       player_.drawVaus(window_);
+      current_level_->drawBorders(window_);
       break;
     case LevelCompleted:
       current_level_->draw(window_);
+      current_level_->drawBorders(window_);
       gui_.drawLevelCompletedScreen(window_);
       break;
     case GameCompleted:
@@ -302,7 +310,7 @@ void Game::update() {
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
          || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-          const bool crash = !player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
+          const bool crash = player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
           if (crash && current_level_->isBreakActive()) current_level_->complete();
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
@@ -322,6 +330,8 @@ void Game::update() {
         }
         /* Level */
         current_level_->update(delta_time);
+        /* Vaus animation */
+        player_.updateVausAnim();
       }
       break;
   }

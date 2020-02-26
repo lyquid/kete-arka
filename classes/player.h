@@ -10,22 +10,13 @@
 struct Vaus {
   sf::RectangleShape shape;
   float speed;
+  std::vector<sf::Texture> textures;
+  sf::RectangleShape collision_rect;
 };
 
 class Player {
  public:
-  Player():
-    dead_(false),
-    lives_(kPlayerDefaultLives_),
-    score_(0u),
-    pwrup_active_(false),
-    growth_(0.f),
-    pwrup_type_(PowerUpTypes::Nil) {
-      vaus_.shape.setFillColor(kVausDefaultColor_);
-      vaus_.shape.setSize(kVausDefaultSize_);
-      vaus_.shape.setPosition(kVausDefaultPosition_);
-      vaus_.speed = kVausDefaultSpeed_;
-    }
+  Player();
   ~Player() {}
   void decreaseLives(unsigned int decrease_by = 1u);
   unsigned int getLives() { return lives_; };
@@ -43,6 +34,8 @@ class Player {
   float getVausSpeed() { return vaus_.speed; };
   bool moveVaus(const sf::Vector2f& offset);
   void resetVaus();
+  void toggleCollisionRect() { show_collision_rect_ = !show_collision_rect_; };
+  void updateVausAnim();
   /* Power-ups stuff */
   void deactivatePowerUp();
   PowerUpTypes getPowerUp() { return pwrup_type_; };
@@ -61,10 +54,15 @@ class Player {
   static Vaus vaus_;
   static const sf::Vector2f kVausDefaultSize_;
   static const sf::Vector2f kVausDefaultPosition_;
+  static const sf::Vector2f kVausDefaultCollisionRect_;
   static const float kVausDefaultSpeed_;
   static const float kVausMaxLength_;
   static const float kVausGrowth_;
-  static const sf::Color kVausDefaultColor_; // to delete some day
+  static const unsigned int kVausAnimFrames_;
+  static const float kVausAnimSpeed_;
+  static unsigned int vaus_anim_frame_;
+  static sf::Clock vaus_anim_clk_;
+  static bool show_collision_rect_;
   /* Power-ups stuff */
   void enlargeVaus();
   void shortenVaus();
