@@ -156,7 +156,7 @@ void Game::handlePowerUps() {
   if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
   if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
   if (player_.isPowerUpActive()) player_.deactivatePowerUp();
-  // switch (PowerUpTypes::Enlarge) { /* QoL purposes */
+  // switch (PowerUpTypes::Laser) { /* QoL purposes */
   switch (pwrup) {
     case PowerUpTypes::Break:
       current_level_->setPowerUp(PowerUpTypes::Break);
@@ -172,6 +172,7 @@ void Game::handlePowerUps() {
       break;
     case PowerUpTypes::Laser:
       current_level_->setPowerUp(PowerUpTypes::Laser);
+      player_.setPowerUp(PowerUpTypes::Laser);
       break;
     case PowerUpTypes::Player:
       player_.increaseLives();

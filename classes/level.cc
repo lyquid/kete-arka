@@ -171,13 +171,14 @@ bool Level::fireLaser() {
   && lasers_on_screen_ < kMaxLasersOnScreen_) {
     for (auto& laser: lasers_) {
       if (!laser.active) {
-        const float offset = 10.f;
+        constexpr float offset_left = 11.f;
+        constexpr float offset_right = 16.f;
         sf::Vector2f pos;
         pos.y = player_->getVausPosition().y;
         if (laser_flip_) {
-          pos.x = player_->getVausPosition().x + offset;
+          pos.x = player_->getVausPosition().x + offset_left;
         } else {
-          pos.x = player_->getVausPosition().x + player_->getVausSize().x - kLaserSize_.x - offset;
+          pos.x = player_->getVausPosition().x + player_->getVausSize().x - kLaserSize_.x - offset_right;
         }
         laser.shape.setPosition(pos);
         laser.active = true;

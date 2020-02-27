@@ -14,25 +14,31 @@ const float        Player::kVausAnimSpeed_            = 0.10f;
 unsigned int       Player::vaus_anim_frame_;
 sf::Clock          Player::vaus_anim_clk_;
 bool               Player::show_collision_rect_;
+/* Laser Vaus */
+const unsigned int Player::kVausLaserAnimFrames_ = 6u;
+const float        Player::kVausLaserAnimSpeed_  = 0.20f;
+unsigned int       Player::vaus_laser_anim_frame_;
 
 void Player::deactivatePowerUp() {
   switch (pwrup_type_) {
     case PowerUpTypes::Enlarge:
       growth_ = -kVausGrowth_;
-      pwrup_type_ = PowerUpTypes::Nil;
-      pwrup_active_ = false;
+      break;
+    case PowerUpTypes::Laser:
+      deactivateLaserVaus();
       break;
     case PowerUpTypes::Nil:
     case PowerUpTypes::Break:
     case PowerUpTypes::Catch:
     case PowerUpTypes::Disruption:
-    case PowerUpTypes::Laser:
     case PowerUpTypes::Player:
     case PowerUpTypes::Slow:
     default:
       // print something horrible to the logger
       break;
   }
+  pwrup_type_ = PowerUpTypes::Nil;
+  pwrup_active_ = false;
 }
 
 /////////////////////////////////////////////////
@@ -157,6 +163,13 @@ Player::Player():
         exit(EXIT_FAILURE);
       }
     }
+    vaus_.laser_textures.resize(kVausLaserAnimFrames_);
+    const auto laser_path = k::kImagePath + "vaus/laser/";
+    for (auto i = 0u; i < kVausLaserAnimFrames_; ++i) {
+      if (!vaus_.laser_textures.at(i).loadFromFile(laser_path + std::to_string(i) + k::kImageExt)) {
+        exit(EXIT_FAILURE);
+      }
+    }
     show_collision_rect_ = false;
     vaus_.shape.setTexture(&vaus_.textures.front());
     vaus_.collision_rect.setFillColor(sf::Color::Transparent);
@@ -181,7 +194,8 @@ void Player::resetVaus() {
   vaus_.speed = kVausDefaultSpeed_;
   vaus_.collision_rect.setSize(kVausDefaultCollisionRect_);
   vaus_.collision_rect.setPosition(kVausDefaultPosition_);
-  vaus_anim_frame_ = 0.f;
+  vaus_anim_frame_ = 0u;
+  vaus_laser_anim_frame_ = 0u;
 }
 
 void Player::resizeVaus() {
@@ -197,11 +211,15 @@ void Player::setPowerUp(PowerUpTypes type) {
       pwrup_active_ = true;
       break;
     }
+    case PowerUpTypes::Laser:
+      pwrup_type_ = type;
+      pwrup_active_ = true;
+      activateLaserVaus();
+      break;
     case PowerUpTypes::Nil:
     case PowerUpTypes::Break:
     case PowerUpTypes::Catch:
     case PowerUpTypes::Disruption:
-    case PowerUpTypes::Laser:
     case PowerUpTypes::Player:
     case PowerUpTypes::Slow:
     default:
@@ -228,9 +246,29 @@ void Player::shortenVaus() {
 }
 
 void Player::updateVausAnim() {
-  if (vaus_anim_clk_.getElapsedTime().asSeconds() >= kVausAnimSpeed_) {
-    vaus_anim_clk_.restart();
-    vaus_anim_frame_ < kVausAnimFrames_ - 1u ? ++vaus_anim_frame_ : vaus_anim_frame_ = 0u;
-    vaus_.shape.setTexture(&vaus_.textures.at(vaus_anim_frame_));
+  switch (pwrup_type_) {
+    case PowerUpTypes::Laser:
+      // THIS IS PROVISIONAL
+      if (vaus_anim_clk_.getElapsedTime().asSeconds() >= kVausLaserAnimSpeed_) {
+        vaus_anim_clk_.restart();
+        vaus_laser_anim_frame_ < kVausLaserAnimFrames_ - 1u ? ++vaus_laser_anim_frame_ : vaus_laser_anim_frame_ = 0u;
+        vaus_.shape.setTexture(&vaus_.laser_textures.at(vaus_laser_anim_frame_));
+      }
+    break;
+    default:
+      if (vaus_anim_clk_.getElapsedTime().asSeconds() >= kVausAnimSpeed_) {
+        vaus_anim_clk_.restart();
+        vaus_anim_frame_ < kVausAnimFrames_ - 1u ? ++vaus_anim_frame_ : vaus_anim_frame_ = 0u;
+        vaus_.shape.setTexture(&vaus_.textures.at(vaus_anim_frame_));
+      }
+    break;
   }
+}
+
+void Player::activateLaserVaus() {
+  vaus_.shape.setTexture(&vaus_.laser_textures.front());
+}
+
+void Player::deactivateLaserVaus() {
+  vaus_.shape.setTexture(&vaus_.textures.front());
 }

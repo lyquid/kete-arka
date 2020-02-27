@@ -9,9 +9,10 @@
 
 struct Vaus {
   sf::RectangleShape shape;
-  float speed;
-  std::vector<sf::Texture> textures;
   sf::RectangleShape collision_rect;
+  float speed;
+  std::vector<sf::Texture> laser_textures;
+  std::vector<sf::Texture> textures;
 };
 
 class Player {
@@ -63,6 +64,12 @@ class Player {
   static unsigned int vaus_anim_frame_;
   static sf::Clock vaus_anim_clk_;
   static bool show_collision_rect_;
+  /* Laser Vaus */
+  void activateLaserVaus();
+  void deactivateLaserVaus();
+  static const unsigned int kVausLaserAnimFrames_;
+  static const float kVausLaserAnimSpeed_;
+  static unsigned int vaus_laser_anim_frame_;
   /* Power-ups stuff */
   void enlargeVaus();
   void shortenVaus();
