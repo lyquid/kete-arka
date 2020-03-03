@@ -18,7 +18,7 @@ void Game::handleEvents() {
   }
 }
 
-void Game::handleKeyEvents(const sf::Event key_event) {
+void Game::handleKeyEvents(const sf::Event& key_event) {
   switch (state_) {
     case k::GameStates::Title:
       switch (key_event.key.code) {
@@ -223,12 +223,8 @@ Game::Game():
 }
 
 void Game::initLevelsMenu() {
-  unsigned int lvl_num = 1u;
-  for (auto& level: levels_) {
-    level.setNumber(lvl_num);
-    gui_.setLevelInfo(lvl_num - 1u, lvl_num, level.getName());
-    ++lvl_num;
-  }
+  for (const auto& level: levels_)
+    gui_.setLevelInfo(level.getNumber() - 1u, level.getNumber(), level.getName());
 }
 
 bool Game::loadLevel(unsigned int lvl_num) {

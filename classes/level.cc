@@ -455,6 +455,7 @@ void Level::initBricks() {
 void Level::setLevels(std::vector<Level>& levels) {
   unsigned int index = 0u;
   for (auto& level: levels) {
+    level.number_ = index + 1u;
     level.name_ = k::kProtoLevels[index].name;
     level.background_ = k::kProtoLevels[index].background;
     for (auto i = 0u; i < k::kLevelMaxRows * k::kLevelMaxColumns; ++i) {

@@ -23,7 +23,7 @@ class Game {
 
  private:
   void clean();
-  void handleKeyEvents(const sf::Event key_event);
+  void handleKeyEvents(const sf::Event& key_event);
   void handlePowerUps();
   void initLevelsMenu();
   bool loadLevel(unsigned int lvl_num);
