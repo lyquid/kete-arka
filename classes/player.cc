@@ -2,10 +2,10 @@
 
 const unsigned int Player::kPlayerDefaultLives_ = 3u;
 /* Vaus stuff */
-Vaus Player::vaus_;
+k::Vaus Player::vaus_;
 const sf::Vector2f Player::kVausDefaultSize_          = sf::Vector2f(95.f, 28.f);
 const sf::Vector2f Player::kVausDefaultCollisionRect_ = sf::Vector2f(kVausDefaultSize_.x - 10.f, kVausDefaultSize_.y);
-const sf::Vector2f Player::kVausDefaultPosition_      = sf::Vector2f((kScreenWidth - kVausDefaultCollisionRect_.x) / 2.f, kScreenHeight * 0.9f);
+const sf::Vector2f Player::kVausDefaultPosition_      = sf::Vector2f((k::kScreenWidth - kVausDefaultCollisionRect_.x) / 2.f, k::kScreenHeight * 0.9f);
 const float        Player::kVausDefaultSpeed_         = 500.f;
 const float        Player::kVausMaxLength_            = kVausDefaultSize_.x * 1.66f;
 const float        Player::kVausGrowth_               = 0.5f;
@@ -21,23 +21,23 @@ unsigned int       Player::vaus_laser_anim_frame_;
 
 void Player::deactivatePowerUp() {
   switch (pwrup_type_) {
-    case PowerUpTypes::Enlarge:
+    case k::PowerUpTypes::Enlarge:
       growth_ = -kVausGrowth_;
       break;
-    case PowerUpTypes::Laser:
+    case k::PowerUpTypes::Laser:
       deactivateLaserVaus();
       break;
-    case PowerUpTypes::Nil:
-    case PowerUpTypes::Break:
-    case PowerUpTypes::Catch:
-    case PowerUpTypes::Disruption:
-    case PowerUpTypes::Player:
-    case PowerUpTypes::Slow:
+    case k::PowerUpTypes::Nil:
+    case k::PowerUpTypes::Break:
+    case k::PowerUpTypes::Catch:
+    case k::PowerUpTypes::Disruption:
+    case k::PowerUpTypes::Player:
+    case k::PowerUpTypes::Slow:
     default:
       // print something horrible to the logger
       break;
   }
-  pwrup_type_ = PowerUpTypes::Nil;
+  pwrup_type_ = k::PowerUpTypes::Nil;
   pwrup_active_ = false;
 }
 
@@ -82,10 +82,10 @@ void Player::enlargeVaus() {
   } else {
     const auto displ = growth_ / 2.f;
     auto new_x = displ;
-    if (vaus_.collision_rect.getPosition().x - displ < kGUIBorderThickness) {
+    if (vaus_.collision_rect.getPosition().x - displ < k::kGUIBorderThickness) {
       new_x = 0.f;
     }
-    if (vaus_.collision_rect.getPosition().x + vaus_colx - displ > kScreenWidth - kGUIBorderThickness) {
+    if (vaus_.collision_rect.getPosition().x + vaus_colx - displ > k::kScreenWidth - k::kGUIBorderThickness) {
       new_x = growth_;
     }
     vaus_.collision_rect.move(-new_x, 0.f);
@@ -137,12 +137,12 @@ bool Player::moveVaus(const sf::Vector2f& offset) {
   bool lateral_hit = false;
   vaus_.collision_rect.move(offset);
   /* Left hit */
-  if (vaus_.collision_rect.getPosition().x < kGUIBorderThickness) {
-    vaus_.collision_rect.setPosition(kGUIBorderThickness, vaus_.collision_rect.getPosition().y);
+  if (vaus_.collision_rect.getPosition().x < k::kGUIBorderThickness) {
+    vaus_.collision_rect.setPosition(k::kGUIBorderThickness, vaus_.collision_rect.getPosition().y);
     lateral_hit = true;
   /* Right hit */
-  } else if (vaus_.collision_rect.getPosition().x + vaus_.collision_rect.getSize().x > kScreenWidth - kGUIBorderThickness) {
-    vaus_.collision_rect.setPosition(kScreenWidth - kGUIBorderThickness - vaus_.collision_rect.getSize().x, vaus_.collision_rect.getPosition().y);
+  } else if (vaus_.collision_rect.getPosition().x + vaus_.collision_rect.getSize().x > k::kScreenWidth - k::kGUIBorderThickness) {
+    vaus_.collision_rect.setPosition(k::kScreenWidth - k::kGUIBorderThickness - vaus_.collision_rect.getSize().x, vaus_.collision_rect.getPosition().y);
     lateral_hit = true;
   }
   vaus_.shape.setPosition(vaus_.collision_rect.getPosition());
@@ -155,16 +155,16 @@ Player::Player():
   score_(0u),
   pwrup_active_(false),
   growth_(0.f),
-  pwrup_type_(PowerUpTypes::Nil) {
+  pwrup_type_(k::PowerUpTypes::Nil) {
     vaus_.textures.resize(kVausAnimFrames_);
-    const auto path = k::kImagePath + "vaus/";
+    const auto path = k::kImagePath + std::string("vaus/");
     for (auto i = 0u; i < kVausAnimFrames_; ++i) {
       if (!vaus_.textures.at(i).loadFromFile(path + std::to_string(i) + k::kImageExt)) {
         exit(EXIT_FAILURE);
       }
     }
     vaus_.laser_textures.resize(kVausLaserAnimFrames_);
-    const auto laser_path = k::kImagePath + "vaus/laser/";
+    const auto laser_path = k::kImagePath + std::string("vaus/laser/");
     for (auto i = 0u; i < kVausLaserAnimFrames_; ++i) {
       if (!vaus_.laser_textures.at(i).loadFromFile(laser_path + std::to_string(i) + k::kImageExt)) {
         exit(EXIT_FAILURE);
@@ -185,7 +185,7 @@ void Player::reset() {
   gui_->setLivesText(lives_);
   score_ = 0u;
   pwrup_active_ = false;
-  pwrup_type_ = PowerUpTypes::Nil;
+  pwrup_type_ = k::PowerUpTypes::Nil;
 }
 
 void Player::resetVaus() {
@@ -203,25 +203,25 @@ void Player::resizeVaus() {
   else shortenVaus();
 }
 
-void Player::setPowerUp(PowerUpTypes type) {
+void Player::setPowerUp(k::PowerUpTypes type) {
   switch (type) {
-    case PowerUpTypes::Enlarge: {
+    case k::PowerUpTypes::Enlarge: {
       growth_ = kVausGrowth_;
       pwrup_type_ = type;
       pwrup_active_ = true;
       break;
     }
-    case PowerUpTypes::Laser:
+    case k::PowerUpTypes::Laser:
       pwrup_type_ = type;
       pwrup_active_ = true;
       activateLaserVaus();
       break;
-    case PowerUpTypes::Nil:
-    case PowerUpTypes::Break:
-    case PowerUpTypes::Catch:
-    case PowerUpTypes::Disruption:
-    case PowerUpTypes::Player:
-    case PowerUpTypes::Slow:
+    case k::PowerUpTypes::Nil:
+    case k::PowerUpTypes::Break:
+    case k::PowerUpTypes::Catch:
+    case k::PowerUpTypes::Disruption:
+    case k::PowerUpTypes::Player:
+    case k::PowerUpTypes::Slow:
     default:
       // print something horrible to the logger
       break;
@@ -247,7 +247,7 @@ void Player::shortenVaus() {
 
 void Player::updateVausAnim() {
   switch (pwrup_type_) {
-    case PowerUpTypes::Laser:
+    case k::PowerUpTypes::Laser:
       // THIS IS PROVISIONAL
       if (vaus_anim_clk_.getElapsedTime().asSeconds() >= kVausLaserAnimSpeed_) {
         vaus_anim_clk_.restart();

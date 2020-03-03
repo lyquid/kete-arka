@@ -1,5 +1,9 @@
 #include "gui.h"
 
+const sf::Color GUI::kGUIDefaultFontColor_         = sf::Color::White;
+const sf::Color GUI::kGUIDefaultSelectedFontColor_ = sf::Color::Black;
+const sf::Color GUI::kGUIDefaultFontOutlineColor_  = sf::Color::Black;
+
 ///
 void GUI::drawGameCompleted(sf::RenderWindow& window) {
   window.draw(game_completed_);
@@ -43,7 +47,7 @@ void GUI::drawLevelCompletedScreen(sf::RenderWindow& window) {
   window.draw(level_completed_title_);
   window.draw(level_completed_name_);
   window.draw(total_score_text_);
-  if (current_level_ < kMaxLevels) {
+  if (current_level_ < k::kMaxLevels) {
     window.draw(level_completed_next_);
     window.draw(level_completed_next_name_);
   }
@@ -63,7 +67,7 @@ void GUI::drawLevelCompletedScreen(sf::RenderWindow& window) {
 void GUI::drawLevelSelection(sf::RenderWindow& window) {
   window.draw(level_select_title_text_);
   window.draw(level_selected_shape_);
-  for (auto i = 0u; i < kMaxLevels; ++i) {
+  for (auto i = 0u; i < k::kMaxLevels; ++i) {
     window.draw(level_info_texts_[i]);
   }
   window.draw(level_select_keys_);
@@ -126,64 +130,64 @@ void GUI::drawTitleScreen(sf::RenderWindow& window) {
 /// that need to be called.
 /////////////////////////////////////////////////
 void GUI::init(const sf::Font& font) {
-  constexpr int halfScreenW = kScreenWidth / 2;
+  constexpr auto halfScreenW = k::kScreenWidth / 2u;
   // main title
-  initText(title_text_, kGameTitle, font, kGUIGameTitleFontSize, kGUIDefaultFontColor, BothAxis);
-  title_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.25f);
+  initText(title_text_, k::kGameTitle, font, kGUIGameTitleFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  title_text_.setPosition(halfScreenW, k::kScreenHeight * 0.25f);
   // press start
-  initText(press_start_text_, kPressStartText, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
-  press_start_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
+  initText(press_start_text_, kPressStartText_, font, kGUIPressStartTextFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  press_start_text_.setPosition(halfScreenW, k::kScreenHeight * 0.75f);
   // pause
-  initText(pause_text_, kPauseText, font, kGUIPauseTextFontSize, kGUIDefaultFontColor, BothAxis);
-  pause_text_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
+  initText(pause_text_, kPauseText_, font, kGUIPauseTextFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  pause_text_.setPosition(halfScreenW, k::kScreenHeight / 2.f);
   // game over
-  initText(game_over_text_, kGameOverText, font, kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
-  game_over_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.33f);
+  initText(game_over_text_, kGameOverText_, font, kGUIGameOverFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  game_over_text_.setPosition(halfScreenW, k::kScreenHeight * 0.33f);
   // press any key
-  initText(press_any_key_text_, kContinueText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
-  press_any_key_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.75f);
+  initText(press_any_key_text_, kContinueText_, font, kGUITextFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  press_any_key_text_.setPosition(halfScreenW, k::kScreenHeight * 0.75f);
   // MENU - level selection
-  initText(menu_level_text_, kMenuLevelText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor, Horizontal);
-  menu_level_text_.setPosition(halfScreenW, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 2.f);
+  initText(menu_level_text_, kMenuLevelText_, font, kGUIMenuItemFontSize_, kGUIDefaultFontColor_, TextCenter::Horizontal);
+  menu_level_text_.setPosition(halfScreenW, k::kScreenHeight * 0.66f + kGUIMenuItemFontSize_ * 2.f);
   // MENU - start
-  initText(menu_start_text_, kMenuStartText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor);
-  menu_start_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, (float)kScreenHeight * 0.66f);
+  initText(menu_start_text_, kMenuStartText_, font, kGUIMenuItemFontSize_, kGUIDefaultFontColor_);
+  menu_start_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, k::kScreenHeight * 0.66f);
   // MENU - exit
-  initText(menu_quit_text_, kMenuQuitText, font, kGUIMenuItemFontSize, kGUIDefaultFontColor);
-  menu_quit_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, (float)kScreenHeight * 0.66f + kGUIMenuItemFontSize * 4.f);
+  initText(menu_quit_text_, kMenuQuitText_, font, kGUIMenuItemFontSize_, kGUIDefaultFontColor_);
+  menu_quit_text_.setPosition(menu_level_text_.getGlobalBounds().left - 4.f, k::kScreenHeight * 0.66f + kGUIMenuItemFontSize_ * 4.f);
   // GUI - lives
-  initText(gui_lives_text_, kGUILivesText + "", font, kGUITextFontSize, kGUIDefaultFontColor, TopLeft);
-  gui_lives_text_.setPosition(kGUIDefaultMargin + kGUIBorderThickness, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
+  initText(gui_lives_text_, kGUILivesText_ + std::string(""), font, kGUITextFontSize_, kGUIDefaultFontColor_, TextCenter::TopLeft);
+  gui_lives_text_.setPosition(kGUIDefaultMargin_ + k::kGUIBorderThickness, k::kScreenHeight - kGUIDefaultMargin_ - kGUITextFontSize_);
   // GUI - score
-  initText(gui_score_text_, kGUIScoreText + toString(0), font, kGUITextFontSize, kGUIDefaultFontColor, Horizontal);
-  gui_score_text_.setPosition(halfScreenW, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
+  initText(gui_score_text_, kGUIScoreText_ + std::to_string(0), font, kGUITextFontSize_, kGUIDefaultFontColor_, TextCenter::Horizontal);
+  gui_score_text_.setPosition(halfScreenW, k::kScreenHeight - kGUIDefaultMargin_ - kGUITextFontSize_);
   // GUI - level
-  initText(gui_level_text_, kGUILevelText, font, kGUITextFontSize, kGUIDefaultFontColor, TopRight);
-  gui_level_text_.setPosition((float)kScreenWidth - kGUIDefaultMargin - kGUIBorderThickness, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
+  initText(gui_level_text_, kGUILevelText_, font, kGUITextFontSize_, kGUIDefaultFontColor_, TextCenter::TopRight);
+  gui_level_text_.setPosition(k::kScreenWidth - kGUIDefaultMargin_ - k::kGUIBorderThickness, k::kScreenHeight - kGUIDefaultMargin_ - kGUITextFontSize_);
   // LEVEL SELECTION - levels list
   initLevelsList(font);
   // LEVEL SELECTION - key guide
-  initText(level_select_keys_, kLevelSelectKeys, font, kGUILevelSelectKeys, kGUIDefaultFontColor, Horizontal);
-  level_select_keys_.setPosition(halfScreenW, static_cast<int>(kScreenHeight - kGUILevelSelectKeys));
+  initText(level_select_keys_, kLevelSelectKeys_, font, kGUILevelSelectKeys_, kGUIDefaultFontColor_, TextCenter::Horizontal);
+  level_select_keys_.setPosition(halfScreenW, k::kScreenHeight - kGUILevelSelectKeys_);
   // LEVEL COMPLETED - Title
-  initText(level_completed_title_, kLevelCompletedText, font, kGUILevelCompletedFontSize, kGUIDefaultFontColor, BothAxis);
-  level_completed_title_.setPosition(halfScreenW, (float)kScreenHeight * 0.25f);
+  initText(level_completed_title_, kLevelCompletedText_, font, kGUILevelCompletedFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  level_completed_title_.setPosition(halfScreenW, k::kScreenHeight * 0.25f);
   // LEVEL COMPLETED - Level name
-  initText(level_completed_name_, "", font, kGUILevelCompletedFontSize, kGUIDefaultFontColor, BothAxis);
+  initText(level_completed_name_, "", font, kGUILevelCompletedFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
   // LEVEL COMPLETED - Total score
-  initText(total_score_text_, kTotalScoreText, font, kGUILevelCompletedFontSize, kGUIDefaultFontColor, BothAxis);
-  total_score_text_.setPosition(halfScreenW, kScreenHeight * 0.40f);
+  initText(total_score_text_, kTotalScoreText_, font, kGUILevelCompletedFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  total_score_text_.setPosition(halfScreenW, k::kScreenHeight * 0.40f);
   // LEVEL COMPLETED - Next
-  initText(level_completed_next_, kLevelCompletedNext, font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
-  level_completed_next_.setPosition(halfScreenW, (float)kScreenHeight * 0.70f);
+  initText(level_completed_next_, kLevelCompletedNext_, font, kGUIPressStartTextFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  level_completed_next_.setPosition(halfScreenW, k::kScreenHeight * 0.70f);
   // LEVEL COMPLETED - Next name
-  initText(level_completed_next_name_, "", font, kGUIPressStartTextFontSize, kGUIDefaultFontColor, BothAxis);
+  initText(level_completed_next_name_, "", font, kGUIPressStartTextFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
   // LEVEL COMPLETED - Continue
-  initText(level_completed_continue_, kPressSpaceText, font, kGUITextFontSize, kGUIDefaultFontColor, BothAxis);
-  level_completed_continue_.setPosition(halfScreenW, (float)kScreenHeight * 0.85f);
+  initText(level_completed_continue_, kPressSpaceText_, font, kGUITextFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  level_completed_continue_.setPosition(halfScreenW, k::kScreenHeight * 0.85f);
   // GAME COMPLETED
-  initText(game_completed_, kGameCompletedText, font,  kGUIGameOverFontSize, kGUIDefaultFontColor, BothAxis);
-  game_completed_.setPosition(halfScreenW, (float)kScreenHeight / 2.f);
+  initText(game_completed_, kGameCompletedText_, font,  kGUIGameOverFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+  game_completed_.setPosition(halfScreenW, k::kScreenHeight / 2.f);
 }
 
 /////////////////////////////////////////////////
@@ -197,17 +201,17 @@ void GUI::init(const sf::Font& font) {
 /// @todo: Fix the bug with the position of the texts.
 /////////////////////////////////////////////////
 void GUI::initLevelsList(const sf::Font& font) {
-  constexpr auto x = kScreenWidth / 2u;
-  auto y = kGUIDefaultMargin + kGUILevelSelectFontSize / 2u;
-  initText(level_select_title_text_, kLevelSelectText, font, kGUILevelSelectFontSize, kGUIDefaultFontColor, BothAxis);
+  constexpr auto x = k::kScreenWidth / 2u;
+  auto y = kGUIDefaultMargin_ + kGUILevelSelectFontSize_ / 2u;
+  initText(level_select_title_text_, kLevelSelectText_, font, kGUILevelSelectFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
   level_select_title_text_.setPosition(x, y);
-  for (auto i = 0u; i < kMaxLevels; ++i) {
-    y = (kGUIDefaultMargin + kGUILevelSelectKeys * 2u) + (kGUILevelSelectKeys * (i + 1u)) + (8u * i);
-    initText(level_info_texts_[i], level_info_[i].select_text, font, kGUILevelSelectKeys, kGUIDefaultFontColor, BothAxis);
+  for (auto i = 0u; i < k::kMaxLevels; ++i) {
+    y = (kGUIDefaultMargin_ + kGUILevelSelectKeys_ * 2u) + (kGUILevelSelectKeys_ * (i + 1u)) + (8u * i);
+    initText(level_info_texts_[i], level_info_[i].select_text, font, kGUILevelSelectKeys_, kGUIDefaultFontColor_, TextCenter::BothAxis);
     level_info_texts_[i].setPosition(x, y);
   }
   level_selected_ = 0u;
-  level_selected_shape_.setFillColor(kGUIDefaultFontColor);
+  level_selected_shape_.setFillColor(kGUIDefaultFontColor_);
   updateLevelSelectionShape();
 }
 
@@ -224,18 +228,18 @@ void GUI::initLevelsList(const sf::Font& font) {
 /// Sets the font, the size, the fill color and the string to be
 /// rendered for the text. Thereafter sets the origin of the text if needed.
 /////////////////////////////////////////////////
-void GUI::initText( sf::Text&             text, 
-                    const sf::String&     string_text, 
-                    const sf::Font&       font, 
-                    unsigned int          size,
-                    const sf::Color&      color, 
-                    TextCenterModes       mode ) {
+void GUI::initText( sf::Text&         text, 
+                    const sf::String& string_text, 
+                    const sf::Font&   font, 
+                    unsigned int      size,
+                    const sf::Color&  color, 
+                    TextCenter        mode ) {
   text.setFont(font);
   text.setCharacterSize(size);
   text.setFillColor(color);
   text.setString(string_text);
-  text.setOutlineColor(kGUIDefaultFontOutlineColor);
-  text.setOutlineThickness(kGUIDefaultFontOutline);
+  text.setOutlineColor(kGUIDefaultFontOutlineColor_);
+  text.setOutlineThickness(kGUIDefaultFontOutline_);
   setOrigin(text, mode);
 }
 
@@ -247,9 +251,9 @@ void GUI::initText( sf::Text&             text,
 void GUI::reset() {
   // setLivesText(kPlayerDefaultLives);
   // setLivesText(0);
-  gui_score_text_.setCharacterSize(kGUITextFontSize);
+  gui_score_text_.setCharacterSize(kGUITextFontSize_);
   setScoreText(0u);
-  gui_score_text_.setPosition(kScreenWidth / 2.f, kScreenHeight - kGUIDefaultMargin - kGUITextFontSize);
+  gui_score_text_.setPosition(k::kScreenWidth / 2.f, k::kScreenHeight - kGUIDefaultMargin_ - kGUITextFontSize_);
 }
 
 /////////////////////////////////////////////////
@@ -260,9 +264,9 @@ void GUI::reset() {
 /// Also updates the selection shape by calling updateLevelSelectionShape().
 /////////////////////////////////////////////////
 void GUI::selectNextLevel() {
-  if (level_selected_ >= kMaxLevels - 1u) {
+  if (level_selected_ >= k::kMaxLevels - 1u) {
     level_selected_ = 0u;
-    updateLevelSelectionShape(kMaxLevels - 1u);
+    updateLevelSelectionShape(k::kMaxLevels - 1u);
   } else {
     ++level_selected_;
     updateLevelSelectionShape(level_selected_ - 1u);
@@ -278,7 +282,7 @@ void GUI::selectNextLevel() {
 /////////////////////////////////////////////////
 void GUI::selectPreviousLevel() {
   if (level_selected_ <= 0u) {
-    level_selected_ = kMaxLevels - 1u;
+    level_selected_ = k::kMaxLevels - 1u;
     updateLevelSelectionShape(0u);
   } else {
     --level_selected_;
@@ -293,8 +297,8 @@ void GUI::selectPreviousLevel() {
 /// and the text position to the middle of the screen.
 /////////////////////////////////////////////////
 void GUI::setFinalScoreText(unsigned long long int score) {
-  total_score_text_.setString(kTotalScoreText + toString(score));
-  setOrigin(total_score_text_, BothAxis);
+  total_score_text_.setString(kTotalScoreText_ + std::to_string(score));
+  setOrigin(total_score_text_, TextCenter::BothAxis);
 }
 
 /////////////////////////////////////////////////
@@ -309,9 +313,9 @@ void GUI::setLevelInfo(unsigned int lvl_position, unsigned int lvl_num, const sf
   level_info_[lvl_position].number = lvl_num;
   level_info_[lvl_position].name = lvl_name;
   if (lvl_num < 10u) {
-    level_info_[lvl_position].select_text = "0" + toString(lvl_num) + " - " + lvl_name;
+    level_info_[lvl_position].select_text = "0" + std::to_string(lvl_num) + " - " + lvl_name;
   } else {
-    level_info_[lvl_position].select_text = toString(lvl_num) + " - " + lvl_name;
+    level_info_[lvl_position].select_text = std::to_string(lvl_num) + " - " + lvl_name;
   }
 }
 
@@ -324,8 +328,8 @@ void GUI::setLevelInfo(unsigned int lvl_position, unsigned int lvl_num, const sf
 /// Also re-centers the origin of the new lives text.
 /////////////////////////////////////////////////
 void GUI::setLivesText(unsigned int lives) {
-  gui_lives_text_.setString(kGUILivesText + toString(lives));
-  setOrigin(gui_lives_text_, Default);
+  gui_lives_text_.setString(kGUILivesText_ + std::to_string(lives));
+  setOrigin(gui_lives_text_, TextCenter::Default);
 }
 
 /////////////////////////////////////////////////
@@ -337,8 +341,8 @@ void GUI::setLivesText(unsigned int lives) {
 /// Also re-centers the origin of the new score text.
 /////////////////////////////////////////////////
 void GUI::setScoreText(unsigned long long score) {
-  gui_score_text_.setString(kGUIScoreText + toString(score));
-  setOrigin(gui_score_text_, Horizontal);
+  gui_score_text_.setString(kGUIScoreText_ + std::to_string(score));
+  setOrigin(gui_score_text_, TextCenter::Horizontal);
 }
 
 /////////////////////////////////////////////////
@@ -363,44 +367,28 @@ void GUI::setRenderFlashingTextFlag(bool status) {
 /// Sets the origin of a sf::Text as requested. Options are:
 /// Horizontal, Vertical, BothAxis, TopRight, TopLeft, Default and Current.
 /////////////////////////////////////////////////
-template <typename T> void GUI::setOrigin(T& shape, TextCenterModes mode) {
-  const sf::FloatRect shape_rect = shape.getLocalBounds();
+template<typename T> void GUI::setOrigin(T& shape, TextCenter mode) {
+  const auto shape_rect = shape.getLocalBounds();
   switch (mode) {
-    case Horizontal:
+    case TextCenter::Horizontal:
       shape.setOrigin(shape_rect.left + (shape_rect.width / 2.f), shape_rect.top);
       break;
-    case Vertical:
+    case TextCenter::Vertical:
       shape.setOrigin(shape_rect.left, shape_rect.top + (shape_rect.height / 2.f));
       break;
-    case BothAxis:
+    case TextCenter::BothAxis:
       shape.setOrigin(shape_rect.left + (shape_rect.width / 2.f), shape_rect.top + (shape_rect.height / 2.f));
       break;
-    case TopRight:
+    case TextCenter::TopRight:
       shape.setOrigin(shape_rect.left + shape_rect.width, shape_rect.top);
       break;
-    case TopLeft:
-    case Default:
+    case TextCenter::TopLeft:
+    case TextCenter::Default:
       shape.setOrigin(0.f, 0.f);
       break;
     default:
-      // do nothing
       break;
   }
-}
-
-/////////////////////////////////////////////////
-/// @brief "Stringifyes" the parameter.
-///
-/// @param t - The thing to be converted into a std::string.
-///
-/// @return - A std::string (hopefully) closely related to the parameter.
-///
-/// Converts the parameter t into a std::string and returns it.
-/////////////////////////////////////////////////
-template <typename T> std::string GUI::toString(const T& t) { 
-  std::ostringstream oss;
-  oss << t; 
-  return oss.str();
 }
 
 /////////////////////////////////////////////////
@@ -422,30 +410,30 @@ void GUI::update(unsigned int lvl_num, const std::string& lvl_name) {
   current_level_ = lvl_num;
   
   level_completed_name_.setString("\"" + lvl_name + "\"");
-  setOrigin(level_completed_name_, BothAxis);
-  level_completed_name_.setPosition(kScreenWidth * 0.5f, kScreenHeight * 0.30f);
+  setOrigin(level_completed_name_, TextCenter::BothAxis);
+  level_completed_name_.setPosition(k::kScreenWidth * 0.5f, k::kScreenHeight * 0.30f);
 
   lvl_num > 9u ?
-    gui_level_text_.setString(kGUILevelText + toString(lvl_num))
-    : gui_level_text_.setString(kGUILevelText + "0" + toString(lvl_num));
-  setOrigin(gui_level_text_, TopRight);
+    gui_level_text_.setString(kGUILevelText_ + std::to_string(lvl_num))
+    : gui_level_text_.setString(kGUILevelText_ + std::string("0") + std::to_string(lvl_num));
+  setOrigin(gui_level_text_, TextCenter::TopRight);
 }
 
 void GUI::update(unsigned int lvl_num, const std::string& lvl_name, const std::string& next_lvl_name) {
   current_level_ = lvl_num;
 
   level_completed_name_.setString("\"" + lvl_name + "\"");
-  setOrigin(level_completed_name_, BothAxis);
-  level_completed_name_.setPosition(kScreenWidth * 0.5f, kScreenHeight * 0.30f);
+  setOrigin(level_completed_name_, TextCenter::BothAxis);
+  level_completed_name_.setPosition(k::kScreenWidth * 0.5f, k::kScreenHeight * 0.30f);
 
   level_completed_next_name_.setString("\"" + next_lvl_name + "\"");
-  setOrigin(level_completed_next_name_, BothAxis);
-  level_completed_next_name_.setPosition(kScreenWidth * 0.5f, kScreenHeight * 0.75f);
+  setOrigin(level_completed_next_name_, TextCenter::BothAxis);
+  level_completed_next_name_.setPosition(k::kScreenWidth * 0.5f, k::kScreenHeight * 0.75f);
 
   lvl_num > 9u ?
-    gui_level_text_.setString(kGUILevelText + toString(lvl_num))
-    : gui_level_text_.setString(kGUILevelText + "0" + toString(lvl_num));
-  setOrigin(gui_level_text_, TopRight);
+    gui_level_text_.setString(kGUILevelText_ + std::to_string(lvl_num))
+    : gui_level_text_.setString(kGUILevelText_ + std::string("0") + std::to_string(lvl_num));
+  setOrigin(gui_level_text_, TextCenter::TopRight);
 }
 
 /////////////////////////////////////////////////
@@ -458,12 +446,12 @@ void GUI::update(unsigned int lvl_num, const std::string& lvl_name, const std::s
 /// selection shape to fit the new selection.
 /////////////////////////////////////////////////
 void GUI::updateLevelSelectionShape(unsigned int previous_level) {
-  level_info_texts_[previous_level].setFillColor(kGUIDefaultFontColor);
-  level_info_texts_[previous_level].setOutlineThickness(kGUIDefaultFontOutline);
-  level_info_texts_[level_selected_].setFillColor(kGUIDefaultSelectedFontColor);
+  level_info_texts_[previous_level].setFillColor(kGUIDefaultFontColor_);
+  level_info_texts_[previous_level].setOutlineThickness(kGUIDefaultFontOutline_);
+  level_info_texts_[level_selected_].setFillColor(kGUIDefaultSelectedFontColor_);
   level_info_texts_[level_selected_].setOutlineThickness(0.f);
   level_selected_shape_.setSize(sf::Vector2f(level_info_texts_[level_selected_].getGlobalBounds().width, level_info_texts_[level_selected_].getGlobalBounds().height));
-  setOrigin(level_selected_shape_, BothAxis);
+  setOrigin(level_selected_shape_, TextCenter::BothAxis);
   level_selected_shape_.setPosition(level_info_texts_[level_selected_].getPosition());
 }
 

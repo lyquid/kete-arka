@@ -398,5 +398,6 @@ MigrationBackup/
 
 # Custom
 kete-arka.log
+kete-arka.cbp
 
 # End of https://www.gitignore.io/api/windows,codeblocks,visualstudio,visualstudiocode

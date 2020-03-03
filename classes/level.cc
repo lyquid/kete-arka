@@ -1,5 +1,20 @@
 #include "level.h"
 
+/* Bricks' default settings */
+const sf::Vector2f Level::kBrickDefaultSize_ = sf::Vector2f(56.f, 28.f);
+/* Bricks' colors */
+const sf::Color Level::kBrickDefaultColor_        = sf::Color::White;
+const sf::Color Level::kBrickDefaultOutlineColor_ = sf::Color::Black;
+const sf::Color Level::kBrickWhite_               = sf::Color(252, 252, 252);
+const sf::Color Level::kBrickOrange_              = sf::Color(252, 116,  96);
+const sf::Color Level::kBrickLighBlue_            = sf::Color( 60, 188, 252);
+const sf::Color Level::kBrickGreen_               = sf::Color(128, 208,  16);
+const sf::Color Level::kBrickRed_                 = sf::Color(216,  40,   0);
+const sf::Color Level::kBrickBlue_                = sf::Color(  0, 112, 236);
+const sf::Color Level::kBrickPink_                = sf::Color(252, 116, 180);
+const sf::Color Level::kBrickYellow_              = sf::Color(252, 152,  56);
+const sf::Color Level::kBrickSilver_              = sf::Color(188, 188, 188);
+const sf::Color Level::kBrickGold_                = sf::Color(240, 188,  60);
 /* Borders VertexArrays and Textures */
 sf::VertexArray Level::border_left_;
 sf::Texture     Level::border_left_tx_;
@@ -8,13 +23,9 @@ sf::Texture     Level::border_right_tx_;
 sf::VertexArray Level::border_top_;
 sf::Texture     Level::border_top_tx_;
 /* Power-up generation stuff */
-const sf::Vector2f Level::kPowerUpSize_      = sf::Vector2f(50.f, 25.f);
-const float        Level::kPowerUpSpeed_     = 150.f;
-const float        Level::kPowerUpAnimSpeed_ = 0.15f;
-const unsigned int Level::kPowerUpFrames_    = 8u;
-PowerUp Level::power_up_;
-PowerUpTypes Level::catched_pwrup_ = PowerUpTypes::Nil;
-bool Level::new_pwrup_ = false;
+const sf::Vector2f Level::kPowerUpSize_ = sf::Vector2f(50.f, 25.f);
+k::PowerUp Level::power_up_;
+k::PowerUpTypes Level::catched_pwrup_ = k::PowerUpTypes::Nil;
 std::vector<sf::Texture> Level::break_tx_(kPowerUpFrames_);
 std::vector<sf::Texture> Level::catch_tx_(kPowerUpFrames_);
 std::vector<sf::Texture> Level::disruption_tx_(kPowerUpFrames_);
@@ -27,28 +38,21 @@ std::vector<sf::Texture>* Level::ptx_;
 sf::Clock Level::pwrup_anim_clk_;
 unsigned int Level::pwrup_anim_frame_;
 /* Break power-up */
-const sf::Vector2f Level::kBreakSize_       = sf::Vector2f(28.f, 56.f);
-const sf::Vector2f Level::kBreakPosition_   = sf::Vector2f(kScreenWidth - kBreakSize_.x, kScreenHeight * 0.9f);
-const unsigned int Level::kBreakAnimFrames_ = 8u;
-const float        Level::kBreakAnimSpeed_  = 0.04f;
+const sf::Vector2f Level::kBreakSize_     = sf::Vector2f(28.f, 56.f);
+const sf::Vector2f Level::kBreakPosition_ = sf::Vector2f(k::kScreenWidth - kBreakSize_.x, k::kScreenHeight * 0.9f);
 sf::RectangleShape Level::break_shape_;
 std::vector<sf::Texture> Level::break_effect_tx_(kBreakAnimFrames_);
 sf::Clock Level::break_anim_clk_;
 unsigned int Level::break_anim_frame_;
 /* Laser power-up */
-const sf::Vector2f Level::kLaserSize_         = sf::Vector2f(4.f, 18.f);
-const float        Level::kLaserDuration_     = 5.f;
-const float        Level::kLaserSpeed_        = 700.f;
-const float        Level::kLaserFireRate_     = 0.1f;
-const unsigned int Level::kMaxLasersOnScreen_ = 500u;
-sf::Texture        Level::laser_effect_tx_;
-std::vector<Laser> Level::lasers_(kMaxLasersOnScreen_);
-sf::Clock          Level::laser_fire_clk_;
-bool               Level::laser_flip_;
+const sf::Vector2f        Level::kLaserSize_ = sf::Vector2f(4.f, 18.f);
+sf::Texture               Level::laser_effect_tx_;
+std::vector<Level::Laser> Level::lasers_(kMaxLasersOnScreen_);
+sf::Clock                 Level::laser_fire_clk_;
 
 bool Level::checkLaserCollisions(const Laser& laser) {
-  for (auto i = 0u; i < kLevelMaxRows; ++i) {
-    for (auto j = 0u; j < kLevelMaxColumns; ++j) {
+  for (auto i = 0u; i < k::kLevelMaxRows; ++i) {
+    for (auto j = 0u; j < k::kLevelMaxColumns; ++j) {
       if (bricks_[i][j].active 
       && laser.shape.getGlobalBounds().intersects(bricks_[i][j].shape.getGlobalBounds())) {
         decreaseResistance({i, j});
@@ -59,7 +63,6 @@ bool Level::checkLaserCollisions(const Laser& laser) {
   return false;
 }
 
-///
 bool Level::checkPowerUpSpawn() {
   if (!power_up_.active && !disruption_in_effect_) {
     --bricks_to_pwrup_;
@@ -70,28 +73,27 @@ bool Level::checkPowerUpSpawn() {
 
 void Level::deactivatePowerUp() {
   switch (pwrup_type_) {
-    case PowerUpTypes::Break:
+    case k::PowerUpTypes::Break:
       break_active_ = false;
       pwrup_active_ = false;
-      pwrup_type_ = PowerUpTypes::Nil;
+      pwrup_type_ = k::PowerUpTypes::Nil;
       break;
-    case PowerUpTypes::Laser:
+    case k::PowerUpTypes::Laser:
       pwrup_active_ = false;
-      pwrup_type_ = PowerUpTypes::Nil;
+      pwrup_type_ = k::PowerUpTypes::Nil;
       break;
-    case PowerUpTypes::Nil:
-    case PowerUpTypes::Catch:
-    case PowerUpTypes::Disruption:
-    case PowerUpTypes::Enlarge:
-    case PowerUpTypes::Player:
-    case PowerUpTypes::Slow:
+    case k::PowerUpTypes::Nil:
+    case k::PowerUpTypes::Catch:
+    case k::PowerUpTypes::Disruption:
+    case k::PowerUpTypes::Enlarge:
+    case k::PowerUpTypes::Player:
+    case k::PowerUpTypes::Slow:
     default:
       // print something horrible to the logger
       break;
   }
 }
 
-///
 void Level::deactivatePowerUpFall() {
   power_up_.active = false;
   pwrup_anim_frame_ = 0u;
@@ -106,7 +108,7 @@ void Level::deactivatePowerUpFall() {
 /// Also updates the score  of the player accordingly.
 /////////////////////////////////////////////////
 void Level::decreaseResistance(sf::Vector2u pos) {
-  if (bricks_[pos.x][pos.y].type != A) {
+  if (bricks_[pos.x][pos.y].type != k::BrickTypes::A) {
     if (bricks_[pos.x][pos.y].resistance - 1u <= 0u) {
       bricks_[pos.x][pos.y].resistance = 0u;
       bricks_[pos.x][pos.y].active = false;
@@ -116,9 +118,9 @@ void Level::decreaseResistance(sf::Vector2u pos) {
         completed_ = true;
         return;
       }
-      if (bricks_[pos.x][pos.y].type != S && checkPowerUpSpawn()) {
+      if (bricks_[pos.x][pos.y].type != k::BrickTypes::S && checkPowerUpSpawn()) {
         spawnPowerUp(sf::Vector2f(
-          bricks_[pos.x][pos.y].shape.getPosition().x + (kBrickDefaultSize.x / 2.f) + 1.5f,
+          bricks_[pos.x][pos.y].shape.getPosition().x + (kBrickDefaultSize_.x / 2.f) + 1.5f,
           bricks_[pos.x][pos.y].shape.getPosition().y
         ));
       }
@@ -137,8 +139,8 @@ void Level::decreaseResistance(sf::Vector2u pos) {
 /////////////////////////////////////////////////
 void Level::draw(sf::RenderWindow& window) {
   window.draw(background_va_, &background_tx_);
-  for (auto i = 0u; i < kLevelMaxRows; ++i) {
-    for (auto j = 0u; j < kLevelMaxColumns; ++j) {
+  for (auto i = 0u; i < k::kLevelMaxRows; ++i) {
+    for (auto j = 0u; j < k::kLevelMaxColumns; ++j) {
       if (bricks_[i][j].active) {
         window.draw(bricks_[i][j].shape);
         if (bricks_[i][j].beveled) {
@@ -160,9 +162,8 @@ void Level::drawBorders(sf::RenderWindow& window) {
   if (break_active_) window.draw(break_shape_);
 }
 
-///
 void Level::eraseCatchedPowerUp() { 
-  catched_pwrup_ = PowerUpTypes::Nil;
+  catched_pwrup_ = k::PowerUpTypes::Nil;
   new_pwrup_ = false;
 }
 
@@ -192,14 +193,6 @@ bool Level::fireLaser() {
   return false;
 }
 
-/////////////////////////////////////////////////
-/// @brief Initializates a level object.
-///
-/// @param ptp - A pointer to the player.
-///
-/// Sets the completed flag to false, the bricks remaining
-/// to 0 and initializes each brick.
-/////////////////////////////////////////////////
 void Level::init(Player* ptp) {
   /* Basic */
   bricks_remaining_ = 0u;
@@ -212,7 +205,7 @@ void Level::init(Player* ptp) {
   power_up_.shape.setOrigin(kPowerUpSize_.x / 2.f, 0.f);
   /* Power-up effects */
   pwrup_active_ = false;
-  pwrup_type_ = PowerUpTypes::Nil;
+  pwrup_type_ = k::PowerUpTypes::Nil;
   /* Break power-up */
   break_active_ = false;
   break_anim_frame_ = 0u;
@@ -228,33 +221,32 @@ void Level::init(Player* ptp) {
   initBricks();
 }
 
-///
 void Level::initBackground() {
   switch (background_) {
-    case Background::Moai:
-      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_moai.png")) {
+    case k::Background::Moai:
+      if (!background_tx_.loadFromFile(k::kImagePath + std::string("backgrounds/bg_moai.png"))) {
         exit(EXIT_FAILURE);
       }
       break;
-    case Background::RedCircuit:
-      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_circuit_red.png")) {
+    case k::Background::RedCircuit:
+      if (!background_tx_.loadFromFile(k::kImagePath + std::string("backgrounds/bg_circuit_red.png"))) {
         exit(EXIT_FAILURE);
       }
       break;
-    case Background::BlueCircuit:
-      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_circuit_blue.png")) {
+    case k::Background::BlueCircuit:
+      if (!background_tx_.loadFromFile(k::kImagePath + std::string("backgrounds/bg_circuit_blue.png"))) {
         exit(EXIT_FAILURE);
       }
       break;
-    case Background::Green:
-      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_green.png")) {
+    case k::Background::Green:
+      if (!background_tx_.loadFromFile(k::kImagePath + std::string("backgrounds/bg_green.png"))) {
         exit(EXIT_FAILURE);
       }
       break;
-    case Background::Blue:
+    case k::Background::Blue:
       [[fallthrough]];
     default:
-      if (!background_tx_.loadFromFile(k::kImagePath + "backgrounds/bg_blue.png")) {
+      if (!background_tx_.loadFromFile(k::kImagePath + std::string("backgrounds/bg_blue.png"))) {
         exit(EXIT_FAILURE);
       }
       break;
@@ -262,63 +254,62 @@ void Level::initBackground() {
   background_tx_.setRepeated(true);
   background_va_.resize(4);
   background_va_.setPrimitiveType(sf::Quads);
-  background_va_[0] = sf::Vector2f(               kGUIBorderThickness, kGUIBorderThickness);
-  background_va_[1] = sf::Vector2f(kScreenWidth - kGUIBorderThickness, kGUIBorderThickness);
-  background_va_[2] = sf::Vector2f(kScreenWidth - kGUIBorderThickness,       kScreenHeight);
-  background_va_[3] = sf::Vector2f(               kGUIBorderThickness,       kScreenHeight);
+  background_va_[0] = sf::Vector2f(                  k::kGUIBorderThickness, k::kGUIBorderThickness);
+  background_va_[1] = sf::Vector2f(k::kScreenWidth - k::kGUIBorderThickness, k::kGUIBorderThickness);
+  background_va_[2] = sf::Vector2f(k::kScreenWidth - k::kGUIBorderThickness,       k::kScreenHeight);
+  background_va_[3] = sf::Vector2f(                  k::kGUIBorderThickness,       k::kScreenHeight);
 
-  background_va_[0].texCoords = sf::Vector2f(                                     0.f,                                 0.f);
-  background_va_[1].texCoords = sf::Vector2f(kScreenWidth - (kGUIBorderThickness * 2),                                 0.f);
-  background_va_[2].texCoords = sf::Vector2f(kScreenWidth - (kGUIBorderThickness * 2), kScreenHeight - kGUIBorderThickness);
-  background_va_[3].texCoords = sf::Vector2f(                                     0.f, kScreenHeight - kGUIBorderThickness);
+  background_va_[0].texCoords = sf::Vector2f(                                           0.f,                                    0.f);
+  background_va_[1].texCoords = sf::Vector2f(k::kScreenWidth - (k::kGUIBorderThickness * 2),                                    0.f);
+  background_va_[2].texCoords = sf::Vector2f(k::kScreenWidth - (k::kGUIBorderThickness * 2), k::kScreenHeight - k::kGUIBorderThickness);
+  background_va_[3].texCoords = sf::Vector2f(                                           0.f, k::kScreenHeight - k::kGUIBorderThickness);
 }
 
-///
 void Level::initGraphics() {
   /* Left border */
-  if (!border_left_tx_.loadFromFile(k::kImagePath + "borders/border_left.png")) {
+  if (!border_left_tx_.loadFromFile(k::kImagePath + std::string("borders/border_left.png"))) {
     exit(EXIT_FAILURE);
   }
   border_left_.resize(4);
   border_left_.setPrimitiveType(sf::Quads);
-  border_left_[0] = sf::Vector2f(                0.f,           0.f);
-  border_left_[1] = sf::Vector2f(kGUIBorderThickness,           0.f);
-  border_left_[2] = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
-  border_left_[3] = sf::Vector2f(                0.f, kScreenHeight);
-  border_left_[0].texCoords = sf::Vector2f(                0.f,           0.f);
-  border_left_[1].texCoords = sf::Vector2f(kGUIBorderThickness,           0.f);
-  border_left_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
-  border_left_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
+  border_left_[0] = sf::Vector2f(                   0.f,              0.f);
+  border_left_[1] = sf::Vector2f(k::kGUIBorderThickness,              0.f);
+  border_left_[2] = sf::Vector2f(k::kGUIBorderThickness, k::kScreenHeight);
+  border_left_[3] = sf::Vector2f(                   0.f, k::kScreenHeight);
+  border_left_[0].texCoords = sf::Vector2f(                   0.f,              0.f);
+  border_left_[1].texCoords = sf::Vector2f(k::kGUIBorderThickness,              0.f);
+  border_left_[2].texCoords = sf::Vector2f(k::kGUIBorderThickness, k::kScreenHeight);
+  border_left_[3].texCoords = sf::Vector2f(                   0.f, k::kScreenHeight);
   /* Right border */
-  if (!border_right_tx_.loadFromFile(k::kImagePath + "borders/border_right.png")) {
+  if (!border_right_tx_.loadFromFile(k::kImagePath + std::string("borders/border_right.png"))) {
     exit(EXIT_FAILURE);
   }
   border_right_.resize(4);
   border_right_.setPrimitiveType(sf::Quads);
-  border_right_[0] = sf::Vector2f(kScreenWidth - kGUIBorderThickness,           0.f);
-  border_right_[1] = sf::Vector2f(                      kScreenWidth,           0.f);
-  border_right_[2] = sf::Vector2f(                      kScreenWidth, kScreenHeight);
-  border_right_[3] = sf::Vector2f(kScreenWidth - kGUIBorderThickness, kScreenHeight);
-  border_right_[0].texCoords = sf::Vector2f(                0.f,           0.f);
-  border_right_[1].texCoords = sf::Vector2f(kGUIBorderThickness,           0.f);
-  border_right_[2].texCoords = sf::Vector2f(kGUIBorderThickness, kScreenHeight);
-  border_right_[3].texCoords = sf::Vector2f(                0.f, kScreenHeight);
+  border_right_[0] = sf::Vector2f(k::kScreenWidth - k::kGUIBorderThickness,              0.f);
+  border_right_[1] = sf::Vector2f(                         k::kScreenWidth,              0.f);
+  border_right_[2] = sf::Vector2f(                         k::kScreenWidth, k::kScreenHeight);
+  border_right_[3] = sf::Vector2f(k::kScreenWidth - k::kGUIBorderThickness, k::kScreenHeight);
+  border_right_[0].texCoords = sf::Vector2f(                   0.f,              0.f);
+  border_right_[1].texCoords = sf::Vector2f(k::kGUIBorderThickness,              0.f);
+  border_right_[2].texCoords = sf::Vector2f(k::kGUIBorderThickness, k::kScreenHeight);
+  border_right_[3].texCoords = sf::Vector2f(                   0.f, k::kScreenHeight);
   /* Top border */
-  if (!border_top_tx_.loadFromFile(k::kImagePath + "borders/border_top.png")) {
+  if (!border_top_tx_.loadFromFile(k::kImagePath + std::string("borders/border_top.png"))) {
     exit(EXIT_FAILURE);
   }
   border_top_.resize(4);
   border_top_.setPrimitiveType(sf::Quads);
-  border_top_[0] = sf::Vector2f(         0.f,                 0.f);
-  border_top_[1] = sf::Vector2f(kScreenWidth,                 0.f);
-  border_top_[2] = sf::Vector2f(kScreenWidth, kGUIBorderThickness);
-  border_top_[3] = sf::Vector2f(         0.f, kGUIBorderThickness);
-  border_top_[0].texCoords = sf::Vector2f(         0.f,                 0.f);
-  border_top_[1].texCoords = sf::Vector2f(kScreenWidth,                 0.f);
-  border_top_[2].texCoords = sf::Vector2f(kScreenWidth, kGUIBorderThickness);
-  border_top_[3].texCoords = sf::Vector2f(         0.f, kGUIBorderThickness);
+  border_top_[0] = sf::Vector2f(            0.f,                    0.f);
+  border_top_[1] = sf::Vector2f(k::kScreenWidth,                    0.f);
+  border_top_[2] = sf::Vector2f(k::kScreenWidth, k::kGUIBorderThickness);
+  border_top_[3] = sf::Vector2f(            0.f, k::kGUIBorderThickness);
+  border_top_[0].texCoords = sf::Vector2f(            0.f,                    0.f);
+  border_top_[1].texCoords = sf::Vector2f(k::kScreenWidth,                    0.f);
+  border_top_[2].texCoords = sf::Vector2f(k::kScreenWidth, k::kGUIBorderThickness);
+  border_top_[3].texCoords = sf::Vector2f(            0.f, k::kGUIBorderThickness);
   /* Power Ups */
-  const auto pwr_path = k::kImagePath + "powerups/";
+  const auto pwr_path = k::kImagePath + std::string("powerups/");
   for (unsigned int i = 0; i < kPowerUpFrames_; ++i) {
     if (!break_tx_.at(i).loadFromFile(pwr_path + "break/" + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
@@ -355,101 +346,101 @@ void Level::initBricks() {
   const unsigned int silver_hits = 2u + number_ / 8u;
   unsigned int i, j, surprise_bricks = 0u;
   sf::Vector2f position;
-  auto start_y = kBrickDefaultStart + kGUIBorderThickness;
-  for (i = 0u; i < kLevelMaxRows; ++i) {
-    for (j = 0u; j < kLevelMaxColumns; ++j) {
-      bricks_[i][j].shape.setSize(kBrickDefaultSize);
-      bricks_[i][j].shape.setOutlineThickness(kBrickDefaultOutline);
-      bricks_[i][j].shape.setOutlineColor(kBrickDefaultOutlineColor);
-      position = sf::Vector2f(bricks_[i][j].shape.getSize().x * j + kGUIBorderThickness, start_y);
+  auto start_y = kBrickDefaultStart_ + k::kGUIBorderThickness;
+  for (i = 0u; i < k::kLevelMaxRows; ++i) {
+    for (j = 0u; j < k::kLevelMaxColumns; ++j) {
+      bricks_[i][j].shape.setSize(kBrickDefaultSize_);
+      bricks_[i][j].shape.setOutlineThickness(kBrickDefaultOutline_);
+      bricks_[i][j].shape.setOutlineColor(kBrickDefaultOutlineColor_);
+      position = sf::Vector2f(bricks_[i][j].shape.getSize().x * j + k::kGUIBorderThickness, start_y);
       bricks_[i][j].shape.setPosition(position);
       bricks_[i][j].active = true;
       bricks_[i][j].beveled = false;
-      switch(layout_[i * kLevelMaxColumns + j]) {
-        case W:
-          bricks_[i][j].type = W;
-          bricks_[i][j].shape.setFillColor(kBrickWhite);
+      switch(layout_[i * k::kLevelMaxColumns + j]) {
+        case k::BrickTypes::W:
+          bricks_[i][j].type = k::BrickTypes::W;
+          bricks_[i][j].shape.setFillColor(kBrickWhite_);
           bricks_[i][j].resistance = 1u;
           bricks_[i][j].points = 50u;
           ++bricks_remaining_;
           ++surprise_bricks;
           break;
-        case O:
-          bricks_[i][j].type = O;
-          bricks_[i][j].shape.setFillColor(kBrickOrange);
+        case k::BrickTypes::O:
+          bricks_[i][j].type = k::BrickTypes::O;
+          bricks_[i][j].shape.setFillColor(kBrickOrange_);
           bricks_[i][j].resistance = 1u;
           bricks_[i][j].points = 60u;
           ++bricks_remaining_;
           ++surprise_bricks;
           break;
-        case L:
-          bricks_[i][j].type = L;
-          bricks_[i][j].shape.setFillColor(kBrickLighBlue);
+        case k::BrickTypes::L:
+          bricks_[i][j].type = k::BrickTypes::L;
+          bricks_[i][j].shape.setFillColor(kBrickLighBlue_);
           bricks_[i][j].resistance = 1u;
           bricks_[i][j].points = 70u;
           ++bricks_remaining_;
           ++surprise_bricks;
           break;
-        case G:
-          bricks_[i][j].type = G;
-          bricks_[i][j].shape.setFillColor(kBrickGreen);
+        case k::BrickTypes::G:
+          bricks_[i][j].type = k::BrickTypes::G;
+          bricks_[i][j].shape.setFillColor(kBrickGreen_);
           bricks_[i][j].resistance = 1u;
           bricks_[i][j].points = 80u;
           ++bricks_remaining_;
           ++surprise_bricks;
           break;
-        case R:
-          bricks_[i][j].type = R;
-          bricks_[i][j].shape.setFillColor(kBrickRed);
+        case k::BrickTypes::R:
+          bricks_[i][j].type = k::BrickTypes::R;
+          bricks_[i][j].shape.setFillColor(kBrickRed_);
           bricks_[i][j].resistance = 1u;
           bricks_[i][j].points = 90u;
           ++bricks_remaining_;
           ++surprise_bricks;
           break;
-        case B:
-          bricks_[i][j].type = B;
-          bricks_[i][j].shape.setFillColor(kBrickBlue);
+        case k::BrickTypes::B:
+          bricks_[i][j].type = k::BrickTypes::B;
+          bricks_[i][j].shape.setFillColor(kBrickBlue_);
           bricks_[i][j].resistance = 1u;
           bricks_[i][j].points = 100u;
           ++bricks_remaining_;
           ++surprise_bricks;
           break;
-        case P:
-          bricks_[i][j].type = P;
-          bricks_[i][j].shape.setFillColor(kBrickPink);
+        case k::BrickTypes::P:
+          bricks_[i][j].type = k::BrickTypes::P;
+          bricks_[i][j].shape.setFillColor(kBrickPink_);
           bricks_[i][j].resistance = 1u;
           bricks_[i][j].points = 110u;
           ++bricks_remaining_;
           ++surprise_bricks;
           break;
-        case Y:
-          bricks_[i][j].type = Y;
-          bricks_[i][j].shape.setFillColor(kBrickYellow);
+        case k::BrickTypes::Y:
+          bricks_[i][j].type = k::BrickTypes::Y;
+          bricks_[i][j].shape.setFillColor(kBrickYellow_);
           bricks_[i][j].resistance = 1u;
           bricks_[i][j].points = 120u;
           ++bricks_remaining_;
           ++surprise_bricks;
           break;
-        case S:
-          bricks_[i][j].type = S;
-          bricks_[i][j].shape.setFillColor(kBrickSilver);
+        case k::BrickTypes::S:
+          bricks_[i][j].type = k::BrickTypes::S;
+          bricks_[i][j].shape.setFillColor(kBrickSilver_);
           bricks_[i][j].resistance = silver_hits;
           bricks_[i][j].points = 50u * number_;
           ++bricks_remaining_;
           bricks_[i][j].beveled = true;
           setBevel(position, {i, j});
           break;
-        case A:
-          bricks_[i][j].type = A;
-          bricks_[i][j].shape.setFillColor(kBrickGold);
+        case k::BrickTypes::A:
+          bricks_[i][j].type = k::BrickTypes::A;
+          bricks_[i][j].shape.setFillColor(kBrickGold_);
           bricks_[i][j].resistance = 0u;
           bricks_[i][j].points = 0u;
           bricks_[i][j].beveled = true;
           setBevel(position, {i, j});
           break;
-        case _:
+        case k::BrickTypes::_:
         default:
-          bricks_[i][j].type = _;
+          bricks_[i][j].type = k::BrickTypes::_;
           bricks_[i][j].active = false;
           bricks_[i][j].resistance = 0u;
           bricks_[i][j].points = 0u;
@@ -469,21 +460,21 @@ void Level::initBricks() {
 /// Initializates the layouts and names of the levels.
 /////////////////////////////////////////////////
 void Level::initProtoLevels(Level* ptl) {
-  for (auto i = 0u; i < kMaxLevels; ++i) {
-    ptl[i].name_ = kProtoLevels[i].name;
-    ptl[i].background_ = kProtoLevels[i].background;
-    for (auto j = 0u; j < kLevelMaxRows * kLevelMaxColumns; ++j) {
-      ptl[i].layout_[j] = kProtoLevels[i].layout[j];
+  
+  for (auto i = 0u; i < k::kMaxLevels; ++i) {
+    ptl[i].name_ = k::kProtoLevels[i].name;
+    ptl[i].background_ = k::kProtoLevels[i].background;
+    for (auto j = 0u; j < k::kLevelMaxRows * k::kLevelMaxColumns; ++j) {
+      ptl[i].layout_[j] = k::kProtoLevels[i].layout[j];
     }
   }
 }
 
 bool Level::isLaserActive() {
-  if (pwrup_type_ == PowerUpTypes::Laser) return true;
+  if (pwrup_type_ == k::PowerUpTypes::Laser) return true;
   return false;
 }
 
-///
 void Level::generatePowerUpSequence(unsigned int surprise_bricks) {
   if (!surprise_bricks || surprise_bricks <= 0u) return;
   const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -491,11 +482,7 @@ void Level::generatePowerUpSequence(unsigned int surprise_bricks) {
   std::uniform_int_distribution<unsigned int> distribution(1u, surprise_bricks / 7u);
   pwrup_sequence_.clear();
   pwrup_sequence_.resize(surprise_bricks);
-  for (auto& x: pwrup_sequence_) {
-    x = distribution(generator);
-    if (kExecutionMode != Normal) std::cout << "[" << x << "]";
-  }
-  if (kExecutionMode != Normal) std::cout << "\n";
+  for (auto& x: pwrup_sequence_) { x = distribution(generator); }
   seq_it_ = pwrup_sequence_.cbegin();
   bricks_to_pwrup_ = *seq_it_;
 }
@@ -504,7 +491,7 @@ void Level::loadBreakTx() {
   break_shape_.setSize(kBreakSize_);
   break_shape_.setOrigin(0.f, break_shape_.getSize().y / 2.f);
   break_shape_.setPosition(kBreakPosition_);
-  const auto path = k::kImagePath + "effects/break/";
+  const auto path = k::kImagePath + std::string("effects/break/");
   for (auto i = 0u; i < kBreakAnimFrames_; ++i) {
     if (!break_effect_tx_.at(i).loadFromFile(path + std::to_string(i) + k::kImageExt)) {
       exit(EXIT_FAILURE);
@@ -514,7 +501,7 @@ void Level::loadBreakTx() {
 }
 
 void Level::loadLaserTx() {
-  const auto path = k::kImagePath + "effects/laser/laser.png";
+  const auto path = k::kImagePath + std::string("effects/laser/laser.png");
   if (!laser_effect_tx_.loadFromFile(path)) {
     exit(EXIT_FAILURE);
   }
@@ -525,89 +512,88 @@ void Level::loadLaserTx() {
   }
 }
 
-///
 void Level::setBevel(sf::Vector2f position, sf::Vector2u brick) {
+  const auto bevel_color = sf::Color::Black;
   sf::VertexArray new_bevel(sf::TriangleStrip, 6);
-  new_bevel[0].color = sf::Color::Black;
-  new_bevel[1].color = sf::Color::Black;
-  new_bevel[2].color = sf::Color::Black;
-  new_bevel[3].color = sf::Color::Black;
-  new_bevel[4].color = sf::Color::Black;
-  new_bevel[5].color = sf::Color::Black;
-  new_bevel[0].position = sf::Vector2f(position.x + kBrickDefaultBevel, position.y + kBrickDefaultSize.y);
-  new_bevel[1].position = sf::Vector2f(position.x + kBrickDefaultBevel, position.y + kBrickDefaultSize.y - kBrickDefaultBevel);
-  new_bevel[2].position = sf::Vector2f(position.x + kBrickDefaultSize.x, position.y + kBrickDefaultSize.y);
-  new_bevel[3].position = sf::Vector2f(position.x + kBrickDefaultSize.x - kBrickDefaultBevel, position.y + kBrickDefaultSize.y - kBrickDefaultBevel);
-  new_bevel[4].position = sf::Vector2f(position.x + kBrickDefaultSize.x, position.y + kBrickDefaultBevel);
-  new_bevel[5].position = sf::Vector2f(position.x + kBrickDefaultSize.x - kBrickDefaultBevel, position.y + kBrickDefaultBevel);
+  new_bevel[0].color = bevel_color;
+  new_bevel[1].color = bevel_color;
+  new_bevel[2].color = bevel_color;
+  new_bevel[3].color = bevel_color;
+  new_bevel[4].color = bevel_color;
+  new_bevel[5].color = bevel_color;
+  new_bevel[0].position = sf::Vector2f(position.x + kBrickDefaultBevel_, position.y + kBrickDefaultSize_.y);
+  new_bevel[1].position = sf::Vector2f(position.x + kBrickDefaultBevel_, position.y + kBrickDefaultSize_.y - kBrickDefaultBevel_);
+  new_bevel[2].position = sf::Vector2f(position.x + kBrickDefaultSize_.x, position.y + kBrickDefaultSize_.y);
+  new_bevel[3].position = sf::Vector2f(position.x + kBrickDefaultSize_.x - kBrickDefaultBevel_, position.y + kBrickDefaultSize_.y - kBrickDefaultBevel_);
+  new_bevel[4].position = sf::Vector2f(position.x + kBrickDefaultSize_.x, position.y + kBrickDefaultBevel_);
+  new_bevel[5].position = sf::Vector2f(position.x + kBrickDefaultSize_.x - kBrickDefaultBevel_, position.y + kBrickDefaultBevel_);
   bricks_[brick.x][brick.y].bevel = new_bevel;
 }
 
-void Level::setPowerUp(PowerUpTypes type) {
+void Level::setPowerUp(k::PowerUpTypes type) {
   switch (type) {
-    case PowerUpTypes::Break:
+    case k::PowerUpTypes::Break:
       break_active_ = true;
       break_anim_frame_ = 0u;
       break_anim_clk_.restart();
       pwrup_active_ = true;
       pwrup_type_ = type;
       break;
-    case PowerUpTypes::Laser:
+    case k::PowerUpTypes::Laser:
       pwrup_active_ = true;
       pwrup_type_ = type;
       break;
-    case PowerUpTypes::Nil:
-    case PowerUpTypes::Catch:
-    case PowerUpTypes::Disruption:
-    case PowerUpTypes::Enlarge:
-    case PowerUpTypes::Player:
-    case PowerUpTypes::Slow:
+    case k::PowerUpTypes::Nil:
+    case k::PowerUpTypes::Catch:
+    case k::PowerUpTypes::Disruption:
+    case k::PowerUpTypes::Enlarge:
+    case k::PowerUpTypes::Player:
+    case k::PowerUpTypes::Slow:
     default:
       // print something horrible to the logger
       break;
   }
 }
 
-///
 void Level::spawnPowerUp(const sf::Vector2f& where) {
   const auto seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
-  std::uniform_int_distribution<unsigned int> distribution(1u , static_cast<unsigned int>(PowerUpTypes::count) - 1u);
-  const auto type = static_cast<PowerUpTypes>(distribution(generator));
+  std::uniform_int_distribution<unsigned int> distribution(1u , static_cast<unsigned int>(k::PowerUpTypes::count) - 1u);
+  const auto type = static_cast<k::PowerUpTypes>(distribution(generator));
   switch (type) {
-    case PowerUpTypes::Nil:
+    case k::PowerUpTypes::Nil:
       return;
-    case PowerUpTypes::Break:
+    case k::PowerUpTypes::Break:
       power_up_.shape.setTexture(&break_tx_.front());
       pwrup_tx_it_ = break_tx_.begin();
       ptx_ = &break_tx_;
       break;
-    case PowerUpTypes::Catch:
+    case k::PowerUpTypes::Catch:
       power_up_.shape.setTexture(&catch_tx_.front());
       pwrup_tx_it_ = catch_tx_.begin();
       ptx_ = &catch_tx_;
       break;
-    case PowerUpTypes::Disruption:
+    case k::PowerUpTypes::Disruption:
       power_up_.shape.setTexture(&disruption_tx_.front());
       pwrup_tx_it_ = disruption_tx_.begin();
       ptx_ = &disruption_tx_;
       break;
-    case PowerUpTypes::Enlarge:
+    case k::PowerUpTypes::Enlarge:
       power_up_.shape.setTexture(&enlarge_tx_.front());
       pwrup_tx_it_ = enlarge_tx_.begin();
       ptx_ = &enlarge_tx_;
       break;
-    case PowerUpTypes::Laser:
+    case k::PowerUpTypes::Laser:
       power_up_.shape.setTexture(&laser_tx_.front());
       pwrup_tx_it_ = laser_tx_.begin();
       ptx_ = &laser_tx_;
       break;
-    case PowerUpTypes::Player:
+    case k::PowerUpTypes::Player:
       power_up_.shape.setTexture(&player_tx_.front());
       pwrup_tx_it_ = player_tx_.begin();
       ptx_ = &player_tx_;
       break;
-    case PowerUpTypes::Slow:
+    case k::PowerUpTypes::Slow:
       power_up_.shape.setTexture(&slow_tx_.front());
       pwrup_tx_it_ = slow_tx_.begin();
       ptx_ = &slow_tx_;
@@ -643,7 +629,7 @@ void Level::updateLasers(float delta_time) {
   const auto factor = kLaserSpeed_ * delta_time;
   for (auto& laser: lasers_) {
     if (laser.active) {
-      if (laser.shape.getPosition().y <= kGUIBorderThickness 
+      if (laser.shape.getPosition().y <= k::kGUIBorderThickness 
       || checkLaserCollisions(laser)) {
         laser.active = false;
         --lasers_on_screen_;
@@ -654,7 +640,6 @@ void Level::updateLasers(float delta_time) {
   }
 }
 
-///
 void Level::updatePowerUpFall(float delta_time) {
   /* Check player collision */
   if (player_->getVaus().shape.getGlobalBounds().intersects(power_up_.shape.getGlobalBounds())) {
@@ -664,7 +649,7 @@ void Level::updatePowerUpFall(float delta_time) {
     return;
   }
   /* Update position */
-  if (power_up_.shape.getPosition().y < kScreenHeight) {
+  if (power_up_.shape.getPosition().y < k::kScreenHeight) {
     const auto factor = kPowerUpSpeed_ * delta_time;
     power_up_.shape.move(0.f, factor);
   } else {

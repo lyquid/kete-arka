@@ -9,7 +9,7 @@ void Game::handleEvents() {
   while (window_.pollEvent(event_)) {
     switch (event_.type) {
       case sf::Event::Closed:
-        state_ = Quit;
+        state_ = k::GameStates::Quit;
         break;
       case sf::Event::KeyPressed:
         handleKeyEvents(event_);
@@ -20,21 +20,21 @@ void Game::handleEvents() {
 
 void Game::handleKeyEvents(const sf::Event key_event) {
   switch (state_) {
-    case Title:
+    case k::GameStates::Title:
       switch (key_event.key.code) {
         case sf::Keyboard::Escape:
-          state_ = Quit;
+          state_ = k::GameStates::Quit;
           break;
         default:
-          state_ = Menu;
+          state_ = k::GameStates::Menu;
           break;
       }
       break;
-    case Menu:
+    case k::GameStates::Menu:
       switch (key_event.key.code) {
         case sf::Keyboard::Escape:
         case sf::Keyboard::Q:
-          state_ = Quit;
+          state_ = k::GameStates::Quit;
           break;
         /* New game start */
         case sf::Keyboard::Num1:
@@ -43,21 +43,21 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           ball_.reset();
           gui_.reset();
           if (loadLevel(1u)) {
-            state_ = Playing;
+            state_ = k::GameStates::Playing;
             logger_.write("Successfully loaded level 1.");
           } else {
             logger_.write("ERROR: Failed loading level 1.");
           }
           break;
         case sf::Keyboard::Num2:
-          state_ = LevelSelection;
+          state_ = k::GameStates::LevelSelection;
       }
       break;
-    case LevelSelection:
+    case k::GameStates::LevelSelection:
       switch (key_event.key.code) {
         case sf::Keyboard::Escape:
         case sf::Keyboard::Q:
-          state_ = Menu;
+          state_ = k::GameStates::Menu;
           break;
         case sf::Keyboard::Up:
         case sf::Keyboard::W:
@@ -76,112 +76,112 @@ void Game::handleKeyEvents(const sf::Event key_event) {
           ball_.reset();
           gui_.reset();
           if (loadLevel(lvl_num)) {
-            state_ = Playing;
-            logger_.write("Successfully loaded level " + GUI::toString(lvl_num) + ".");
+            state_ = k::GameStates::Playing;
+            logger_.write("Successfully loaded level " + std::to_string(lvl_num) + ".");
           } else {
-            logger_.write("ERROR: Failed loading level " + GUI::toString(lvl_num) + ".");
+            logger_.write("ERROR: Failed loading level " + std::to_string(lvl_num) + ".");
           }
           break;
       }
       break;
-    case Playing:
+    case k::GameStates::Playing:
       switch (key_event.key.code) {
         case sf::Keyboard::C:
-          if (kExecutionMode != Normal) {
+          if (k::kExecutionMode != k::ExecutionModes::Normal) {
             current_level_->complete(); // cheat!
           }
           break;
         case sf::Keyboard::V:
-          if (kExecutionMode != Normal) {
+          if (k::kExecutionMode != k::ExecutionModes::Normal) {
             player_.toggleCollisionRect();
           }
           break;
         case sf::Keyboard::Escape:
         case sf::Keyboard::P:
         case sf::Keyboard::Pause:
-          state_ = Paused;
+          state_ = k::GameStates::Paused;
           gui_.setRenderFlashingTextFlag(true);
           break;
       }
       break;
-    case Paused:
+    case k::GameStates::Paused:
       switch (key_event.key.code) {
         case sf::Keyboard::Q: /// @todo: press Q to exit
-          state_ = Menu;
+          state_ = k::GameStates::Menu;
           break;
         default:
-          state_ = Playing;
+          state_ = k::GameStates::Playing;
           break;
       }
       break;
-    case LevelCompleted: {
+    case k::GameStates::LevelCompleted: {
       switch (key_event.key.code) {
         case sf::Keyboard::Escape:
-          state_ = Menu;
+          state_ = k::GameStates::Menu;
           break;
         /* Next level */
         case sf::Keyboard::Space:
           const auto next_lvl = current_level_->getNumber() + 1u;
-          if (next_lvl > kMaxLevels) {
-            state_ = GameCompleted;
+          if (next_lvl > k::kMaxLevels) {
+            state_ = k::GameStates::GameCompleted;
           } else  {
             ball_.reset();
             player_.resetVaus();
             if (loadLevel(next_lvl)) {
-              state_ = Playing;
-              logger_.write("Successfully loaded level " + GUI::toString(next_lvl) + ".");
+              state_ = k::GameStates::Playing;
+              logger_.write("Successfully loaded level " + std::to_string(next_lvl) + ".");
               } else {
-              logger_.write("ERROR: Failed loading level " + GUI::toString(next_lvl) + ".");
+              logger_.write("ERROR: Failed loading level " + std::to_string(next_lvl) + ".");
             }
           }
       }
       break;
     }
-    case GameCompleted:
+    case k::GameStates::GameCompleted:
       // any key goes to main menu
-      state_ = Menu;
+      state_ = k::GameStates::Menu;
       break;
-    case GameOver:
+    case k::GameStates::GameOver:
       // any key goes to Menu
-      state_ = Menu;
+      state_ = k::GameStates::Menu;
       break;
-    case Quit:
+    case k::GameStates::Quit:
       break;
   }
 }
 
 void Game::handlePowerUps() {
-  const PowerUpTypes pwrup = current_level_->getCatchedPowerUp();
+  const k::PowerUpTypes pwrup = current_level_->getCatchedPowerUp();
   current_level_->eraseCatchedPowerUp();
-  if (ball_.isPowerUpActive() && pwrup != PowerUpTypes::Slow) ball_.deactivatePowerUp();
+  if (ball_.isPowerUpActive() && pwrup != k::PowerUpTypes::Slow) ball_.deactivatePowerUp();
   if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
   if (player_.isPowerUpActive()) player_.deactivatePowerUp();
-  // switch (PowerUpTypes::Laser) { /* QoL purposes */
+  // switch (k::PowerUpTypes::Laser) { /* QoL purposes */
   switch (pwrup) {
-    case PowerUpTypes::Break:
-      current_level_->setPowerUp(PowerUpTypes::Break);
+    case k::PowerUpTypes::Break:
+      current_level_->setPowerUp(k::PowerUpTypes::Break);
       break;
-    case PowerUpTypes::Catch:
-      ball_.setPowerUp(PowerUpTypes::Catch);
+    case k::PowerUpTypes::Catch:
+      ball_.setPowerUp(k::PowerUpTypes::Catch);
       break;
-    case PowerUpTypes::Disruption:
-      ball_.setPowerUp(PowerUpTypes::Disruption);
+    case k::PowerUpTypes::Disruption:
+      ball_.setPowerUp(k::PowerUpTypes::Disruption);
       break;
-    case PowerUpTypes::Enlarge:
-      player_.setPowerUp(PowerUpTypes::Enlarge);
+    case k::PowerUpTypes::Enlarge:
+      player_.setPowerUp(k::PowerUpTypes::Enlarge);
       break;
-    case PowerUpTypes::Laser:
-      current_level_->setPowerUp(PowerUpTypes::Laser);
-      player_.setPowerUp(PowerUpTypes::Laser);
+    case k::PowerUpTypes::Laser:
+      current_level_->setPowerUp(k::PowerUpTypes::Laser);
+      player_.setPowerUp(k::PowerUpTypes::Laser);
       break;
-    case PowerUpTypes::Player:
+    case k::PowerUpTypes::Player:
       player_.increaseLives();
       break;
-    case PowerUpTypes::Slow:
-      if (ball_.isPowerUpActive() && ball_.getPowerUp() != PowerUpTypes::Slow) ball_.deactivatePowerUp();
-      ball_.setPowerUp(PowerUpTypes::Slow);
+    case k::PowerUpTypes::Slow:
+      if (ball_.isPowerUpActive() && ball_.getPowerUp() != k::PowerUpTypes::Slow) ball_.deactivatePowerUp();
+      ball_.setPowerUp(k::PowerUpTypes::Slow);
       break;
-    case PowerUpTypes::Nil:
+    case k::PowerUpTypes::Nil:
     default:
       printf("This SHOULDN'T be seen.\n");
       break;
@@ -189,13 +189,12 @@ void Game::handlePowerUps() {
 }
  
 void Game::init() {
-  state_ = Title;
-  title_ = kAppName + " v" + kAppVersion;
+  state_ = k::GameStates::Title;
+  title_ = k::kAppName + std::string(" v") + k::kAppVersion;
   /* Logger */
-  logger_.start();
   logger_.write(title_ + " started.");
   /* Display window */ 
-  window_.create(sf::VideoMode(kScreenWidth, kScreenHeight), title_, sf::Style::Titlebar | sf::Style::Close);
+  window_.create(sf::VideoMode(k::kScreenWidth, k::kScreenHeight), title_, sf::Style::Titlebar | sf::Style::Close);
   logger_.write("Successfully created display window.");
   window_.setVerticalSyncEnabled(true);
   /* Font */
@@ -223,7 +222,7 @@ void Game::init() {
 }
 
 void Game::initLevelsMenu() {
-  for (auto i = 0u; i < kMaxLevels; ++i) {
+  for (auto i = 0u; i < k::kMaxLevels; ++i) {
     game_levels_[i].setNumber(i + 1u);
     gui_.setLevelInfo(i, game_levels_[i].getNumber(), game_levels_[i].getName());
   }
@@ -231,13 +230,13 @@ void Game::initLevelsMenu() {
 
 bool Game::loadLevel(unsigned int lvl_num) {
   bool found = false;
-  for (auto i = 0u; i < kMaxLevels && !found; ++i) {
+  for (auto i = 0u; i < k::kMaxLevels && !found; ++i) {
     if (game_levels_[i].getNumber() == lvl_num) {
       found = true;
       current_level_ = &game_levels_[i];
       current_level_->init(&player_);
       ball_.setLevel(current_level_);
-      if (current_level_->getNumber() >= kMaxLevels) {
+      if (current_level_->getNumber() >= k::kMaxLevels) {
         gui_.update(current_level_->getNumber(), current_level_->getName());
       } else {
         gui_.update(current_level_->getNumber(), current_level_->getName(), game_levels_[i + 1u].getName());
@@ -250,16 +249,16 @@ bool Game::loadLevel(unsigned int lvl_num) {
 void Game::render() {
   window_.clear();
   switch (state_) {
-    case Title:
+    case k::GameStates::Title:
       gui_.drawTitleScreen(window_);
       break;
-    case Menu:
+    case k::GameStates::Menu:
       gui_.drawMenu(window_);
       break;
-    case LevelSelection:
+    case k::GameStates::LevelSelection:
       gui_.drawLevelSelection(window_);
       break;
-    case Paused:
+    case k::GameStates::Paused:
       current_level_->draw(window_);
       gui_.drawPauseScreen(window_);
       gui_.drawInGameGUI(window_);
@@ -267,25 +266,25 @@ void Game::render() {
       player_.drawVaus(window_);
       current_level_->drawBorders(window_);
       break;
-    case Playing:
+    case k::GameStates::Playing:
       current_level_->draw(window_);
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
       player_.drawVaus(window_);
       current_level_->drawBorders(window_);
       break;
-    case LevelCompleted:
+    case k::GameStates::LevelCompleted:
       current_level_->draw(window_);
       current_level_->drawBorders(window_);
       gui_.drawLevelCompletedScreen(window_);
       break;
-    case GameCompleted:
+    case k::GameStates::GameCompleted:
       gui_.drawGameCompleted(window_);
       break;
-    case GameOver:
+    case k::GameStates::GameOver:
       gui_.drawGameOverScreen(window_);
       break;
-    case Quit:
+    case k::GameStates::Quit:
       break;
   }
   window_.display();
@@ -294,13 +293,13 @@ void Game::render() {
 void Game::update() {
   const float delta_time = clock_.restart().asSeconds();
   switch (state_) {
-    case Playing:
+    case k::GameStates::Playing:
       if (player_.isDead()) {
-        state_ = GameOver;
+        state_ = k::GameStates::GameOver;
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else if (current_level_->isCompleted()) {
-        state_ = LevelCompleted;
+        state_ = k::GameStates::LevelCompleted;
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
       } else {
@@ -334,6 +333,8 @@ void Game::update() {
         /* Vaus animation */
         player_.updateVausAnim();
       }
+      break;
+    default:
       break;
   }
 }

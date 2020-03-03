@@ -5,15 +5,6 @@
 
 #include "../config.h"
 #include "gui.h"
-#include "powerups.h"
-
-struct Vaus {
-  sf::RectangleShape shape;
-  sf::RectangleShape collision_rect;
-  float speed;
-  std::vector<sf::Texture> laser_textures;
-  std::vector<sf::Texture> textures;
-};
 
 class Player {
  public:
@@ -29,7 +20,7 @@ class Player {
   void reset();
   /* Vaus stuff */
   void drawVaus(sf::RenderWindow& window);
-  const Vaus& getVaus() { return vaus_; };
+  const k::Vaus& getVaus() { return vaus_; };
   sf::Vector2f getVausSize() { return vaus_.shape.getSize(); };
   sf::Vector2f getVausPosition() { return vaus_.shape.getPosition(); };
   float getVausSpeed() { return vaus_.speed; };
@@ -39,9 +30,9 @@ class Player {
   void updateVausAnim();
   /* Power-ups stuff */
   void deactivatePowerUp();
-  PowerUpTypes getPowerUp() { return pwrup_type_; };
+  k::PowerUpTypes getPowerUp() { return pwrup_type_; };
   bool isPowerUpActive() { return pwrup_active_; };
-  void setPowerUp(PowerUpTypes type);
+  void setPowerUp(k::PowerUpTypes type);
   void resizeVaus();
   bool isVausResizing();
 
@@ -52,7 +43,7 @@ class Player {
   unsigned int lives_;
   unsigned long long score_;
   /* Vaus stuff */
-  static Vaus vaus_;
+  static k::Vaus vaus_;
   static const sf::Vector2f kVausDefaultSize_;
   static const sf::Vector2f kVausDefaultPosition_;
   static const sf::Vector2f kVausDefaultCollisionRect_;
@@ -75,7 +66,7 @@ class Player {
   void shortenVaus();
   bool pwrup_active_;
   float growth_;
-  PowerUpTypes pwrup_type_;
+  k::PowerUpTypes pwrup_type_;
 };
 
 #endif // KETE_ARKA_CLASSES_PLAYER_H_

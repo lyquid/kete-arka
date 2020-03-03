@@ -8,7 +8,7 @@
 /////////////////////////////////////////////////
 void Logger::finish() {
   time(&now_);
-  log_file_.open(kLogFileName.c_str(), std::ofstream::app);
+  log_file_.open(kLogFileName_, std::ofstream::app);
   log_file_ << "--- Log file finished at " << ctime(&now_);
   log_file_.close();
 }
@@ -21,7 +21,7 @@ void Logger::finish() {
 /// Then closes the file for further uses.
 /////////////////////////////////////////////////
 void Logger::start() {
-  log_file_.open(kLogFileName.c_str(), std::ofstream::trunc);
+  log_file_.open(kLogFileName_, std::ofstream::trunc);
   time(&now_);
   log_file_ << "--- Log file started at " << ctime(&now_);
   log_file_.close();
@@ -36,16 +36,16 @@ void Logger::start() {
 /// The message is added with a hh:mm:ss at the begining.
 /// Then closes the file for further uses.
 /////////////////////////////////////////////////
-void Logger::write(const std::string msg) {
-  const int buffer_size = 80;
+void Logger::write(const std::string& msg) {
+  constexpr auto buffer_size = 80u;
   char buffer[buffer_size];
   std::ofstream log_file;
   std::time_t now;
   const struct tm* time_info;
-  log_file.open(kLogFileName.c_str(), std::ofstream::app);
+  log_file.open(kLogFileName_, std::ofstream::app);
   time(&now);
   time_info = localtime(&now);
   strftime(buffer, buffer_size, "%H:%M:%S - ", time_info);
-  log_file << buffer << msg << std::endl;
+  log_file << buffer << msg << "\n";
   log_file.close();
 }

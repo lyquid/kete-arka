@@ -4,21 +4,18 @@
 #include <ctime>
 #include <fstream>  
 
-#include "../config.h"
-
 class Logger {
  public:
-  Logger() {}
-  ~Logger () {
-    finish();
-  }
-  void finish();
-  void start();
-  static void write(const std::string msg);
+  Logger() { start(); }
+  ~Logger () { finish(); }
+  static void write(const std::string& msg);
 
  private:
+  void finish();
+  void start();
   std::ofstream log_file_;
   std::time_t now_;
+  static constexpr auto kLogFileName_ = "kete-arka.log";
 };
 
 #endif  // KETE_ARKA_CLASSES_LOGGER_H_
