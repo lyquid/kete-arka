@@ -2,6 +2,7 @@
 #define KETE_ARKA_CLASSES_GAME_H_
 
 #include <string>
+#include <vector>
 #include <SFML/Graphics.hpp>
 
 #include "../config.h"
@@ -13,27 +14,25 @@
 
 class Game {
  public:
-  Game() {}
-  ~Game() {}
-  void clean();
-  k::GameStates getGameState() { return state_; };
+  Game();
+  ~Game() { clean(); }
+  k::GameStates getGameState() const { return state_; }
   void handleEvents();
-  void init();
   void render();
   void update();
 
  private:
+  void clean();
   void handleKeyEvents(const sf::Event key_event);
   void handlePowerUps();
   void initLevelsMenu();
-  bool isPaused();
   bool loadLevel(unsigned int lvl_num);
   Ball ball_;
   sf::Clock clock_;
   sf::Event event_;
   sf::Font font_;
   GUI gui_;
-  Level game_levels_[k::kMaxLevels];
+  std::vector<Level> levels_;
   Level* current_level_;
   Logger logger_;
   Player player_;

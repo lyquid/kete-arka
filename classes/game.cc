@@ -187,63 +187,65 @@ void Game::handlePowerUps() {
       break;
   }
 }
- 
-void Game::init() {
-  state_ = k::GameStates::Title;
-  title_ = k::kAppName + std::string(" v") + k::kAppVersion;
-  /* Logger */
-  logger_.write(title_ + " started.");
-  /* Display window */ 
-  window_.create(sf::VideoMode(k::kScreenWidth, k::kScreenHeight), title_, sf::Style::Titlebar | sf::Style::Close);
-  logger_.write("Successfully created display window.");
-  window_.setVerticalSyncEnabled(true);
-  /* Font */
-  if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
-    logger_.write("ERROR: Failed loading font.");
-    exit(EXIT_FAILURE);
-  }
-  /* Proto levels, graphics and level selection menu */
-  current_level_ = NULL;
-  Level::initProtoLevels(game_levels_);
-  logger_.write("Successfully initialized protolevels.");
-  Level::initGraphics();
-  logger_.write("Successfully initialized levels' graphics.");
-  initLevelsMenu();
-  logger_.write("Successfully initialized levels menu.");
-  /* GUI */
-  gui_.init(font_);
-  logger_.write("Successfully initialized GUI.");
-  /* Ball */ 
-  ball_.init(&player_);
-  logger_.write("Successfully initialized ball.");
-  /* Player */
-  player_.linkGUI(&gui_);
-  logger_.write("Successfully initialized player.");
+
+Game::Game():
+  current_level_(nullptr),
+  state_(k::GameStates::Title) {
+    title_ = k::kAppName + std::string(" v") + k::kAppVersion;
+    /* Logger */
+    logger_.write(title_ + " started.");
+    /* Display window */ 
+    window_.create(sf::VideoMode(k::kScreenWidth, k::kScreenHeight), title_, sf::Style::Titlebar | sf::Style::Close);
+    logger_.write("Successfully created display window.");
+    window_.setVerticalSyncEnabled(true);
+    /* Font */
+    if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
+      logger_.write("ERROR: Failed loading font.");
+      exit(EXIT_FAILURE);
+    }
+    /* Levels */
+    levels_.resize(k::kMaxLevels);
+    Level::setLevels(levels_);
+    /* Graphics and level selection menu */
+    Level::initGraphics();
+    logger_.write("Successfully initialized levels' graphics.");
+    initLevelsMenu();
+    logger_.write("Successfully initialized levels menu.");
+    /* GUI */
+    gui_.init(font_);
+    logger_.write("Successfully initialized GUI.");
+    /* Ball */ 
+    ball_.init(&player_);
+    logger_.write("Successfully initialized ball.");
+    /* Player */
+    player_.linkGUI(&gui_);
+    logger_.write("Successfully initialized player.");
 }
 
 void Game::initLevelsMenu() {
-  for (auto i = 0u; i < k::kMaxLevels; ++i) {
-    game_levels_[i].setNumber(i + 1u);
-    gui_.setLevelInfo(i, game_levels_[i].getNumber(), game_levels_[i].getName());
+  unsigned int lvl_num = 1u;
+  for (auto& level: levels_) {
+    level.setNumber(lvl_num);
+    gui_.setLevelInfo(lvl_num - 1u, lvl_num, level.getName());
+    ++lvl_num;
   }
 }
 
 bool Game::loadLevel(unsigned int lvl_num) {
-  bool found = false;
-  for (auto i = 0u; i < k::kMaxLevels && !found; ++i) {
-    if (game_levels_[i].getNumber() == lvl_num) {
-      found = true;
-      current_level_ = &game_levels_[i];
+  for (auto i = 0u; i != levels_.size(); ++i) {
+    if (levels_.at(i).getNumber() == lvl_num) {
+      current_level_ = &levels_.at(i);
       current_level_->init(&player_);
       ball_.setLevel(current_level_);
-      if (current_level_->getNumber() >= k::kMaxLevels) {
+      if (current_level_->getNumber() == k::kMaxLevels) {
         gui_.update(current_level_->getNumber(), current_level_->getName());
       } else {
-        gui_.update(current_level_->getNumber(), current_level_->getName(), game_levels_[i + 1u].getName());
+        gui_.update(current_level_->getNumber(), current_level_->getName(), levels_.at(i + 1u).getName());
       }
+      return true;
     }
   }
-  return found;
+  return false;
 }
 
 void Game::render() {

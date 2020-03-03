@@ -452,21 +452,15 @@ void Level::initBricks() {
   generatePowerUpSequence(surprise_bricks);
 }
 
-/////////////////////////////////////////////////
-/// @brief Initializates the layouts and names of the levels.
-///
-/// @param ptl - A pointer to the array of levels.
-///
-/// Initializates the layouts and names of the levels.
-/////////////////////////////////////////////////
-void Level::initProtoLevels(Level* ptl) {
-  
-  for (auto i = 0u; i < k::kMaxLevels; ++i) {
-    ptl[i].name_ = k::kProtoLevels[i].name;
-    ptl[i].background_ = k::kProtoLevels[i].background;
-    for (auto j = 0u; j < k::kLevelMaxRows * k::kLevelMaxColumns; ++j) {
-      ptl[i].layout_[j] = k::kProtoLevels[i].layout[j];
+void Level::setLevels(std::vector<Level>& levels) {
+  unsigned int index = 0u;
+  for (auto& level: levels) {
+    level.name_ = k::kProtoLevels[index].name;
+    level.background_ = k::kProtoLevels[index].background;
+    for (auto i = 0u; i < k::kLevelMaxRows * k::kLevelMaxColumns; ++i) {
+      level.layout_[i] = k::kProtoLevels[index].layout[i];
     }
+    ++index;
   }
 }
 

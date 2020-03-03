@@ -28,29 +28,29 @@ class Level {
   void complete() { completed_ = true; };
   void setNumber(unsigned int lvl_num) { number_ = lvl_num; };
   k::Brick (*getBricks())[k::kLevelMaxColumns] { return bricks_; };
-  std::string getName() { return name_; };
-  unsigned int getNumber() { return number_; };
-  bool isCompleted() { return completed_; };
+  std::string getName() const { return name_; };
+  unsigned int getNumber() const { return number_; };
+  bool isCompleted() const { return completed_; };
   /* Initializers */
   void init(Player* ptp);
   static void initGraphics();
-  static void initProtoLevels(Level* ptl);
+  static void setLevels(std::vector<Level>& levels);
   /* Others */
   void decreaseResistance(sf::Vector2u pos);
   void draw(sf::RenderWindow& window);
   void drawBorders(sf::RenderWindow& window);
   void update(float delta_time);
   /* Power-up generation stuff */
-  bool catchedPowerUp() { return new_pwrup_; };
-  k::PowerUpTypes getCatchedPowerUp() { return catched_pwrup_; };
+  bool catchedPowerUp() const { return new_pwrup_; };
+  k::PowerUpTypes getCatchedPowerUp() const { return catched_pwrup_; };
   void eraseCatchedPowerUp();
   /* Power-up effects */
   void deactivatePowerUp();
-  k::PowerUpTypes getPowerUp() { return pwrup_type_; };
-  bool isPowerUpActive() { return pwrup_active_; };
+  k::PowerUpTypes getPowerUp() const { return pwrup_type_; };
+  bool isPowerUpActive() const { return pwrup_active_; };
   void setPowerUp(k::PowerUpTypes type);
   /* Break power-up */
-  bool isBreakActive() { return break_active_; };
+  bool isBreakActive() const { return break_active_; };
   /* Laser power-up */
   bool fireLaser();
   bool isLaserActive();
