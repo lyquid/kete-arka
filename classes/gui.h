@@ -8,7 +8,9 @@
 
 class GUI {
  public:
-  GUI(): render_flashing_text_flag_(true) {}
+  GUI(): 
+    current_level_(0u),
+    render_flashing_text_flag_(true) {}
   ~GUI() {}
   void drawGameCompleted(sf::RenderWindow& window);
   void drawGameOverScreen(sf::RenderWindow& window);
@@ -24,7 +26,7 @@ class GUI {
   void selectNextLevel();
   void selectPreviousLevel();
   void setFinalScoreText(unsigned long long score);
-  void setLevelInfo(unsigned int lvl_position, unsigned int lvl_num, const sf::String& lvl_name);
+  void setLevelInfo(unsigned int lvl_position, unsigned int lvl_num, const std::string& lvl_name);
   void setLivesText(unsigned int lives);
   void setScoreText(unsigned long long score);
   void setRenderFlashingTextFlag(bool status);
@@ -42,12 +44,12 @@ class GUI {
     std::string select_text;
   };
   void initLevelsList();
-  static void initText(sf::Text&         text, 
-                       const sf::String& string_text, 
-                       const sf::Font&   font, 
-                       unsigned int      size, 
-                       const sf::Color&  color, 
-                       TextCenter        mode = TextCenter::Default);
+  static void initText(sf::Text&          text, 
+                       const std::string& string_text, 
+                       const sf::Font&    font, 
+                       unsigned int       size, 
+                       const sf::Color&   color, 
+                       const TextCenter&  mode = TextCenter::Default);
   template<typename T> static void setOrigin(T& shape, TextCenter mode);
   void updateFlashingTextFlag();
   void updateLevelSelectionShape(unsigned int previous_level = 0u);

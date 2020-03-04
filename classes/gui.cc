@@ -218,7 +218,7 @@ void GUI::initLevelsList() {
 /// @brief Initializes a given text.
 ///
 /// @param text - The address of the sf::Text to be initialized.
-/// @param string_text - The literal sf::String of characters to be rendered.
+/// @param string_text - The literal std::string of characters to be rendered.
 /// @param font - The sf::Font to be used.
 /// @param size - The desired size (integer) of the rendered text.
 /// @param color - The desired sf::Color for the text.
@@ -227,12 +227,12 @@ void GUI::initLevelsList() {
 /// Sets the font, the size, the fill color and the string to be
 /// rendered for the text. Thereafter sets the origin of the text if needed.
 /////////////////////////////////////////////////
-void GUI::initText( sf::Text&         text, 
-                    const sf::String& string_text, 
-                    const sf::Font&   font, 
-                    unsigned int      size,
-                    const sf::Color&  color, 
-                    TextCenter        mode ) {
+void GUI::initText( sf::Text&          text, 
+                    const std::string& string_text, 
+                    const sf::Font&    font, 
+                    unsigned int       size,
+                    const sf::Color&   color, 
+                    const TextCenter&  mode ) {
   text.setFont(font);
   text.setCharacterSize(size);
   text.setFillColor(color);
@@ -308,7 +308,7 @@ void GUI::setFinalScoreText(unsigned long long int score) {
 /// @param lvl_name - The sf::String containing the level name.
 ///
 /////////////////////////////////////////////////
-void GUI::setLevelInfo(unsigned int lvl_position, unsigned int lvl_num, const sf::String& lvl_name) {
+void GUI::setLevelInfo(unsigned int lvl_position, unsigned int lvl_num, const std::string& lvl_name) {
   level_info_[lvl_position].number = lvl_num;
   level_info_[lvl_position].name = lvl_name;
   if (lvl_num < 10u) {
@@ -404,7 +404,6 @@ void GUI::updateFlashingTextFlag(){
   }
 }
 
-///
 void GUI::update(unsigned int lvl_num, const std::string& lvl_name) {
   current_level_ = lvl_num;
   
