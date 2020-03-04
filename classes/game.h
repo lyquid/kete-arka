@@ -1,6 +1,7 @@
 #ifndef KETE_ARKA_CLASSES_GAME_H_
 #define KETE_ARKA_CLASSES_GAME_H_
 
+#include <iterator>
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
@@ -33,7 +34,7 @@ class Game {
   sf::Font font_;
   GUI gui_;
   std::vector<Level> levels_;
-  Level* current_level_;
+  std::vector<Level>::iterator level_;
   Logger logger_;
   Player player_;
   k::GameStates state_;

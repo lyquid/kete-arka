@@ -88,7 +88,7 @@ void Game::handleKeyEvents(const sf::Event& key_event) {
       switch (key_event.key.code) {
         case sf::Keyboard::C:
           if (k::kExecutionMode != k::ExecutionModes::Normal) {
-            current_level_->complete(); // cheat!
+            level_->complete(); // cheat!
           }
           break;
         case sf::Keyboard::V:
@@ -121,7 +121,7 @@ void Game::handleKeyEvents(const sf::Event& key_event) {
           break;
         /* Next level */
         case sf::Keyboard::Space:
-          const auto next_lvl = current_level_->getNumber() + 1u;
+          const auto next_lvl = level_->getNumber() + 1u;
           if (next_lvl > k::kMaxLevels) {
             state_ = k::GameStates::GameCompleted;
           } else  {
@@ -151,15 +151,15 @@ void Game::handleKeyEvents(const sf::Event& key_event) {
 }
 
 void Game::handlePowerUps() {
-  const k::PowerUpTypes pwrup = current_level_->getCatchedPowerUp();
-  current_level_->eraseCatchedPowerUp();
+  const k::PowerUpTypes pwrup = level_->getCatchedPowerUp();
+  level_->eraseCatchedPowerUp();
   if (ball_.isPowerUpActive() && pwrup != k::PowerUpTypes::Slow) ball_.deactivatePowerUp();
-  if (current_level_->isPowerUpActive()) current_level_->deactivatePowerUp();
+  if (level_->isPowerUpActive()) level_->deactivatePowerUp();
   if (player_.isPowerUpActive()) player_.deactivatePowerUp();
   // switch (k::PowerUpTypes::Laser) { /* QoL purposes */
   switch (pwrup) {
     case k::PowerUpTypes::Break:
-      current_level_->setPowerUp(k::PowerUpTypes::Break);
+      level_->setPowerUp(k::PowerUpTypes::Break);
       break;
     case k::PowerUpTypes::Catch:
       ball_.setPowerUp(k::PowerUpTypes::Catch);
@@ -171,7 +171,7 @@ void Game::handlePowerUps() {
       player_.setPowerUp(k::PowerUpTypes::Enlarge);
       break;
     case k::PowerUpTypes::Laser:
-      current_level_->setPowerUp(k::PowerUpTypes::Laser);
+      level_->setPowerUp(k::PowerUpTypes::Laser);
       player_.setPowerUp(k::PowerUpTypes::Laser);
       break;
     case k::PowerUpTypes::Player:
@@ -189,7 +189,7 @@ void Game::handlePowerUps() {
 }
 
 Game::Game():
-  current_level_(nullptr),
+  level_(nullptr),
   state_(k::GameStates::Title) {
     title_ = k::kAppName + std::string(" v") + k::kAppVersion;
     /* Logger */
@@ -228,15 +228,15 @@ void Game::initLevelsMenu() {
 }
 
 bool Game::loadLevel(unsigned int lvl_num) {
-  for (auto i = 0u; i != levels_.size(); ++i) {
-    if (levels_.at(i).getNumber() == lvl_num) {
-      current_level_ = &levels_.at(i);
-      current_level_->init(&player_);
-      ball_.setLevel(current_level_);
-      if (current_level_->getNumber() == k::kMaxLevels) {
-        gui_.update(current_level_->getNumber(), current_level_->getName());
+  for (auto it = levels_.begin(); it != levels_.end(); ++it) {
+    if (it->getNumber() == lvl_num) {
+      level_ = it;
+      level_->init(&player_);
+      ball_.setLevel(level_.base());
+      if (level_->getNumber() == k::kMaxLevels) {
+        gui_.update(level_->getNumber(), level_->getName());
       } else {
-        gui_.update(current_level_->getNumber(), current_level_->getName(), levels_.at(i + 1u).getName());
+        gui_.update(level_->getNumber(), level_->getName(), std::next(it)->getName());
       }
       return true;
     }
@@ -257,23 +257,23 @@ void Game::render() {
       gui_.drawLevelSelection(window_);
       break;
     case k::GameStates::Paused:
-      current_level_->draw(window_);
+      level_->draw(window_);
       gui_.drawPauseScreen(window_);
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
       player_.drawVaus(window_);
-      current_level_->drawBorders(window_);
+      level_->drawBorders(window_);
       break;
     case k::GameStates::Playing:
-      current_level_->draw(window_);
+      level_->draw(window_);
       gui_.drawInGameGUI(window_);
       ball_.draw(window_, state_);
       player_.drawVaus(window_);
-      current_level_->drawBorders(window_);
+      level_->drawBorders(window_);
       break;
     case k::GameStates::LevelCompleted:
-      current_level_->draw(window_);
-      current_level_->drawBorders(window_);
+      level_->draw(window_);
+      level_->drawBorders(window_);
       gui_.drawLevelCompletedScreen(window_);
       break;
     case k::GameStates::GameCompleted:
@@ -296,7 +296,7 @@ void Game::update() {
         state_ = k::GameStates::GameOver;
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
-      } else if (current_level_->isCompleted()) {
+      } else if (level_->isCompleted()) {
         state_ = k::GameStates::LevelCompleted;
         gui_.setRenderFlashingTextFlag(true);
         gui_.setFinalScoreText(player_.getScore());
@@ -309,25 +309,25 @@ void Game::update() {
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)
          || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
           const bool crash = player_.moveVaus(sf::Vector2f(delta_time * player_.getVausSpeed(), 0.f));
-          if (crash && current_level_->isBreakActive()) current_level_->complete();
+          if (crash && level_->isBreakActive()) level_->complete();
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
           /* Laser firing */
-          if (current_level_->isLaserActive()) current_level_->fireLaser();
+          if (level_->isLaserActive()) level_->fireLaser();
           /* Release the ball from the Vaus */
           if (ball_.isCatched()) ball_.release();
         }
         /* Catch new power-ups */
-        if (current_level_->catchedPowerUp()) handlePowerUps();
+        if (level_->catchedPowerUp()) handlePowerUps();
         /* Ball stuff */
         if (ball_.isPowerUpActive()) ball_.updatePowerUps();
         if (ball_.isCatched()) {
           ball_.followVaus(player_.getVaus());
         } else {
-          ball_.move(delta_time, player_.getVaus(), current_level_->getBricks());
+          ball_.move(delta_time, player_.getVaus(), level_->getBricks());
         }
         /* Level */
-        current_level_->update(delta_time);
+        level_->update(delta_time);
         /* Vaus animation */
         player_.updateVausAnim();
       }
