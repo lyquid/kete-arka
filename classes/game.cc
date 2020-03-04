@@ -198,11 +198,6 @@ Game::Game():
     window_.create(sf::VideoMode(k::kScreenWidth, k::kScreenHeight), title_, sf::Style::Titlebar | sf::Style::Close);
     logger_.write("Successfully created display window.");
     window_.setVerticalSyncEnabled(true);
-    /* Font */
-    if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
-      logger_.write("ERROR: Failed loading font.");
-      exit(EXIT_FAILURE);
-    }
     /* Levels */
     levels_.resize(k::kMaxLevels);
     Level::setLevels(levels_);
@@ -212,7 +207,7 @@ Game::Game():
     initLevelsMenu();
     logger_.write("Successfully initialized levels menu.");
     /* GUI */
-    gui_.init(font_);
+    gui_.init();
     logger_.write("Successfully initialized GUI.");
     /* Ball */ 
     ball_.init(&player_);

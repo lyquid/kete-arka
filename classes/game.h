@@ -31,7 +31,6 @@ class Game {
   Ball ball_;
   sf::Clock clock_;
   sf::Event event_;
-  sf::Font font_;
   GUI gui_;
   std::vector<Level> levels_;
   std::vector<Level>::iterator level_;

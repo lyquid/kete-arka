@@ -19,7 +19,7 @@ class GUI {
   void drawPauseScreen(sf::RenderWindow& window);
   void drawTitleScreen(sf::RenderWindow& window);
   unsigned int getLevelSelectedNumber() { return level_selected_ + 1u; };
-  void init(const sf::Font& font);
+  void init();
   void reset();
   void selectNextLevel();
   void selectPreviousLevel();
@@ -41,7 +41,7 @@ class GUI {
     std::string name;
     std::string select_text;
   };
-  void initLevelsList(const sf::Font& font);
+  void initLevelsList();
   static void initText(sf::Text&         text, 
                        const sf::String& string_text, 
                        const sf::Font&   font, 
@@ -51,6 +51,7 @@ class GUI {
   template<typename T> static void setOrigin(T& shape, TextCenter mode);
   void updateFlashingTextFlag();
   void updateLevelSelectionShape(unsigned int previous_level = 0u);
+  sf::Font font_;
   unsigned int current_level_;
   bool render_flashing_text_flag_;
   sf::Clock flashing_text_clock_;
