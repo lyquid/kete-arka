@@ -117,6 +117,12 @@ void GUI::drawTitleScreen(sf::RenderWindow& window) {
   }
 }
 
+GUI::GUI(): current_level_(0u),
+            render_flashing_text_flag_(true) {
+  level_info_.resize(k::kMaxLevels);
+  level_info_texts_.resize(k::kMaxLevels);
+}
+
 /////////////////////////////////////////////////
 /// @brief Initializes the GUI.
 ///
@@ -205,7 +211,7 @@ void GUI::initLevelsList() {
   level_select_title_text_.setPosition(x, y);
   for (auto i = 0u; i < k::kMaxLevels; ++i) {
     y = (kGUIDefaultMargin_ + kGUILevelSelectKeys_ * 2u) + (kGUILevelSelectKeys_ * (i + 1u)) + (8u * i);
-    initText(level_info_texts_.at(i), level_info_[i].select_text, font_, kGUILevelSelectKeys_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+    initText(level_info_texts_.at(i), level_info_.at(i).select_text, font_, kGUILevelSelectKeys_, kGUIDefaultFontColor_, TextCenter::BothAxis);
     level_info_texts_.at(i).setPosition(x, y);
   }
   level_selected_ = 0u;
@@ -308,12 +314,12 @@ void GUI::setFinalScoreText(unsigned long long int score) {
 ///
 /////////////////////////////////////////////////
 void GUI::setLevelInfo(unsigned int lvl_position, unsigned int lvl_num, const std::string& lvl_name) {
-  level_info_[lvl_position].number = lvl_num;
-  level_info_[lvl_position].name = lvl_name;
+  level_info_.at(lvl_position).number = lvl_num;
+  level_info_.at(lvl_position).name = lvl_name;
   if (lvl_num < 10u) {
-    level_info_[lvl_position].select_text = "0" + std::to_string(lvl_num) + " - " + lvl_name;
+    level_info_.at(lvl_position).select_text = "0" + std::to_string(lvl_num) + " - " + lvl_name;
   } else {
-    level_info_[lvl_position].select_text = std::to_string(lvl_num) + " - " + lvl_name;
+    level_info_.at(lvl_position).select_text = std::to_string(lvl_num) + " - " + lvl_name;
   }
 }
 

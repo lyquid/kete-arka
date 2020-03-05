@@ -9,11 +9,7 @@
 
 class GUI {
  public:
-  GUI(): 
-    current_level_(0u),
-    render_flashing_text_flag_(true) {
-      level_info_texts_.resize(k::kMaxLevels);
-    }
+  GUI();
   ~GUI() {}
   void drawGameCompleted(sf::RenderWindow& window);
   void drawGameOverScreen(sf::RenderWindow& window);
@@ -76,7 +72,7 @@ class GUI {
   sf::Text gui_lives_text_;
   sf::Text gui_score_text_;
   /* Level selection */
-  LevelInfo level_info_[k::kMaxLevels];
+  std::vector<LevelInfo> level_info_;
   std::vector<sf::Text> level_info_texts_;
   sf::Text level_select_keys_;
   unsigned int level_selected_;
