@@ -1,6 +1,7 @@
 #ifndef KETE_ARKA_CLASSES_GUI_H_
 #define KETE_ARKA_CLASSES_GUI_H_
 
+#include <assert.h>
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
@@ -19,7 +20,7 @@ class GUI {
   void drawMenu(sf::RenderWindow& window);
   void drawPauseScreen(sf::RenderWindow& window);
   void drawTitleScreen(sf::RenderWindow& window);
-  unsigned int getLevelSelectedNumber() { return level_selected_ + 1u; };
+  unsigned int getLevelSelectedNumber() { return level_selected_ + 1u; }
   void init();
   void reset();
   void selectNextLevel();

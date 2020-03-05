@@ -15,12 +15,9 @@
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add library="C:/Users/ketep/lib/SFML-2.5.1/lib/libsfml-graphics-d.a" />
-					<Add library="C:/Users/ketep/lib/SFML-2.5.1/lib/libsfml-window-d.a" />
-					<Add library="C:/Users/ketep/lib/SFML-2.5.1/lib/libsfml-system-d.a" />
-					<!-- <Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics-d.a" />
+					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics-d.a" />
 					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-window-d.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system-d.a" /> -->
+					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system-d.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -33,23 +30,20 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="C:/Users/ketep/lib/SFML-2.5.1/lib/libsfml-graphics.a" />
-					<Add library="C:/Users/ketep/lib/SFML-2.5.1/lib/libsfml-window.a" />
-					<Add library="C:/Users/ketep/lib/SFML-2.5.1/lib/libsfml-system.a" />
-					<!-- <Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics.a" />
+					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-graphics.a" />
 					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-window.a" />
-					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system.a" /> -->
+					<Add library="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib/libsfml-system.a" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-std=c++11" />
-			<Add directory="C:/Users/ketep/lib/SFML-2.5.1/include" />
+			<Add directory="C:/lib/SFML-2.5.1/include" />
 			<Add directory="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/include" />
 		</Compiler>
 		<Linker>
-			<Add directory="C:/Users/ketep/lib/SFML-2.5.1/lib" />
+			<Add directory="C:/lib/SFML-2.5.1/lib" />
 			<Add directory="H:/GRUPOS/ACREDITACIONES/TRABAJADORES_CA/ALEX/PrOG/SFML-2.5.1/lib" />
 		</Linker>
 		<Unit filename="classes/ball.cc" />
@@ -64,7 +58,6 @@
 		<Unit filename="classes/logger.h" />
 		<Unit filename="classes/player.cc" />
 		<Unit filename="classes/player.h" />
-		<Unit filename="classes/powerups.h" />
 		<Unit filename="config.h" />
 		<Unit filename="levels.h" />
 		<Unit filename="main.cc" />

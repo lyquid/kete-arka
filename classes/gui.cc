@@ -121,6 +121,7 @@ GUI::GUI(): current_level_(0u),
             render_flashing_text_flag_(true) {
   level_info_.resize(k::kMaxLevels);
   level_info_texts_.resize(k::kMaxLevels);
+  assert(level_info_.size() == level_info_texts_.size());
 }
 
 /////////////////////////////////////////////////
@@ -209,9 +210,9 @@ void GUI::initLevelsList() {
   auto y = kGUIDefaultMargin_ + kGUILevelSelectFontSize_ / 2u;
   initText(level_select_title_text_, kLevelSelectText_, font_, kGUILevelSelectFontSize_, kGUIDefaultFontColor_, TextCenter::BothAxis);
   level_select_title_text_.setPosition(x, y);
-  for (auto i = 0u; i < k::kMaxLevels; ++i) {
-    y = (kGUIDefaultMargin_ + kGUILevelSelectKeys_ * 2u) + (kGUILevelSelectKeys_ * (i + 1u)) + (8u * i);
+  for (auto i = 0u; i < level_info_.size(); ++i) {
     initText(level_info_texts_.at(i), level_info_.at(i).select_text, font_, kGUILevelSelectKeys_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+    y = (kGUIDefaultMargin_ + kGUILevelSelectKeys_ * 2u) + (kGUILevelSelectKeys_ * (i + 1u)) + (8u * i);
     level_info_texts_.at(i).setPosition(x, y);
   }
   level_selected_ = 0u;
