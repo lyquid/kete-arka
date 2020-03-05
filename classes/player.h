@@ -32,12 +32,12 @@ class Player {
   void deactivatePowerUp();
   k::PowerUpTypes getPowerUp() { return pwrup_type_; };
   bool isPowerUpActive() { return pwrup_active_; };
-  void setPowerUp(k::PowerUpTypes type);
+  void setPowerUp(const k::PowerUpTypes& type);
   void resizeVaus();
   bool isVausResizing();
 
  private:
-  static const unsigned int kPlayerDefaultLives_;
+  static constexpr unsigned int kPlayerDefaultLives_ = 3u;
   bool dead_;
   GUI* gui_;
   unsigned int lives_;
@@ -47,25 +47,26 @@ class Player {
   static const sf::Vector2f kVausDefaultSize_;
   static const sf::Vector2f kVausDefaultPosition_;
   static const sf::Vector2f kVausDefaultCollisionRect_;
-  static const float kVausDefaultSpeed_;
-  static const float kVausMaxLength_;
-  static const float kVausGrowth_;
-  static const unsigned int kVausAnimFrames_;
-  static const float kVausAnimSpeed_;
-  static unsigned int vaus_anim_frame_;
-  static sf::Clock vaus_anim_clk_;
-  static bool show_collision_rect_;
+  static constexpr float        kVausDefaultSpeed_ = 500.f;
+  static constexpr float        kVausAnimSpeed_    = 0.10f;
+  static constexpr unsigned int kVausAnimFrames_   = 6u;
+  static           unsigned int vaus_anim_frame_;
+  static           sf::Clock    vaus_anim_clk_;
+  static           bool         show_collision_rect_;
+  /* Enlarge Vaus */
+  static constexpr float kVausGrowth_ = 0.5f;
+  static const     float kVausMaxLength_;
+  void enlargeVaus();
+  void shortenVaus();
+  float growth_;
   /* Laser Vaus */
   void activateLaserVaus();
   void deactivateLaserVaus();
-  static const unsigned int kVausLaserAnimFrames_;
-  static const float kVausLaserAnimSpeed_;
-  static unsigned int vaus_laser_anim_frame_;
+  static constexpr unsigned int kVausLaserAnimFrames_ = 6u;
+  static constexpr float        kVausLaserAnimSpeed_  = 0.20f;
+  static           unsigned int vaus_laser_anim_frame_;
   /* Power-ups stuff */
-  void enlargeVaus();
-  void shortenVaus();
   bool pwrup_active_;
-  float growth_;
   k::PowerUpTypes pwrup_type_;
 };
 

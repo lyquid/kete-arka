@@ -1,22 +1,15 @@
 #include "player.h"
 
-const unsigned int Player::kPlayerDefaultLives_ = 3u;
 /* Vaus stuff */
 k::Vaus Player::vaus_;
 const sf::Vector2f Player::kVausDefaultSize_          = sf::Vector2f(95.f, 28.f);
 const sf::Vector2f Player::kVausDefaultCollisionRect_ = sf::Vector2f(kVausDefaultSize_.x - 10.f, kVausDefaultSize_.y);
 const sf::Vector2f Player::kVausDefaultPosition_      = sf::Vector2f((k::kScreenWidth - kVausDefaultCollisionRect_.x) / 2.f, k::kScreenHeight * 0.9f);
-const float        Player::kVausDefaultSpeed_         = 500.f;
 const float        Player::kVausMaxLength_            = kVausDefaultSize_.x * 1.66f;
-const float        Player::kVausGrowth_               = 0.5f;
-const unsigned int Player::kVausAnimFrames_           = 6u;
-const float        Player::kVausAnimSpeed_            = 0.10f;
 unsigned int       Player::vaus_anim_frame_;
 sf::Clock          Player::vaus_anim_clk_;
 bool               Player::show_collision_rect_;
 /* Laser Vaus */
-const unsigned int Player::kVausLaserAnimFrames_ = 6u;
-const float        Player::kVausLaserAnimSpeed_  = 0.20f;
 unsigned int       Player::vaus_laser_anim_frame_;
 
 void Player::deactivatePowerUp() {
@@ -202,7 +195,7 @@ void Player::resizeVaus() {
   else shortenVaus();
 }
 
-void Player::setPowerUp(k::PowerUpTypes type) {
+void Player::setPowerUp(const k::PowerUpTypes& type) {
   switch (type) {
     case k::PowerUpTypes::Enlarge: {
       growth_ = kVausGrowth_;
