@@ -96,7 +96,6 @@ bool Ball::checkBorderCollision(BallShape& ball) {
     if (!active_balls_ ) {
       player_->decreaseLives();
       player_->resetVaus();
-      if (player_->isPowerUpActive()) player_->deactivatePowerUp();
       if (level_->isPowerUpActive()) level_->deactivatePowerUp();
       if (isPowerUpActive()) deactivatePowerUp();
       reset();

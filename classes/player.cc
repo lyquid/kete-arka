@@ -175,7 +175,6 @@ Player::Player():
     vaus_.collision_rect.setFillColor(sf::Color::Transparent);
     vaus_.collision_rect.setOutlineColor(sf::Color::Green);
     vaus_.collision_rect.setOutlineThickness(-1.f);
-    resetVaus();
   }
 
 ////////////////////////////////////////////////
@@ -184,8 +183,7 @@ void Player::reset() {
   lives_ = kPlayerDefaultLives_;
   gui_->setLivesText(lives_);
   score_ = 0u;
-  pwrup_active_ = false;
-  pwrup_type_ = k::PowerUpTypes::Nil;
+  deactivatePowerUp();
 }
 
 void Player::resetVaus() {
@@ -196,6 +194,7 @@ void Player::resetVaus() {
   vaus_.collision_rect.setPosition(kVausDefaultPosition_);
   vaus_anim_frame_ = 0u;
   vaus_laser_anim_frame_ = 0u;
+  deactivatePowerUp();
 }
 
 void Player::resizeVaus() {

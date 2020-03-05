@@ -39,7 +39,6 @@ void Game::handleKeyEvents(const sf::Event& key_event) {
         /* New game start */
         case sf::Keyboard::Num1:
           player_.reset();
-          player_.resetVaus();
           ball_.reset();
           gui_.reset();
           if (loadLevel(1u)) {
@@ -72,7 +71,6 @@ void Game::handleKeyEvents(const sf::Event& key_event) {
         case sf::Keyboard::Space:
           const auto lvl_num = gui_.getLevelSelectedNumber();
           player_.reset();
-          player_.resetVaus();
           ball_.reset();
           gui_.reset();
           if (loadLevel(lvl_num)) {
@@ -126,7 +124,6 @@ void Game::handleKeyEvents(const sf::Event& key_event) {
             state_ = k::GameStates::GameCompleted;
           } else  {
             ball_.reset();
-            player_.resetVaus();
             if (loadLevel(next_lvl)) {
               state_ = k::GameStates::Playing;
               logger_.write("Successfully loaded level " + std::to_string(next_lvl) + ".");
@@ -228,6 +225,7 @@ bool Game::loadLevel(unsigned int lvl_num) {
       level_ = it;
       level_->init(&player_);
       ball_.setLevel(level_.base());
+      player_.resetVaus();
       if (level_->getNumber() == k::kMaxLevels) {
         gui_.update(level_->getNumber(), level_->getName());
       } else {
