@@ -67,9 +67,8 @@ void GUI::drawLevelCompletedScreen(sf::RenderWindow& window) {
 void GUI::drawLevelSelection(sf::RenderWindow& window) {
   window.draw(level_select_title_text_);
   window.draw(level_selected_shape_);
-  for (auto i = 0u; i < k::kMaxLevels; ++i) {
-    window.draw(level_info_texts_[i]);
-  }
+  for (const auto& level_info: level_info_texts_)
+    window.draw(level_info);
   window.draw(level_select_keys_);
 }
 
@@ -206,8 +205,8 @@ void GUI::initLevelsList() {
   level_select_title_text_.setPosition(x, y);
   for (auto i = 0u; i < k::kMaxLevels; ++i) {
     y = (kGUIDefaultMargin_ + kGUILevelSelectKeys_ * 2u) + (kGUILevelSelectKeys_ * (i + 1u)) + (8u * i);
-    initText(level_info_texts_[i], level_info_[i].select_text, font_, kGUILevelSelectKeys_, kGUIDefaultFontColor_, TextCenter::BothAxis);
-    level_info_texts_[i].setPosition(x, y);
+    initText(level_info_texts_.at(i), level_info_[i].select_text, font_, kGUILevelSelectKeys_, kGUIDefaultFontColor_, TextCenter::BothAxis);
+    level_info_texts_.at(i).setPosition(x, y);
   }
   level_selected_ = 0u;
   level_selected_shape_.setFillColor(kGUIDefaultFontColor_);
@@ -227,12 +226,12 @@ void GUI::initLevelsList() {
 /// Sets the font, the size, the fill color and the string to be
 /// rendered for the text. Thereafter sets the origin of the text if needed.
 /////////////////////////////////////////////////
-void GUI::initText( sf::Text&          text, 
-                    const std::string& string_text, 
-                    const sf::Font&    font, 
-                    unsigned int       size,
-                    const sf::Color&   color, 
-                    const TextCenter&  mode ) {
+void GUI::initText(sf::Text&          text, 
+                   const std::string& string_text, 
+                   const sf::Font&    font, 
+                   unsigned int       size,
+                   const sf::Color&   color, 
+                   const TextCenter&  mode ) {
   text.setFont(font);
   text.setCharacterSize(size);
   text.setFillColor(color);
@@ -444,12 +443,12 @@ void GUI::update(unsigned int lvl_num, const std::string& lvl_name, const std::s
 /// selection shape to fit the new selection.
 /////////////////////////////////////////////////
 void GUI::updateLevelSelectionShape(unsigned int previous_level) {
-  level_info_texts_[previous_level].setFillColor(kGUIDefaultFontColor_);
-  level_info_texts_[previous_level].setOutlineThickness(kGUIDefaultFontOutline_);
-  level_info_texts_[level_selected_].setFillColor(kGUIDefaultSelectedFontColor_);
-  level_info_texts_[level_selected_].setOutlineThickness(0.f);
-  level_selected_shape_.setSize(sf::Vector2f(level_info_texts_[level_selected_].getGlobalBounds().width, level_info_texts_[level_selected_].getGlobalBounds().height));
+  level_info_texts_.at(previous_level).setFillColor(kGUIDefaultFontColor_);
+  level_info_texts_.at(previous_level).setOutlineThickness(kGUIDefaultFontOutline_);
+  level_info_texts_.at(level_selected_).setFillColor(kGUIDefaultSelectedFontColor_);
+  level_info_texts_.at(level_selected_).setOutlineThickness(0.f);
+  level_selected_shape_.setSize(sf::Vector2f(level_info_texts_.at(level_selected_).getGlobalBounds().width, level_info_texts_.at(level_selected_).getGlobalBounds().height));
   setOrigin(level_selected_shape_, TextCenter::BothAxis);
-  level_selected_shape_.setPosition(level_info_texts_[level_selected_].getPosition());
+  level_selected_shape_.setPosition(level_info_texts_.at(level_selected_).getPosition());
 }
 

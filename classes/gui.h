@@ -2,6 +2,7 @@
 #define KETE_ARKA_CLASSES_GUI_H_
 
 #include <string>
+#include <vector>
 #include <SFML/Graphics.hpp>
 
 #include "../config.h"
@@ -10,7 +11,9 @@ class GUI {
  public:
   GUI(): 
     current_level_(0u),
-    render_flashing_text_flag_(true) {}
+    render_flashing_text_flag_(true) {
+      level_info_texts_.resize(k::kMaxLevels);
+    }
   ~GUI() {}
   void drawGameCompleted(sf::RenderWindow& window);
   void drawGameOverScreen(sf::RenderWindow& window);
@@ -40,8 +43,8 @@ class GUI {
   };
   struct LevelInfo {
     unsigned int number;
-    std::string name;
-    std::string select_text;
+    std::string  name;
+    std::string  select_text;
   };
   void initLevelsList();
   static void initText(sf::Text&          text, 
@@ -74,7 +77,7 @@ class GUI {
   sf::Text gui_score_text_;
   /* Level selection */
   LevelInfo level_info_[k::kMaxLevels];
-  sf::Text level_info_texts_[k::kMaxLevels];
+  std::vector<sf::Text> level_info_texts_;
   sf::Text level_select_keys_;
   unsigned int level_selected_;
   sf::RectangleShape level_selected_shape_;
