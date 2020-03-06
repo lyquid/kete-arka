@@ -4,12 +4,9 @@
 const sf::Vector2f Ball::kBallDefaultPosition_ = sf::Vector2f(k::kScreenWidth / 2.f, k::kScreenHeight * 0.75f);
 const sf::Color    Ball::kBallDefaultColor_ = sf::Color::White;
 /* Disruption power-up */
-const unsigned int           Ball::kDisruptionMaxBalls_ = 3u;
 std::vector<Ball::BallShape> Ball::balls_(kDisruptionMaxBalls_);
 unsigned int                 Ball::active_balls_;
 /* Catch power-up */
-const float Ball::kCatchMinTime_ = 1.50f;
-const float Ball::kCatchMaxTime_ = 3.00f;
 sf::Clock   Ball::catch_clk_;
 float       Ball::time_to_release_;
 bool        Ball::catched_;
@@ -34,7 +31,7 @@ void Ball::activateDisruption() {
   }
 }
 
-bool Ball::checkBrickCollision(BallShape& ball, k::Brick bricks[][k::kLevelMaxColumns]) {
+bool Ball::checkBrickCollision(BallShape& ball, const k::Brick bricks[][k::kLevelMaxColumns]) {
   bool collision = false;
   for (auto i = 0u; i < k::kLevelMaxRows; ++i) {
     for (auto j = 0u; j < k::kLevelMaxColumns; ++j) {
@@ -205,7 +202,7 @@ void Ball::invertVerticalDirection(BallShape& ball, float variation) {
   ball.direction.y = -ball.direction.y + variation;
 }
 
-void Ball::move(float delta_time, const k::Vaus& vaus, k::Brick bricks[][k::kLevelMaxColumns]) {
+void Ball::move(float delta_time, const k::Vaus& vaus, const k::Brick bricks[][k::kLevelMaxColumns]) {
   // bool collision = false;
   if (moving_flag_) {
     for (auto& ball: balls_) {
@@ -345,9 +342,10 @@ void Ball::reset() {
   active_balls_ = 1u;
   /* Ball direction_ vector randomization */
   float random_x_direction = 0.f;
-  do {  /* Get a number between -10 and 10, not including 0. */
+  /* Get a number between -10 and 10, not including 0. */
+  while (random_x_direction == 0.f) { 
     random_x_direction = std::rand() % 21 - 10;
-  } while (random_x_direction == 0.f);
+  } 
   /* Take the random number and divide it to make it between -0.10, -0.09, -0.08, ... to 0.10 */
   random_x_direction = random_x_direction / 100.f;
   /* Ball's vector full initialization */
@@ -376,7 +374,7 @@ void Ball::reset() {
   catched_ = false;
 }
 
-void Ball::setPowerUp(k::PowerUpTypes type) {
+void Ball::setPowerUp(const k::PowerUpTypes& type) {
   pwrup_type_ = type;
   pwrup_active_ = true;
   switch (type) {

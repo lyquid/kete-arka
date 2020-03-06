@@ -15,23 +15,23 @@
 
 class Ball {
  public:
-  Ball(): pwrup_active_(false) {}
+  Ball() {}
   ~Ball() {}
   void draw(sf::RenderWindow& window, k::GameStates state);
   void init(Player* ptp);
-  void move(float delta_time, const k::Vaus& vaus, k::Brick bricks[][k::kLevelMaxColumns]);
+  void move(float delta_time, const k::Vaus& vaus, const k::Brick bricks[][k::kLevelMaxColumns]);
   void reset();
-  void setLevel(Level* ptl) { level_ = ptl; };
+  void setLevel(Level* ptl) { level_ = ptl; }
   /* Power-ups stuff */
   void deactivatePowerUp();
-  k::PowerUpTypes getPowerUp() { return pwrup_type_; };
-  bool isPowerUpActive() { return pwrup_active_; };
-  void setPowerUp(k::PowerUpTypes type);
+  k::PowerUpTypes getPowerUp() const { return pwrup_type_; }
+  bool isPowerUpActive() const { return pwrup_active_; }
+  void setPowerUp(const k::PowerUpTypes& type);
   void updatePowerUps();
   /* Catch power-up */
   void followVaus(const k::Vaus& vaus);
-  bool isCatched() { return catched_; };
-  void release() { catched_ = false; };
+  bool isCatched() const { return catched_; }
+  void release() { catched_ = false; }
 
  private:
   /* Ball default settings */
@@ -51,7 +51,7 @@ class Ball {
     sf::Vector2f    last_position;
     sf::CircleShape shape;
   };
-  bool checkBrickCollision(BallShape& ball, k::Brick bricks[][k::kLevelMaxColumns]);
+  bool checkBrickCollision(BallShape& ball, const k::Brick bricks[][k::kLevelMaxColumns]);
   bool checkBorderCollision(BallShape& ball);
   bool checkVausCollision(BallShape& ball, const k::Vaus& vaus);
   void invertHorizontalDirection(BallShape& ball, float variation);
@@ -77,12 +77,12 @@ class Ball {
   float slow_timer_;
   /* Disruption power-up */
   void activateDisruption();
-  static const unsigned int kDisruptionMaxBalls_;
+  static constexpr unsigned int kDisruptionMaxBalls_ = 3u;
   static unsigned int active_balls_;
   /* Catch power-up */
   float generateRandomTime(float min, float max);
-  static const float kCatchMaxTime_;
-  static const float kCatchMinTime_;
+  static constexpr float kCatchMaxTime_ = 3.00f;
+  static constexpr float kCatchMinTime_ = 1.50f;
   static sf::Clock catch_clk_;
   static float time_to_release_;
   static bool catched_;
