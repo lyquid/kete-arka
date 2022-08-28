@@ -32,6 +32,7 @@ endif()
 
 if(DEFINED CMAKE_TOOLCHAIN_FILE)
   target_link_libraries(kete-arka PRIVATE
+    assets_path
     sfml-system
     sfml-network
     sfml-graphics

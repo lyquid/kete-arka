@@ -1,19 +1,20 @@
 #ifndef KETE_ARKA_CONFIG_H_
 #define KETE_ARKA_CONFIG_H_
 
+#include "./lib/assets_path.hpp"
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
 
 namespace k {
-  
+
   enum BrickTypes { _, W, O, L, G, R, B, P, Y, S, A };
   enum class Background { Blue, Green, BlueCircuit, RedCircuit, Moai };
   enum class ExecutionModes { Normal, Debug, LogFile };
-  enum class GameStates { 
-    Title, Menu, LevelSelection, 
-    Playing, Paused, LevelCompleted, 
-    GameCompleted, GameOver, Quit 
+  enum class GameStates {
+    Title, Menu, LevelSelection,
+    Playing, Paused, LevelCompleted,
+    GameCompleted, GameOver, Quit
   };
   enum class PowerUpTypes {
     Nil, Break, Catch, Disruption,
@@ -51,7 +52,7 @@ namespace k {
   constexpr ExecutionModes kExecutionMode = ExecutionModes::Debug;
   /* Image stuff */
   constexpr auto kImageExt  = ".png";
-  constexpr auto kImagePath = "assets/img/";
+  const auto kImagePath = ktp::Assets::getAssetsPath("img");
   /* Levels stuff */
   constexpr unsigned int kMaxLevels       = 36u;
   constexpr unsigned int kLevelMaxColumns = 11u;

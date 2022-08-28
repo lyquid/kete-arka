@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "../lib/assets_path.hpp"
 
 const sf::Color GUI::kGUIDefaultFontColor_         = sf::Color::White;
 const sf::Color GUI::kGUIDefaultSelectedFontColor_ = sf::Color::Black;
@@ -134,7 +135,7 @@ GUI::GUI(): current_level_(0u),
 /// that need to be called.
 /////////////////////////////////////////////////
 void GUI::init() {
-  if (!font_.loadFromFile("assets/PressStart2P.ttf")) {
+  if (!font_.loadFromFile(ktp::Assets::getAssetsPath() + "/PressStart2P.ttf")) {
     exit(EXIT_FAILURE);
   }
   constexpr auto halfScreenW = k::kScreenWidth / 2u;

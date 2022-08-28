@@ -48,6 +48,7 @@ else()
 	find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 endif()
 
+add_subdirectory(lib)
 add_subdirectory(src)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
