@@ -39,8 +39,8 @@ void Player::deactivatePowerUp() {
 ///
 /// @param decrease_by The amount to decrease the lives by.
 ///
-/// Decreases the lives of the player by the amount specified. 
-/// If no amount is specified, decreases the lives by 1. 
+/// Decreases the lives of the player by the amount specified.
+/// If no amount is specified, decreases the lives by 1.
 /// If lives equals 0, sets the player dead.
 /// Note that lives cannot be decreased below 0.
 /////////////////////////////////////////////////
@@ -106,7 +106,7 @@ void Player::increaseLives(unsigned int increase_by) {
 ///
 /// @param increase_by The amount to increase the score by.
 ///
-/// Increases the score of the player by the amount specified. 
+/// Increases the score of the player by the amount specified.
 /////////////////////////////////////////////////
 void Player::increaseScore(unsigned long long increase_by) {
   score_ += increase_by;
@@ -123,7 +123,7 @@ bool Player::isVausResizing() {
 ///
 /// @param offset - The sf::Vector2f to be added to the current position.
 ///
-/// Checks if we want to move the ship right or left and 
+/// Checks if we want to move the ship right or left and
 /// keeps the ship within the screen boundaries.
 /////////////////////////////////////////////////
 bool Player::moveVaus(const sf::Vector2f& offset) {

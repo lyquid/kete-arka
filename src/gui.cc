@@ -200,7 +200,7 @@ void GUI::init() {
 /////////////////////////////////////////////////
 /// @brief Initializes the level selection list.
 ///
-/// Initializes and sets the position of the texts for 
+/// Initializes and sets the position of the texts for
 /// the level selection screen.
 ///
 /// @todo: Fix the bug with the position of the texts.
@@ -233,11 +233,11 @@ void GUI::initLevelsList() {
 /// Sets the font, the size, the fill color and the string to be
 /// rendered for the text. Thereafter sets the origin of the text if needed.
 /////////////////////////////////////////////////
-void GUI::initText(sf::Text&          text, 
-                   const std::string& string_text, 
-                   const sf::Font&    font, 
+void GUI::initText(sf::Text&          text,
+                   const std::string& string_text,
+                   const sf::Font&    font,
                    unsigned int       size,
-                   const sf::Color&   color, 
+                   const sf::Color&   color,
                    const TextCenter&  mode ) {
   text.setFont(font);
   text.setCharacterSize(size);
@@ -264,8 +264,8 @@ void GUI::reset() {
 /////////////////////////////////////////////////
 /// @brief Changes selected level to the next.
 ///
-/// Changes selected level to the next. I there's no next level, 
-/// level selected becomes the first (0). 
+/// Changes selected level to the next. I there's no next level,
+/// level selected becomes the first (0).
 /// Also updates the selection shape by calling updateLevelSelectionShape().
 /////////////////////////////////////////////////
 void GUI::selectNextLevel() {
@@ -281,8 +281,8 @@ void GUI::selectNextLevel() {
 /////////////////////////////////////////////////
 /// @brief Changes selected level to the previous.
 ///
-/// Changes selected level to the previous. I there's no previous level, 
-/// level selected becomes the last. 
+/// Changes selected level to the previous. I there's no previous level,
+/// level selected becomes the last.
 /// Also updates the selection shape by calling updateLevelSelectionShape().
 /////////////////////////////////////////////////
 void GUI::selectPreviousLevel() {
@@ -298,7 +298,7 @@ void GUI::selectPreviousLevel() {
 /////////////////////////////////////////////////
 /// @brief Sets the score text to be displayed in the "Game Over" screen.
 ///
-/// Sets the score text origin to the center of both axis 
+/// Sets the score text origin to the center of both axis
 /// and the text position to the middle of the screen.
 /////////////////////////////////////////////////
 void GUI::setFinalScoreText(unsigned long long int score) {
@@ -412,7 +412,7 @@ void GUI::updateFlashingTextFlag(){
 
 void GUI::update(unsigned int lvl_num, const std::string& lvl_name) {
   current_level_ = lvl_num;
-  
+
   level_completed_name_.setString("\"" + lvl_name + "\"");
   setOrigin(level_completed_name_, TextCenter::BothAxis);
   level_completed_name_.setPosition(k::kScreenWidth * 0.5f, k::kScreenHeight * 0.30f);
@@ -446,7 +446,7 @@ void GUI::update(unsigned int lvl_num, const std::string& lvl_name, const std::s
 /// @param previous_level - The previous selected level.
 ///
 /// Changes the previously selected level to it's original state (color)
-/// and the newly selected level to the selected color and adjusts the 
+/// and the newly selected level to the selected color and adjusts the
 /// selection shape to fit the new selection.
 /////////////////////////////////////////////////
 void GUI::updateLevelSelectionShape(unsigned int previous_level) {

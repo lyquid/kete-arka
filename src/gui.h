@@ -32,11 +32,11 @@ class GUI {
   void setRenderFlashingTextFlag(bool status);
   void update(unsigned int lvl_num, const std::string& lvl_name);
   void update(unsigned int lvl_num, const std::string& lvl_name, const std::string& next_lvl_name);
-
+  
  private:
-  enum class TextCenter { 
-    Horizontal, Vertical, BothAxis, 
-    TopLeft, TopRight, Default 
+  enum class TextCenter {
+    Horizontal, Vertical, BothAxis,
+    TopLeft, TopRight, Default
   };
   struct LevelInfo {
     unsigned int number;
@@ -44,11 +44,11 @@ class GUI {
     std::string  select_text;
   };
   void initLevelsList();
-  static void initText(sf::Text&          text, 
-                       const std::string& string_text, 
-                       const sf::Font&    font, 
-                       unsigned int       size, 
-                       const sf::Color&   color, 
+  static void initText(sf::Text&          text,
+                       const std::string& string_text,
+                       const sf::Font&    font,
+                       unsigned int       size,
+                       const sf::Color&   color,
                        const TextCenter&  mode = TextCenter::Default);
   template<typename T> static void setOrigin(T& shape, TextCenter mode);
   void updateFlashingTextFlag();
@@ -68,7 +68,7 @@ class GUI {
   sf::Text menu_start_text_;
   sf::Text menu_level_text_;
   sf::Text menu_quit_text_;
-  /* In game GUI */ 
+  /* In game GUI */
   sf::Text gui_level_text_;
   sf::Text gui_lives_text_;
   sf::Text gui_score_text_;

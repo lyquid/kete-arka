@@ -145,7 +145,7 @@ class Level {
   /* Bricks' default settings */
   static constexpr float kBrickDefaultStart_   = 0.f;
   static constexpr float kBrickDefaultOutline_ = -1.5f;
-  static constexpr float kBrickDefaultBevel_   = 5.f; 
+  static constexpr float kBrickDefaultBevel_   = 5.f;
   static const sf::Vector2f kBrickDefaultSize_;
   /* Bricks' colors */
   static const sf::Color kBrickDefaultColor_;

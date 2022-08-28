@@ -79,7 +79,7 @@ bool Ball::checkBorderCollision(BallShape& ball) {
   // right collision
   } else if (ball.shape.getPosition().x + current_radius >= k::kScreenWidth - k::kGUIBorderThickness) {
     randomizeBounceAngle(ball, Collisions::Right);
-    ball.shape.setPosition(k::kScreenWidth - k::kGUIBorderThickness - current_radius - 0.1f, ball.shape.getPosition().y); 
+    ball.shape.setPosition(k::kScreenWidth - k::kGUIBorderThickness - current_radius - 0.1f, ball.shape.getPosition().y);
     collision = true;
   // top collision
   } else if (ball.shape.getPosition().y - current_radius <= k::kGUIBorderThickness) {
@@ -148,7 +148,7 @@ void Ball::deactivatePowerUp() {
     case k::PowerUpTypes::Nil:
     case k::PowerUpTypes::Break:
     case k::PowerUpTypes::Enlarge:
-    case k::PowerUpTypes::Laser:  
+    case k::PowerUpTypes::Laser:
     case k::PowerUpTypes::Player:
     default:
       // print something horrible to the logger
@@ -168,7 +168,7 @@ void Ball::draw(sf::RenderWindow& window, k::GameStates state) {
     }
   } else {
     for (const auto& ball: balls_) {
-      if (ball.active) window.draw(ball.shape); 
+      if (ball.active) window.draw(ball.shape);
     }
   }
 }
@@ -343,9 +343,9 @@ void Ball::reset() {
   /* Ball direction_ vector randomization */
   float random_x_direction = 0.f;
   /* Get a number between -10 and 10, not including 0. */
-  while (random_x_direction == 0.f) { 
+  while (random_x_direction == 0.f) {
     random_x_direction = std::rand() % 21 - 10;
-  } 
+  }
   /* Take the random number and divide it to make it between -0.10, -0.09, -0.08, ... to 0.10 */
   random_x_direction = random_x_direction / 100.f;
   /* Ball's vector full initialization */
@@ -390,7 +390,7 @@ void Ball::setPowerUp(const k::PowerUpTypes& type) {
     case k::PowerUpTypes::Nil:
     case k::PowerUpTypes::Break:
     case k::PowerUpTypes::Enlarge:
-    case k::PowerUpTypes::Laser:  
+    case k::PowerUpTypes::Laser:
     case k::PowerUpTypes::Player:
     default:
       // print something horrible to the logger
@@ -439,7 +439,7 @@ void Ball::updatePowerUps() {
     case k::PowerUpTypes::Nil:
     case k::PowerUpTypes::Break:
     case k::PowerUpTypes::Enlarge:
-    case k::PowerUpTypes::Laser:  
+    case k::PowerUpTypes::Laser:
     case k::PowerUpTypes::Player:
     default:
       // print something horrible to the logger

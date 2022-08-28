@@ -186,12 +186,11 @@ void Game::handlePowerUps() {
 }
 
 Game::Game():
-  level_(nullptr),
   state_(k::GameStates::Title) {
     title_ = k::kAppName + std::string(" v") + k::kAppVersion;
     /* Logger */
     logger_.write(title_ + " started.");
-    /* Display window */ 
+    /* Display window */
     window_.create(sf::VideoMode(k::kScreenWidth, k::kScreenHeight), title_, sf::Style::Titlebar | sf::Style::Close);
     logger_.write("Successfully created display window.");
     window_.setVerticalSyncEnabled(true);
@@ -206,7 +205,7 @@ Game::Game():
     /* GUI */
     gui_.init();
     logger_.write("Successfully initialized GUI.");
-    /* Ball */ 
+    /* Ball */
     ball_.init(&player_);
     logger_.write("Successfully initialized ball.");
     /* Player */
@@ -224,7 +223,7 @@ bool Game::loadLevel(unsigned int lvl_num) {
     if (it->getNumber() == lvl_num) {
       level_ = it;
       level_->init(&player_);
-      ball_.setLevel(level_.base());
+      ball_.setLevel(&*level_);
       player_.resetVaus();
       if (level_->getNumber() == k::kMaxLevels) {
         gui_.update(level_->getNumber(), level_->getName());
@@ -295,7 +294,7 @@ void Game::update() {
         gui_.setFinalScoreText(player_.getScore());
       } else {
         if (player_.isVausResizing()) player_.resizeVaus();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)
          || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
           player_.moveVaus(sf::Vector2f(delta_time * -player_.getVausSpeed(), 0.f));
         }

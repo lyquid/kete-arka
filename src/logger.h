@@ -2,7 +2,7 @@
 #define KETE_ARKA_CLASSES_LOGGER_H_
 
 #include <ctime>
-#include <fstream>  
+#include <fstream>
 
 class Logger {
  public:

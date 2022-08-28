@@ -53,7 +53,7 @@ sf::Clock                 Level::laser_fire_clk_;
 bool Level::checkLaserCollisions(const Laser& laser) {
   for (auto i = 0u; i < k::kLevelMaxRows; ++i) {
     for (auto j = 0u; j < k::kLevelMaxColumns; ++j) {
-      if (bricks_[i][j].active 
+      if (bricks_[i][j].active
       && laser.shape.getGlobalBounds().intersects(bricks_[i][j].shape.getGlobalBounds())) {
         decreaseResistance({i, j});
         return true;
@@ -162,7 +162,7 @@ void Level::drawBorders(sf::RenderWindow& window) {
   if (break_active_) window.draw(break_shape_);
 }
 
-void Level::eraseCatchedPowerUp() { 
+void Level::eraseCatchedPowerUp() {
   catched_pwrup_ = k::PowerUpTypes::Nil;
   new_pwrup_ = false;
 }
@@ -624,7 +624,7 @@ void Level::updateLasers(float delta_time) {
   const auto factor = kLaserSpeed_ * delta_time;
   for (auto& laser: lasers_) {
     if (laser.active) {
-      if (laser.shape.getPosition().y <= k::kGUIBorderThickness 
+      if (laser.shape.getPosition().y <= k::kGUIBorderThickness
       || checkLaserCollisions(laser)) {
         laser.active = false;
         --lasers_on_screen_;
@@ -654,7 +654,7 @@ void Level::updatePowerUpFall(float delta_time) {
   /* Update animation */
   if (pwrup_anim_clk_.getElapsedTime().asSeconds() >= kPowerUpAnimSpeed_) {
     pwrup_anim_clk_.restart();
-    power_up_.shape.setTexture(pwrup_tx_it_.base());
+    power_up_.shape.setTexture(&*pwrup_tx_it_);
     if (pwrup_anim_frame_ != kPowerUpFrames_ - 1u) {
       ++pwrup_anim_frame_;
       ++pwrup_tx_it_;

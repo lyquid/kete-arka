@@ -32,10 +32,10 @@ class Ball {
   void followVaus(const k::Vaus& vaus);
   bool isCatched() const { return catched_; }
   void release() { catched_ = false; }
-
+  
  private:
   /* Ball default settings */
-  static constexpr float kBallDefaultRadius_       = 5.f;         
+  static constexpr float kBallDefaultRadius_       = 5.f;
   static constexpr float kBallDefaultSpeed_        = 400.f;
   static constexpr float kBallDefaultDisplacement_ = 1.41f;
   static const sf::Vector2f kBallDefaultPosition_;
@@ -43,7 +43,7 @@ class Ball {
   enum class Collisions {
     Top, Bottom, Left, Right,
     TopShip, BottomShip, LeftShip, RightShip,
-    TopBrick, BottomBrick, LeftBrick, RightBrick 
+    TopBrick, BottomBrick, LeftBrick, RightBrick
   };
   struct BallShape {
     bool            active;

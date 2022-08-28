@@ -33,7 +33,7 @@ class Game {
   sf::Event event_;
   GUI gui_;
   std::vector<Level> levels_;
-  std::vector<Level>::iterator level_;
+  std::vector<Level>::iterator level_ {};
   Logger logger_;
   Player player_;
   k::GameStates state_;
